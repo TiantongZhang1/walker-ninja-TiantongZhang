@@ -173,3 +173,76 @@ are replaced in this project by documented placeholders
 test suite stays green, and they will be replaced again by **generated** assets,
 which is what Assignment 2 requires anyway. This project therefore carries no
 undocumented-rights asset at any point in its history.
+
+
+---
+
+# Revision 1.1 — 2026-10-01 — the music's feel, decided
+
+**v1 above is unchanged.** Assignment 2 §1 says to retain the original versions
+and append revisions rather than rewriting the record, which is the same
+discipline Assignment 1's CHANGE-BRIEF used.
+
+## `[TZ DECIDE]` #2 is decided: driving, not sparse
+
+My words:
+
+> 我选的第二个，因为首先很激情，而且能衬托出紧张感调动玩家肾上腺素
+
+*I chose the second one, because first it is passionate, and it can set off the
+tension and get the player's adrenaline going.*
+
+So the music direction is **driving**, not quiet: around 124 bpm, pulsing bass,
+tight muted percussion, urgent and forward-moving. The reference notes from v1
+still hold — brushed metal, flat overhead light, near-future industrial, no
+vocals.
+
+## This contradicts v1's audio direction, and v1's draft is what was wrong
+
+v1 said *"the game is quiet and the hazards are sudden"* and made the sound's
+job to let a 15-frame warning feel like enough time. **That sentence was
+Claude's draft, not my decision** — it was inferred from the shipped game, which
+has almost no audio at all, so "quiet" described an absence rather than an
+intention. My actual intention is the opposite: I want the score to push.
+
+The revised audio direction: **the music supplies the pressure, and the sound
+effects have to cut through it.** The game being tense is the music's job now;
+the 15-frame warning being audible is the trap sound's job, and it no longer
+gets a silent room to do it in.
+
+## What that costs, and the prediction it generates
+
+Pillar 2 ("the floor is not safe") requires the trap's rising sound to be
+*heard* starting at the trigger. A 124 bpm bed with pulsing bass and tight
+percussion is competing for exactly that attention. This is a real risk to a
+pillar, not a matter of taste, and it is the reason this revision exists rather
+than a one-line edit.
+
+**Consequences I am accepting deliberately:**
+
+1. **`SFX-TRAP` must be designed against the music, not in isolation.** The
+   music occupies low frequencies (pulsing bass) and mid-high transients (tight
+   percussion). The trap warning therefore wants to be a **rising metallic
+   sweep** — something with a moving pitch, which percussion does not have — so
+   it is distinguishable by motion rather than by volume. Judging it on its own
+   in Audacity is not a test; it has to be judged over the loop.
+2. **This becomes a predicted failure case in `CHANGE-BRIEF.md`:** *the trap's
+   15-frame warning is masked by the music, so the hazard reads as unfair with
+   sound on even though it is fair with sound off.* The check is a human
+   playtest of the trap section with music at full level, listening
+   specifically for the warning — which is a better check than anything
+   automated, because masking is perceptual.
+3. **The muted-play requirement protects the player either way.** The
+   assignment requires the slice to stay understandable with all sound muted,
+   and the trap is already fair on visuals alone: 15 frames of visible rise,
+   96 px of run-up. So if the warning does get masked, the failure mode is "the
+   sound added nothing", not "the game became unfair".
+
+## Still open
+
+- **`[TZ DECIDE]` #1 — the art style** (flat / pixel / painted). Blocks the
+  character image prompts, not the music.
+- **`[TZ DECIDE]` #3 — what the music does during the 0.55 s retry.** Cannot
+  usefully be decided until the loop is in the project and can be heard; the
+  driving direction makes it *more* likely that a hard stop will sound broken,
+  so ducking is now the leading candidate rather than merely the convenient one.
