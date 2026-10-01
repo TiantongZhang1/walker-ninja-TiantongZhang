@@ -162,3 +162,73 @@ Also still open: the art style, and what the music does during the 0.55 s retry.
 
 **Traceability:** `ASSET-LOG.md` rows `MUS-A-01` / `MUS-B-01` / `MUS-C-00`;
 `CONCEPT.md` revision 1.1.
+
+---
+
+## 2026-10-01 (correction, same day) — it was eight tracks, not two
+
+I sent Claude a screenshot of the Suno workspace, and it corrected three things
+in the entry above. Appending rather than editing it, because the entry above
+is what I actually told Claude and the correction is part of the record.
+
+- **Eight tracks, not two.** Each direction was run four times. My "前两个"
+  meant the first two *directions*, not two generations.
+- **The model is `v6-mini`** for the four usable tracks. The other four came
+  back tagged `V6 PREVIEW`, capped at **1:00** behind an "Upgrade for full
+  song" button — unusable on the free tier whatever they sound like. I did not
+  know that would happen when I started, and it halves the candidate pool.
+- **Direction A's four prompts were all reworded** and none matches what Claude
+  wrote. Direction B's four are Claude's prompt verbatim. Whether I edited A's
+  or Suno's prompt enhancement expanded them, the screenshot does not settle,
+  and Claude did not assert either way in the log.
+
+**Zero downloads.** All eight auditioned in the browser. The counter is still
+0 of 7.
+
+**What I notice looking at the eight together.** Direction A got four
+different wordings — one of them (`MUS-A-02`) even asked for a "driving urgent
+pulse" at 85 BPM, so it was already drifting toward B — and still lost.
+Direction B won on the first wording, unchanged. Rewriting the prompt did not
+rescue a direction that was wrong for the game. The decision that mattered was
+which feeling the score should carry, and that is not a prompt-engineering
+problem.
+
+**Traceability:** `design/rejected/2026-10-01-suno-library.png`, `ASSET-LOG.md`
+rows `MUS-A-01`…`MUS-C-00`.
+
+---
+
+## 2026-10-01 — the art style: pixel art
+
+**Wanted:** a style decision concrete enough to prompt a character reference
+with tomorrow.
+
+**Decided: pixel art** (option (b) of the three in `CONCEPT.md` v1).
+
+**Why, in my words:** the flat option would have been safest but the generated
+frames would end up looking like the code-drawn ones they are replacing, and
+that is a weak thing to put in the film. Painted was already ruled out in v1 —
+at 18 × 28 the texture is mush. Pixel art is the only one whose constraints are
+the same as the game's.
+
+**What I am accepting by choosing it:** the texture import filter has to be set
+to nearest or every frame blurs, and the palette is not free — the character
+still has to read against both the cream sky and the dark slate platforms, so
+v1's palette section is a constraint the generated art inherits rather than a
+suggestion.
+
+**One thing I am carrying over from the audio.** The assignment says to
+generate one reference image and derive every pose from it, because consistency
+comes from the reference and not from repeating the prompt. Direction A's four
+rewordings just demonstrated that in audio: changing the sentence did not change
+the outcome. I expect the same to be true of the character, so I am not planning
+to prompt ten poses independently.
+
+**Human / Claude / model:** the style choice and the reasoning are mine. Claude
+laid out the three options with their costs in v1 and recorded this decision as
+revision 1.2. No image has been generated yet.
+
+**Still unresolved:** what the music does during the 0.55 s retry — still not
+judgeable until the loop is actually in the game.
+
+**Traceability:** `CONCEPT.md` revision 1.2.

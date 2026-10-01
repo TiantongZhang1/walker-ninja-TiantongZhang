@@ -246,3 +246,46 @@ than a one-line edit.
   usefully be decided until the loop is in the project and can be heard; the
   driving direction makes it *more* likely that a hard stop will sound broken,
   so ducking is now the leading candidate rather than merely the convenient one.
+
+---
+
+# Revision 1.2 — 2026-10-01 — the art style, decided: pixel art
+
+**`[TZ DECIDE]` #1 is decided: option (b), pixel art.** v1 and revision 1.1 are
+unchanged.
+
+## Why this one serves the pillars
+
+Pillar 4 is "readable at 18 by 28 pixels", and pixel art is the only one of the
+three candidate styles whose **constraints are the same as the game's**: a
+limited palette and a 1 px outline on a 640 × 360 canvas are not a stylistic
+affectation here, they are a description of the target. The flat option (a) was
+the safe choice and would have sat beside the existing level art without a
+clash, but it would also have produced generated frames that look like the
+code-drawn ones they replace, which is a weak thing to show in the film. The
+painted option (c) was rejected in v1's own words: at 18 × 28 the texture is
+mush.
+
+## What this commits me to, concretely
+
+1. **The texture import filter must be set to nearest**, or every frame blurs.
+   The assignment names this specifically, and it is a Godot project setting,
+   not a per-sprite one — so it is a change to make once and verify once, in
+   the slice.
+2. **Prompts specify a limited palette and a 1 px outline**, and the palette is
+   not free: it has to be the existing one, because the character already has
+   to read against both the cream sky `#f6f3ec` and the dark slate platforms.
+   v1's palette section is the constraint the generated art inherits.
+3. **One reference image first, then every pose derived from it.** The
+   assignment's own guidance, and the thing that makes ten poses look like one
+   character instead of ten cousins. Consistency comes from the reference, not
+   from repeating the prompt text — which direction A's four rewordings already
+   demonstrated in audio: changing the sentence did not change the outcome.
+4. **Judged scaled down before judged at all.** Pillar 4, and v1's asset choice
+   for it: every frame gets looked at at on-screen size and as a solid-black
+   silhouette before anyone looks at its detail.
+
+## Still open
+
+- **`[TZ DECIDE]` #3 — what the music does during the 0.55 s retry.** Still
+  cannot be judged until the loop is in the project. Unchanged from 1.1.
