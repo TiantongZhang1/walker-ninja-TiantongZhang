@@ -1,0 +1,32 @@
+# Engine caches and local editor state
+.godot/
+.DS_Store
+.idea/
+.vscode/
+
+# Video/audio and generated distribution packages stay outside source control.
+*.[mM][pP]3
+*.[mM][pP]4
+*.avi
+*.mov
+*.wav
+exports/
+builds/
+
+# Local credentials/configuration
+.env
+.env.*
+!.env.example
+credentials/
+*.p12
+*.pfx
+
+# Git cannot ignore by size: inspect staged files before committing (>25 MB).
+
+# Film build intermediates. The reel's evidence (coverage.json, beat_sheet.json,
+# the input logs, _qc/REPORT.md) is tracked; the compositor's working clips and
+# the rendered media are not - both are reproducible, and the media is already
+# excluded by the *.mp4 rule above.
+youtube/*/clips/
+youtube/*/media/
+youtube/*/mp3/*.mp3
