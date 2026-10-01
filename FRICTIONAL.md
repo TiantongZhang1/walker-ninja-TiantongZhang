@@ -113,3 +113,52 @@ first generated character; and what the music does during the 0.55 s retry,
 which cannot be judged until the loop is actually playing in the game.
 
 **Traceability:** `CONCEPT.md` revision 1.1, commit to follow.
+
+---
+
+## 2026-10-01 (later) — the first two generations, and one I did not spend
+
+**Wanted:** to hear the difference between the three directions rather than
+reason about adjectives, and to do it without burning downloads — Suno's free
+plan allows 7 for the life of the account and they never reset.
+
+**Asked:** Suno (version to confirm), the three prompts Claude wrote from
+`CONCEPT.md`'s pillars, 35–40 s each so there is room to cut a loop at a bar
+boundary. Asset log rows `MUS-A-01`, `MUS-B-01`, `MUS-C-00`.
+
+**Got, and decided:**
+
+- **A, sparse and patient** — generated, auditioned in the browser,
+  **rejected**. It leaves the player room. That is exactly what I decided I did
+  not want.
+- **B, driving at 124 bpm** — generated, auditioned, **accepted as the
+  direction**. 很激情，能衬托出紧张感调动玩家肾上腺素.
+- **C, cold industrial ambient** — **never generated.** My words:
+  *第三个从文字描述上就提不起我的兴趣* — the third one did not interest me from
+  its written description alone.
+
+**On not generating C.** I am recording this as a decision, not an omission.
+The free daily credits do not carry over, so an unused one is lost — but a
+generation I already know I will reject is not worth the ten minutes of
+listening either. Reading the prompt and deciding it is not the game I am
+making is the same judgement I would have made after hearing it, arrived at
+earlier. Claude wrote the prompt; the decision not to spend it was mine.
+
+**What is still only a direction, not an asset.** `MUS-B-01` is a 124 bpm
+generation I liked in a browser. It is not yet a loop: it has to be cut at a
+bar boundary, checked across at least three repetitions for a seam, and
+exported as OGG. None of that has happened, so nothing is in the project yet
+and the slice still has no music.
+
+**Human / Claude / model:** Claude wrote the three candidate prompts from the
+concept and kept the log. Suno produced A and B. I chose B, rejected A on
+hearing it, and rejected C without generating it. Two of those three are
+judgements only I could make.
+
+**Still unresolved:** which Suno version this was and whether I downloaded B —
+both marked **TO CONFIRM** in the asset log rather than guessed, because the
+download counter and the rubric's "model and version" field are factual claims.
+Also still open: the art style, and what the music does during the 0.55 s retry.
+
+**Traceability:** `ASSET-LOG.md` rows `MUS-A-01` / `MUS-B-01` / `MUS-C-00`;
+`CONCEPT.md` revision 1.1.
