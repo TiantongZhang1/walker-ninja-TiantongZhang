@@ -20,6 +20,21 @@ from its prompt without being generated at all. Model: `v6-mini` for the four
 usable tracks, `V6 PREVIEW` for four that came back capped at 1:00 behind an
 upgrade button.
 
+> **CORRECTION, 2026-10-04 — the counter above is wrong, and it is left standing
+> so the mistake is visible.** Suno refuses to download at all: it reports the
+> download allowance as already used up, although no track has been downloaded
+> for this project. Suno changed its free plan on **2026-09-03** to seven
+> downloads for the life of the account, **applied retroactively** — so any
+> download ever made on this account, from before this course existed, is
+> counted against the seven. "0 used" was never a number I verified; it was an
+> assumption that the account started clean on the day the project did.
+>
+> **Consequence:** `MUS-B-01` and `MUS-B-02` cannot be brought into the project.
+> Eight generations and a decided music direction are still on the record and
+> still count as work; what is lost is the audio file. The music is regenerated
+> on a tool that can actually hand over the file — see the correction entry
+> below and `FRICTIONAL.md` 2026-10-04.
+
 ## Music
 
 **Evidence:** `design/rejected/2026-10-01-suno-library.png` — a screenshot of

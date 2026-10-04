@@ -293,3 +293,51 @@ It has to record a seed, which Suno could not, and that is the one requirement I
 am treating as non-negotiable after the music turned out to be unreproducible.
 
 **Traceability:** `CHARACTER-SHEET.md`, `CHANGE-BRIEF.md` revision 2.0.0.
+
+---
+
+## 2026-10-04 — the music cannot be downloaded, and the counter I kept was fiction
+
+**What happened.** I went to download the finalist and Suno says the download
+allowance is already used up. I have not downloaded anything for this project.
+
+**Why.** Suno changed its free plan on 2026-09-03 to seven downloads **for the
+life of the account**, and applied it **retroactively**. Anything I ever
+downloaded on that account — long before this course — is counted. The account
+was not clean on the day the project started, and I never checked that it was.
+
+**The part that is mine to own.** `ASSET-LOG.md` has carried a hand-maintained
+counter reading "0 used, 7 remaining" since the first entry. That number was
+never verified against the account; it was an assumption written in the
+confident format of a measurement. A table with two numbers in it looks like a
+fact, which is exactly why it went unchallenged for three days. **The counter
+is left standing in the file with the correction above it**, because deleting it
+would hide the one interesting thing here: the log was wrong in the direction of
+making the project look safer than it was.
+
+**What is actually lost, stated precisely.** Eight generations, a decided music
+direction judged by ear, and a written argument for why direction B beat
+direction A on the first wording while A lost over four. All of that is still on
+the record and still counts. What is lost is **one audio file**. The design work
+survives the tool; that distinction is worth noticing, and it is an argument for
+keeping the reasoning in the log rather than only the asset.
+
+**What this does not change.** `CONCEPT.md` revision 1.1 — driving, around
+124 bpm, the score supplies the pressure — stands. It was a decision about the
+game, not about a vendor. The replacement loop is judged against the same
+revision, which is what a written direction is *for*.
+
+**What it does change.** The "prefer a seeded tool" requirement, which
+`CHARACTER-SHEET.md` section 8 and `ASSET-LOG.md` both already carried as a
+preference for the art and the sound effects, is now **binding on the music
+too**. The reason has gone from "the log would be nicer" to "the file has to be
+mine once it is generated". Those are different arguments and the second is the
+stronger one.
+
+**Human / Claude / model:** I hit the wall. Claude checked what actually changed
+at Suno rather than guessing, found the 2026-09-03 retroactive change, and
+corrected the log the same day by appending rather than rewriting. Which
+generator replaces it is mine to decide; the shortlist and the reasons are
+Claude's.
+
+**Traceability:** `ASSET-LOG.md` correction dated 2026-10-04.
