@@ -35,11 +35,24 @@ fine on the test background and disappears here".
 
 ## The hand-drawn sketches
 
-Six, one per panel, drawn by hand and photographed into
-`design/storyboard/panel-01.jpg` … `panel-06.jpg`.
+**Drawn 2026-10-03.** Seven frames in pen on one sheet, photographed as
+`design/storyboard/sheet-2026-10-03.jpg` and cropped into
+`design/storyboard/panel-01.jpg` … `panel-06.jpg`, plus
+`panel-06-death.jpg` for the death variant of panel 06.
 
-**None of them exists yet.** Each panel below names its file; the panel is not
-finished until that file is there.
+The sheet's own numbering is not this document's. The frames were drawn in the
+order they came to hand; the mapping is recorded here rather than renumbered on
+the paper, because the paper is the evidence:
+
+| frame on the sheet | panel |
+|---|---|
+| 1 | 01 `GET MOVING` |
+| 2 | 04 `SOMETHING PATROLS` |
+| 3 | 03 `PICK A ROAD` |
+| 4 | 02 `MIND THE GAP` |
+| 5 | 05 `CONTESTED LANDINGS` |
+| 6 | 06 `LAST STAND` |
+| 7 | 06, death variant |
 
 What a sketch has to show, and it is a low bar on purpose — the point is the
 composition, not the draughtsmanship:
@@ -55,7 +68,7 @@ composition, not the draughtsmanship:
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-01.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-01.jpg` — drawn 2026-10-03 (sheet frame 1) |
 | Where | x 0 – 474, the long opening platform; spawn is (64, 320) |
 | In frame | the character, the 48 × 16 step at x 160, the single fixed spike at x 320, the label `01 / GET MOVING` and `Read the landing. Then jump.` |
 | Poses | **P1 Idle**, then **P2 Run**, then **P3 Rising** |
@@ -74,7 +87,7 @@ not doing its job, this is where it shows**, before any complication.
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-02.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-02.jpg` — drawn 2026-10-03 (sheet frame 4) |
 | Where | x 474 – 862; gaps at 448–512 and 736–784, a raised 48 × 32 block at x 576 |
 | In frame | the character airborne over a gap, both platform edges, the label `02 / MIND THE GAP` |
 | Poses | **P3 Rising** into **P4 Falling** |
@@ -92,7 +105,7 @@ direction is the tell: below-and-behind rising, above-and-behind falling.
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-03.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-03.jpg` — drawn 2026-10-03 (sheet frame 3) |
 | Where | x 862 – 1544, the fork |
 | In frame | **both roads at once** — the high planks at y 224 and y 200, the low floor at y 320 with three pop-up traps (spikes at x 1160, 1296, 1432), the slime patrolling the high road between x 1356 and 1424, and both labels: `HIGH ROAD - GUARDED` and `LOW ROAD - IT BITES` |
 | Poses | **P1 Idle** at the decision point; the branch is not drawn |
@@ -114,7 +127,7 @@ in the slice where that is true.
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-04.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-04.jpg` — drawn 2026-10-03 (sheet frame 2) |
 | Where | x 1544 – 2100 |
 | In frame | the character mid-swing, a slime patrolling x 1580 – 1690, a flying horse at y 268 patrolling x 1700 – 1820, the label `One slash is enough. Touching one is not.` |
 | Poses | **P6 Attack windup** (4 ticks) and **P7 Attack live** (9 ticks) |
@@ -137,7 +150,7 @@ and a sound decision, and this panel is where it is visible.
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-05.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-05.jpg` — drawn 2026-10-03 (sheet frame 5) |
 | Where | x 2100 – 2700, four 128 px platforms with 64 px gaps |
 | In frame | the character dashing across a gap, a horse holding the gap at y 268, a slime on the far platform, the label `The horses hold the gaps.` |
 | Poses | **P5 Dash** (10 ticks, 167 ms) |
@@ -155,7 +168,7 @@ airborne period — so it has to look like a decision, not like fast running.
 
 | | |
 |---|---|
-| Sketch | `design/storyboard/panel-06.jpg` — **not yet drawn** |
+| Sketch | `design/storyboard/panel-06.jpg` and `panel-06-death.jpg` — drawn 2026-10-03 (sheet frames 6 and 7) |
 | Where | x 2700 – 3072; trap triggers at x 2704, spike at x 2800; finish at (3030, 264) |
 | In frame | **the moment of the trap**: the character past the trigger, the spike part-way through its 15-tick rise, the finish visible beyond it |
 | Poses | **P2 Run**, and the alternate **P8 Death** |
@@ -201,12 +214,60 @@ Both backgrounds appear: cream sky in every panel, dark slate platform in every
 panel, and panel 03 is the only one showing the high planks and the low floor
 simultaneously.
 
+---
+
+# What the drawings settled, 2026-10-03
+
+## Three things that are now specified and were not before
+
+**1. The death pose, P8, is prone and face-down.** Sheet frame 7 draws the
+character flat on the ground, face down, head pointing the way it was
+travelling, limbs collapsed. That is a specification — `CHARACTER-SHEET.md`
+section 5 only said "the pose the player sees while the retry ticks", and
+`CHANGE-BRIEF.md` C3 only said it must be keyed off `session.state`. Prone and
+face-down is also the right answer for the reason the panel exists: it is the
+one silhouette in the game that is **wider than it is tall**, so it cannot be
+confused with any other pose even at 5 mm.
+
+**2. The death frame carries text.** Frame 7 is lettered `You Died.` The build
+already prints text on death — `session.gd:516` sets `death_reason` to
+"Missed the landing" / "It got you" / "Watch the spikes", drawn by
+`hud.gd:47`. So the drawing is asking for a **second**, larger line above the
+existing one, not a replacement.
+
+That is a real decision and it is being taken the other way: **the existing
+`death_reason` stays and no `You Died.` line is added.** Pillar 1 is "every
+failure teaches", and "Watch the spikes" teaches something that "You Died."
+does not — the player already knows they died. The drawing is kept as drawn
+because it is the record of what was wanted; this paragraph is the record of
+why it was not done.
+
+**3. The swing arc is drawn, and it is already in the code.** Frame 2 puts
+motion strokes above the blade. `player.gd:344-351` already draws a translucent
+wedge, and **only while `attack_phase() >= 2`** — so the bright sweep marks
+exactly the ticks that can kill. The sketch and the build agree without either
+having been changed to match, which is the best outcome available for a
+retrospective panel.
+
+## Where the drawings depart from the appendix, and what is being done about it
+
+| | appendix says | sheet does | action |
+|---|---|---|---|
+| Character size | 5.4 × 8.4 mm, true scale | roughly 3× that | **accepted.** The frames still read; forcing a redraw at true scale would cost a day and the contrast question is answered by the real sprite on the real background, not by a pen sketch |
+| Pose box | one per panel | only on frame 1 | **accepted.** The poses are legible in the frames |
+| The four annotation lines | on every page | not written | **accepted**, because this document carries the same information per panel and in more detail |
+| Panel 06 trigger line | dashed, 28.8 mm before the spike | not drawn; the spike is at the character's feet | **noted, not redrawn.** The 96 px run-up is the fairness argument and it is measured in `CHANGE-BRIEF.md` C5 against the level file, which is a stronger record than a pen line |
+| Panel 03 | two high planks | one | **accepted.** Both roads are present, which is what the panel is for |
+
+None of these is a reason to redraw. All of them are reasons this document, not
+the photographs, is where the specification lives.
+
 ## Open
 
-- **All six sketches.** None drawn.
-- Panels 01 and 06 are the two that must be drawn first: 01 is the contrast
-  test and 06 is the fairness argument. If time runs out, those two plus 04 are
-  the set that still proves something.
+- Nothing in the storyboard. All seven frames are drawn and filed.
+- The storyboard's job now is to be checked **against** the generated art: each
+  pose, once generated, gets placed on its panel's background at true size and
+  judged there (`CHARACTER-SHEET.md` section 6).
 
 ---
 
