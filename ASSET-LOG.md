@@ -136,6 +136,12 @@ file — **136× smaller**.
 | In the project | `godot/assets/music-loop.ogg`, Vorbis q5, 595 009 bytes |
 | Loop SHA-256 | `ea52713afeef1cacdae6ee9b5fe9789ff266c57f7e2b9c6d6380b1e1a85db865` |
 
+**Wired into the game, 2026-10-04 (later).** `CHANGE-BRIEF.md` revision 2.2.0:
+an `AudioStreamPlayer` on a dedicated `Music` bus, `loop = true`, starting with
+the session and surviving every retry without restarting. Eight behavioural
+checks cover it; the engine reports the stream length as 30.9632091522217 s,
+which is the cut in the table above.
+
 **Still owed:** the human listen. `CHANGE-BRIEF.md` C4 requires playing the loop
 three times back to back and listening at the seam *before* it goes near the
 project. The file was placed first and the listen is outstanding — recorded that

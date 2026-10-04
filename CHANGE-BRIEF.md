@@ -342,3 +342,90 @@ plainly rather than let a dungeon be mistaken for what generated art did.
 C2 (sprite swap), C3 (death pose), C4 (music wiring — the loop file is in the
 project but nothing plays it yet), C5 (sound effects), C6 (mute), C7 (replace
 the placeholder death assets).
+
+
+---
+
+# Revision 2.2.0 — 2026-10-04 (later) — C4 and C6 are in the build
+
+Revisions 2.0.0 and 2.1.0 are unchanged.
+
+## C4 — music: **done**
+
+`session.gd`. An `AudioStreamPlayer` on a **`Music` bus created at runtime**
+(index 1), loaded the same no-import way the death laugh is, with
+`stream.loop = true`. It starts on the first attempt of a session, stops at
+the finish and at the main menu, and freezes with the game on pause and on
+focus loss exactly as the death reaction does.
+
+**The one line that matters.** `restart_attempt()` runs on *every* death, so a
+naive `music.play()` there would restart the loop at bar 1 every 0.55 s —
+worse than no music at all. The guard resumes instead of restarting.
+
+**A bug the guard had anyway, found by probing rather than by reasoning.**
+`AudioStreamPlayer.playing` reports **false** while `stream_paused` is true.
+The first guard was `if not music.playing: music.play()`, which meant
+**pause → R → the track jumped back to bar 1**. Rewritten to test
+`playing or stream_paused`, and the case is now a named regression check.
+
+## C6 — mute: **done**
+
+New `mute` action on **`KEY_0`** (`M` is already `menu`), handled *before* the
+state branches so it works on the menu and the results screen, not only
+mid-run. It calls `AudioServer.set_bus_mute` on **Master**.
+
+**Master, not per-stream** — the failure 2.0.0 predicted was that a per-stream
+mute leaves anything added later audible, and the four sound effects of C5 do
+not exist yet. A bus mute cannot be forgotten by a stream that was not written
+when it was.
+
+The HUD advertises the key in the control line and prints a warm `MUTED` in the
+bottom band while it is on. Captured as `evidence/screens/10-muted.png`: the
+assignment requires the slice to stay understandable with sound off, and that
+claim is only checkable if the player can see which state they are in.
+
+## Verified
+
+**`tests/test_game.gd`: 87 checks / 0 failures** — eight new, all of them
+behavioural rather than "the object exists":
+
+| check | what it pins down |
+|---|---|
+| `music-loop-is-flagged-to-loop` | `loop` set and length 30.9632 s, matching the cut in `ASSET-LOG.md` |
+| `music-is-on-its-own-bus` | bus is `Music`, index > 0 — not Master |
+| `music-plays-during-a-run` | starts with the session |
+| `a-retry-does-not-restart-the-track` | playback position does not go backwards across `restart_attempt()` |
+| `music-pauses-with-the-game` | `stream_paused` on, then off, and still playing |
+| `retry-while-paused-resumes-rather-than-restarts` | the `playing`/`stream_paused` bug above |
+| `mute-is-a-master-bus-mute` | toggles bus 0, both directions |
+| `music-stops-at-the-finish` | not left looping under the results card |
+
+Trap and enemy visibility checks both still PASS; all screen captures redone.
+
+## An operational note worth keeping
+
+Re-running `capture_game.gd` produced only three of its six frames and exited
+cleanly, which looked exactly like a regression from this change. It was not.
+**`--quit-after` counts process iterations, not physics ticks**, and the
+windowed run renders uncapped — so 6000 "frames" can elapse in nine seconds of
+wall clock while only ~450 physics ticks have run. The same script passes
+headless, which is what isolated it. The captures now run with
+`--quit-after 200000`.
+
+Recorded because the first instinct was to go looking for the bug in the music
+code, and ten minutes went into a thing that was never broken.
+
+## `[TZ DECIDE]` #3 is now answerable
+
+v1 and revisions 1.1–1.3 left open *what the music does during the 0.55 s
+retry*, on the grounds that it could not be judged until the loop was audible
+in the game. **It is now implemented as "keeps playing"** — the simplest
+behaviour, chosen because ducking is a bus-level change that should be made
+against something heard rather than imagined.
+
+It is now a listening decision, not a design one.
+
+## Still open from 2.0.0
+
+C2 (sprite swap), C3 (death pose), C5 (sound effects), C7 (replace the
+placeholder death assets).

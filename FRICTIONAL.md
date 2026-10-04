@@ -415,3 +415,58 @@ since 1.1. The loop is in the project now but nothing plays it yet.
 
 **Traceability:** `CONCEPT.md` revision 1.3, `CHANGE-BRIEF.md` revision 2.1.0,
 `CHARACTER-SHEET.md` section 3b and its correction, `evidence/screens/`.
+
+---
+
+## 2026-10-04 (later) — the music is in the game, and two things that looked like bugs
+
+**Wanted:** the loop actually playing, and a mute key, so the seam can be judged
+by ear in the place it will be heard instead of in Audacity.
+
+**Both done.** Music on its own bus, mute on `0`, eighty-seven checks passing.
+
+**The line that took the most thought is one `if`.** `restart_attempt()` runs
+on *every* death. Calling `music.play()` there restarts the loop at bar 1 every
+0.55 s, which is worse than silence. The guard has to resume, not restart.
+
+**And the guard was still wrong, which only probing found.**
+`AudioStreamPlayer.playing` reports **false** while `stream_paused` is true. So
+`if not music.playing: music.play()` did the right thing for an ordinary death
+and the wrong thing for *pause → R*: the track jumped back to the top. I would
+not have found that by reading the code, because the code reads correctly. I
+found it by printing what the engine actually reports in each state before
+writing the assertions. The case is a named regression check now.
+
+**The second thing was not a bug at all, and I spent ten minutes on it.**
+Re-running the screen captures produced three of six frames and exited cleanly
+— exactly what a regression from the music change would look like, and I went
+looking for it there. It was `--quit-after`: it counts **process iterations**,
+not physics ticks, and a windowed run renders uncapped, so six thousand
+"frames" can burn in nine seconds while only about four hundred fifty physics
+ticks have happened. The headless run completing is what isolated it.
+
+Worth writing down because the mistake was not technical. I had just changed
+the audio, so when something broke I looked at the audio. The thing that
+actually settled it was running the *same script* in a different mode and
+getting a different answer, which is a question about the harness, not about
+the feature.
+
+**`[TZ DECIDE]` #3 is finally answerable.** Since revision 1.1 I have been
+deferring "what does the music do during the 0.55 s retry" on the grounds that
+it cannot be judged until the loop is audible in the game. It is audible now,
+and it is implemented the simplest way: **it keeps playing.** Ducking is a
+bus-level change and should be made against something heard rather than
+imagined. That decision is now mine to make with my ears, not on paper.
+
+**Still owed, and it is mine:** the listen. `CHANGE-BRIEF.md` C4 says play the
+loop three times and listen at the seam before it goes near the project, and
+the file went in first. The seam measured at the 10th percentile of the track's
+own frame-to-frame change, which is a strong number, but a number is not an ear.
+
+**Human / Claude / model:** Claude wrote the wiring, the tests and the
+documents, found the `stream_paused` bug by probing the engine rather than
+trusting the API's name, and corrected its own misdiagnosis of the capture
+script. The retry behaviour, the loop choice and the seam are mine to judge.
+
+**Traceability:** `CHANGE-BRIEF.md` revision 2.2.0, `ASSET-LOG.md` 2026-10-04,
+`evidence/screens/10-muted.png`.

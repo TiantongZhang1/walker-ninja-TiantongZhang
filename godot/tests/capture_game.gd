@@ -81,6 +81,18 @@ func run() -> void:
 	await capture("06-trap-risen")
 	print("trap frames: buried and risen captured at camera x=%.1f" % game.camera.position.x)
 
+	# C6 evidence. The assignment requires the slice to stay understandable with
+	# all sound muted; that claim is only checkable if the player can SEE which
+	# state they are in, so the indicator and the control line that advertises
+	# the key are captured rather than asserted in prose.
+	game.state = Game.State.MENU
+	game.start_session()
+	game.set_muted(true)
+	for i in range(3):
+		await step()
+	await capture("10-muted")
+	game.set_muted(false)
+
 	print("VISUAL ROUTE: completed with %d deaths" % game.deaths)
 	game.queue_free()
 	await process_frame

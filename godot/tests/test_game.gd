@@ -686,6 +686,50 @@ func run() -> void:
 		if not game.enemy_alive[i] or absf(game.enemy_x[i] - game.enemy_anchor[i].x) > 4.0:
 			all_back = false
 	check("enemies-reset-on-retry", all_back and game.enemies_killed == 0, {"all_alive_at_spawn":all_back, "killed":game.enemies_killed, "state":game.state})
+	# --- C4 / C6: music and mute (CHANGE-BRIEF revision 2.1.0) ---------------
+	await fresh()
+	var ms = game.music.stream
+	check("music-loop-is-flagged-to-loop", ms != null and ms.loop and absf(ms.get_length() - 30.9632) < 0.01, {"loaded":ms != null, "loop":ms.loop if ms else false, "length":ms.get_length() if ms else -1.0})
+	# Its own bus, so it can be ducked or balanced without touching the SFX.
+	check("music-is-on-its-own-bus", game.music.bus == Game.MUSIC_BUS and AudioServer.get_bus_index(Game.MUSIC_BUS) > 0, {"bus":game.music.bus, "index":AudioServer.get_bus_index(Game.MUSIC_BUS)})
+	check("music-plays-during-a-run", game.music.playing, {"playing":game.music.playing, "position":game.music.get_playback_position()})
+	# The one that matters: restart_attempt() runs on EVERY death, and a loop
+	# that jumps back to bar 1 every 0.55 s is worse than no music at all.
+	await steps(30)
+	var pos_before: float = game.music.get_playback_position()
+	game.restart_attempt()
+	await steps(5)
+	var pos_after: float = game.music.get_playback_position()
+	check("a-retry-does-not-restart-the-track", game.music.playing and pos_after >= pos_before, {"before":pos_before, "after":pos_after, "went_backwards":pos_after < pos_before})
+	# Frozen with the game, exactly like the death reaction.
+	game.set_paused(true)
+	await steps(2)
+	var paused_ok: bool = game.music.stream_paused
+	var pos_paused: float = game.music.get_playback_position()
+	game.set_paused(false)
+	await steps(2)
+	check("music-pauses-with-the-game", paused_ok and not game.music.stream_paused and game.music.playing, {"stream_paused_while_paused":paused_ok, "stream_paused_after":game.music.stream_paused, "playing_after":game.music.playing})
+	# `playing` reads FALSE while `stream_paused` is true, so a guard written
+	# against `playing` alone restarted the track here. Regression check.
+	game.set_paused(true)
+	await steps(2)
+	var pos_at_pause: float = game.music.get_playback_position()
+	game.restart_attempt()
+	await steps(3)
+	check("retry-while-paused-resumes-rather-than-restarts", game.music.get_playback_position() >= pos_at_pause and not game.music.stream_paused, {"at_pause":pos_at_pause, "after_retry":game.music.get_playback_position(), "stream_paused":game.music.stream_paused})
+	# Mute is a MASTER bus mute, not a per-stream one: a per-stream mute leaves
+	# anything added later audible, which is the failure the brief predicted.
+	var master: int = AudioServer.get_bus_index("Master")
+	game.set_muted(true)
+	var muted_ok: bool = AudioServer.is_bus_mute(master) and game.muted
+	game.set_muted(false)
+	check("mute-is-a-master-bus-mute", muted_ok and not AudioServer.is_bus_mute(master) and not game.muted, {"muted_master":muted_ok, "unmuted_master":AudioServer.is_bus_mute(master), "flag":game.muted})
+	# Reaching the goal ends the track; it is not left looping under the card.
+	game.state = Game.State.PLAYING
+	game.resolve_contacts(false, true)
+	await steps(2)
+	check("music-stops-at-the-finish", game.state == Game.State.COMPLETE and not game.music.playing, {"state":game.state, "playing":game.music.playing, "pos_at_pause_unused":pos_paused})
+
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)
 	var file := FileAccess.open(out + "/mechanics-" + str(Time.get_unix_time_from_system()) + ".json", FileAccess.WRITE)

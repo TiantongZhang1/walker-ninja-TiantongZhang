@@ -31,7 +31,7 @@ func _draw() -> void:
 	draw_rect(Rect2(0,0,640,74), BAND)
 	text_at("WALKER / JUMPMAN", Vector2(22,27), 18, CHALK)
 	text_at("FIRST STEPS", Vector2(497,27), 14, CHALK)
-	text_at("A/D move   Space jump x2   Shift dash   L-click slash   R retry   Esc pause", Vector2(22,50), 13, CHALK)
+	text_at("A/D move   Space jump x2   Shift dash   L-click slash   R retry   Esc pause   0 mute", Vector2(22,50), 13, CHALK)
 	draw_rect(Rect2(22,63,596,3), Color("3a3344"))
 	# Derived from the level instead of the starter's hard-coded 852, which was
 	# (finish 916 - spawn 64) and stopped being true when the finish moved.
@@ -40,6 +40,11 @@ func _draw() -> void:
 	draw_rect(Rect2(22,63,596*progress,3), Color("287c68"))
 	draw_rect(Rect2(0,335,640,25), BAND)
 	text_at("No lives. Just another try.", Vector2(22,353), 13, CHALK)
+	if game.muted:
+		# Warm, so it cannot be mistaken for the chalk status text beside it. The
+		# assignment requires the slice to be understandable with sound off, and
+		# that claim is only testable if the player can see which state they are in.
+		text_at("MUTED", Vector2(362,353), 13, Color("c89a5a"))
 	text_at("RETRIES %02d     %04.1fs" % [game.deaths, game.elapsed], Vector2(440,353), 13, CHALK)
 	# Death reaction. Drawn BEFORE the PLAYING early-return, because the
 	# overlay is meant to outlast the 0.55 s respawn and stay up for as long

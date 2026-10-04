@@ -33,6 +33,10 @@ var trap_triggers: Array[float] = []
 var trap_risen: Array[int] = []
 var laugh: AudioStreamPlayer
 var death_fx_remaining: float = 0.0
+# C4/C6 (CHANGE-BRIEF revision 2.1.0).
+const MUSIC_BUS := "Music"
+var music: AudioStreamPlayer
+var muted: bool = false
 var death_fx_total: float = 0.0
 var cat_texture: Texture2D
 
@@ -95,6 +99,24 @@ func _ready() -> void:
 		ProjectSettings.globalize_path("res://assets/death-laugh.ogg"))
 	add_child(laugh)
 	death_fx_total = laugh.stream.get_length() if laugh.stream else 0.0
+	# C4. A dedicated bus, not the master: the music has to be duckable and
+	# balanceable against the sound effects without touching them, and the
+	# `[TZ DECIDE] #3` question about the 0.55 s retry is a bus-level answer.
+	if AudioServer.get_bus_index(MUSIC_BUS) < 0:
+		AudioServer.add_bus(1)
+		AudioServer.set_bus_name(1, MUSIC_BUS)
+	music = AudioStreamPlayer.new()
+	music.name = "Music"
+	music.bus = MUSIC_BUS
+	var music_stream := AudioStreamOggVorbis.load_from_file(
+		ProjectSettings.globalize_path("res://assets/music-loop.ogg"))
+	if music_stream:
+		# The file is already an exact 16-bar loop with a 20 ms crossfade at
+		# the wrap (ASSET-LOG 2026-10-04); this flag is what makes the engine
+		# wrap it rather than stop.
+		music_stream.loop = true
+		music.stream = music_stream
+	add_child(music)
 	var cat_image := Image.load_from_file(
 		ProjectSettings.globalize_path("res://assets/death-laugh-cat.png"))
 	cat_texture = ImageTexture.create_from_image(cat_image) if cat_image else null
@@ -102,7 +124,7 @@ func _ready() -> void:
 	queue_redraw()
 
 func _setup_input() -> void:
-	var actions := {"move_left": [KEY_A, KEY_LEFT], "move_right": [KEY_D, KEY_RIGHT], "jump": [KEY_SPACE], "pause": [KEY_ESCAPE, KEY_P], "restart": [KEY_R], "confirm": [KEY_ENTER], "menu": [KEY_M], "dash": [KEY_SHIFT]}
+	var actions := {"move_left": [KEY_A, KEY_LEFT], "move_right": [KEY_D, KEY_RIGHT], "jump": [KEY_SPACE], "pause": [KEY_ESCAPE, KEY_P], "restart": [KEY_R], "confirm": [KEY_ENTER], "menu": [KEY_M], "dash": [KEY_SHIFT], "mute": [KEY_0]}
 	for action in actions:
 		if InputMap.has_action(action):
 			continue
@@ -466,6 +488,19 @@ func stop_death_fx() -> void:
 		laugh.stop()
 		laugh.stream_paused = false
 
+func stop_music() -> void:
+	if music:
+		music.stop()
+		music.stream_paused = false
+
+## C6. Master bus, not per-stream. Muting each stream individually leaves
+## anything added later audible, which is the failure the brief predicted; a
+## bus mute cannot be forgotten by a stream that did not exist when it was
+## written.
+func set_muted(value: bool) -> void:
+	muted = value
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), value)
+
 func start_session() -> void:
 	if state == State.PLAYING:
 		return
@@ -485,12 +520,25 @@ func restart_attempt() -> void:
 	player.reset_at(Vector2(level.spawn[0], level.spawn[1]))
 	player.enabled = true
 	camera.position = Vector2(320, 180)
+	# C4. restart_attempt() runs on EVERY death, so this guard is the whole
+	# point of the line: a loop that jumps back to bar 1 every 0.55 s is worse
+	# than no music at all. Retries leave the track running.
+	if music and music.stream:
+		if music.playing or music.stream_paused:
+			# Already running, or frozen by a pause. Resume where it was.
+			# `playing` reports FALSE while `stream_paused` is true, so testing
+			# `playing` alone made R-while-paused restart the track at bar 1.
+			music.stream_paused = false
+		else:
+			music.play()
 
 func set_paused(value: bool) -> void:
 	if laugh and (state == State.PLAYING or state == State.PAUSED):
 		# Freeze the reaction with the game so the sound and the image stay in
 		# step with the countdown that drives the overlay.
 		laugh.stream_paused = value
+	if music and (state == State.PLAYING or state == State.PAUSED):
+		music.stream_paused = value
 	if value and state == State.PLAYING:
 		state = State.PAUSED
 		player.enabled = false
@@ -523,6 +571,7 @@ func resolve_contacts(fatal: bool, finished: bool) -> void:
 	elif finished:
 		state = State.COMPLETE
 		last_finish_time = elapsed
+		stop_music()
 		player.enabled = false
 		player.velocity = Vector2.ZERO
 
@@ -568,10 +617,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		set_paused(state != State.PAUSED)
 	elif event.is_action_pressed("restart") and state in [State.PLAYING, State.PAUSED, State.DYING]:
 		restart_attempt()
+	elif event.is_action_pressed("mute"):
+		# Checked before the state branches on purpose: mute has to work on the
+		# menu and the results screen too, not only mid-run.
+		set_muted(not muted)
 	elif event.is_action_pressed("menu") and state in [State.PAUSED, State.COMPLETE]:
 		state = State.MENU
 		player.enabled = false
 		stop_death_fx()
+		stop_music()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if Rect2(220, 215, 200, 34).has_point(hud.get_local_mouse_position()):
 			if state in [State.MENU, State.COMPLETE]:
