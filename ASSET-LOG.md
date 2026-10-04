@@ -74,6 +74,75 @@ passionate, and it sets off the tension. Judged against `CONCEPT.md` revision
 then cut at a bar boundary, checked across ≥3 repetitions for a seam, and
 exported as OGG. None of that has happened; the slice still has no music.
 
+### 2026-10-04 — the file is in the project
+
+**How.** A single-download pack was purchased. The free-tier wall described in
+the correction above was not circumvented and nothing was screen-recorded; the
+download was paid for. **The exact licence terms of that pack have not been
+read yet** and are an open item for `SOURCES.md` — they are not assumed to be
+the same as the free tier's personal-use grant, and they are not assumed to be
+broader either.
+
+**Which track.** `MUS-B-02`, identified by duration: the downloaded file is
+101.614 s (1:41.6), and the library screenshot lists `MUS-B-02` at 1:42.
+
+| | |
+|---|---|
+| Source file | `Metal Walkways.mp3`, 2 625 278 bytes, mp3 48 kHz stereo ~207 kbps |
+| Source SHA-256 | `052baa0989785b7fa30126062ff7dd0bf07d6b5621b9a76c08234ae59ac06f8d` |
+| Downloads used | **1** (paid pack; the free lifetime 7 were already spent before this project) |
+
+**Measured, not assumed.** Tempo was recovered from the audio rather than taken
+from the prompt: a spectral-flux onset envelope, autocorrelated for the beat
+period, then refined by a comb search over period and phase.
+
+| | measured |
+|---|---|
+| Tempo | **124.018 BPM** (beat 0.483800 s) |
+| Bar (4/4) | 1.935200 s |
+| First downbeat | 0.69380 s |
+| Downbeats in the track | 52 |
+
+**The prompt asked for 124 bpm and the track is 124.02.** Worth recording
+because the coarse first pass read 125.00 exactly — that was the
+autocorrelation's bin resolution (10.7 ms), not the music. The refined number
+is the one in the table.
+
+**The loop.** Three candidates were cut at bar boundaries and scored for
+spectral continuity across the splice plus level match. The chosen one is the
+best of the three on both counts:
+
+| | start | bars | length | seam rank |
+|---|---|---|---|---|
+| **A — chosen** | 29.722 s | 16 | **30.9632 s** | **10th percentile** |
+| B | 41.333 s | 20 | 38.7040 s | 22nd percentile |
+| C | 49.074 s | 16 | 30.9632 s | 33rd percentile |
+
+A 20 ms equal-power crossfade is applied at the wrap: the 20 ms *following* the
+loop end is blended into the loop's head, so the last sample flows into the
+first.
+
+**How "seam rank" was measured, because "it sounds fine" is not a check.** The
+loop was concatenated three times and a frame-to-frame spectral-difference
+curve computed over the whole thing. The two internal seams are then ranked
+against every other moment in the same audio. Loop A's seams sit at the **10th
+and 8th percentile** — the wrap changes the spectrum *less* than 90 % of
+ordinary moments in the music do. The raw waveform discontinuity at the wrap is
+0.00247, against a largest ordinary sample-to-sample step of 0.33545 in the same
+file — **136× smaller**.
+
+| | |
+|---|---|
+| In the project | `godot/assets/music-loop.ogg`, Vorbis q5, 595 009 bytes |
+| Loop SHA-256 | `ea52713afeef1cacdae6ee9b5fe9789ff266c57f7e2b9c6d6380b1e1a85db865` |
+
+**Still owed:** the human listen. `CHANGE-BRIEF.md` C4 requires playing the loop
+three times back to back and listening at the seam *before* it goes near the
+project. The file was placed first and the listen is outstanding — recorded that
+way round rather than claimed in the right order. The 30.96 s length is also
+short of the 35–40 s the original prompt asked for; that was a request to the
+generator, not a requirement of the game, and loop A won on seam quality.
+
 ### Direction A — sparse, 85 BPM — *rejected*
 
 **The four prompts here were all reworded, and none of them is the prompt
