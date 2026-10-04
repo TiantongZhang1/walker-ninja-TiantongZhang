@@ -141,6 +141,40 @@ func _trap_rise_offset(i: int) -> float:
 	var t := float(trap_risen[i]) / float(TRAP_RISE_TICKS)
 	return trap_rects[i].size.y * (1.0 - t)
 
+## A blind arch set into the wall. Drawn at the x positions the cream
+## backdrop used for hills, so `level.hills` keeps its meaning and its data.
+func _draw_alcove(cx: float) -> void:
+	var half := 28.0
+	var top := 150.0
+	# Drawn twice: once 2 px larger in a lighter stone, then the recess on top.
+	# The 2 px that survive are the arch's own masonry edge, which is what makes
+	# it read as cut into the wall rather than as a dark blob on it.
+	for pass_i in range(2):
+		var grow: float = 2.0 if pass_i == 0 else 0.0
+		var pts := PackedVector2Array()
+		pts.append(Vector2(cx - half - grow, 320.0))
+		var steps := 14
+		for i in range(steps + 1):
+			var a: float = PI - PI * float(i) / float(steps)
+			pts.append(Vector2(cx + cos(a) * (half + grow), top + half - sin(a) * (half + grow)))
+		pts.append(Vector2(cx + half + grow, 320.0))
+		draw_colored_polygon(pts, Color("352c40") if pass_i == 0 else Color("241e2c"))
+
+## A wall torch: four nested translucent discs for the pool, then the bracket
+## and the flame. Static on purpose -- see the note at the call site.
+func _draw_torch(cx: float, cy: float) -> void:
+	# 16 nested discs rather than 4: at four the rings were visible as banding
+	# in the rendered frame, which a screenshot caught and the code did not.
+	for i in range(16):
+		draw_circle(Vector2(cx, cy), 60.0 - float(i) * 3.6, Color(1.0, 0.60, 0.24, 0.018))
+	draw_rect(Rect2(cx - 1.0, cy, 2.0, 10.0), Color("3a2f26"))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(cx - 3.0, cy + 1.0), Vector2(cx, cy - 7.0), Vector2(cx + 3.0, cy + 1.0)]),
+		Color("ff9a3c"))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(cx - 1.5, cy), Vector2(cx, cy - 4.0), Vector2(cx + 1.5, cy)]),
+		Color("ffe08a"))
+
 func _draw_spikes(rect: Rect2, rise_offset: float) -> void:
 	# Count, pitch, base and tip all come from the rect, so what is drawn and
 	# what kills are derived from the same numbers (P12).
@@ -550,18 +584,40 @@ func _draw() -> void:
 		return
 	var font := ThemeDB.fallback_font
 	var ink := Color("25354a")
+	# Anything that has to be legible AGAINST THE WALL is drawn in chalk, not
+	# ink. Before revision 1.3 the backdrop was a cream sky and ink did both
+	# jobs; in a dungeon ink against the wall is 1.43:1 and disappears.
+	var chalk := Color("9aa7bd")
 	# All visual assets are original Godot vector drawing, not recovered art.
 	# Every extent below is derived from level.width, so widening the level in
 	# the JSON no longer leaves the backdrop, grid or labels behind
 	# (CHANGE-BRIEF 0.5.0).
 	var width: float = level.width
-	draw_rect(Rect2(-400, -200, width + 800.0, 900), Color("f6f3ec"))
-	for x in range(0, int(width) + 1, 32):
-		draw_line(Vector2(x, 80), Vector2(x, 320), Color("e7e5df"), 1)
+	# --- Dungeon backdrop (CONCEPT revision 1.3) ---------------------------
+	# The wall is deliberately the quietest surface on screen: mortar is
+	# 1.18:1 against it and the alcoves 1.10:1. The strong contrast is spent
+	# on what the player interacts with -- the lit platform edge at 6.96:1,
+	# the spikes at 4.15:1 and the character's own light rim at 7.31:1.
+	draw_rect(Rect2(-400, -200, width + 800.0, 900), Color("1b1620"))
+	var mortar := Color("2b2430")
+	var course := 0
 	for y in range(96, 321, 32):
-		draw_line(Vector2(0, y), Vector2(width, y), Color("e7e5df"), 1)
+		draw_line(Vector2(0, y), Vector2(width, y), mortar, 1)
+		# Staggered vertical joints, so the wall reads as masonry rather than
+		# as the graph paper the cream version was.
+		var off: int = 0 if course % 2 == 0 else 32
+		for x in range(off, int(width) + 1, 64):
+			draw_line(Vector2(x, y), Vector2(x, minf(float(y) + 32.0, 320.0)), mortar, 1)
+		course += 1
+	# The alcoves stand where the cream version's hills stood, so the level
+	# file is unchanged: the same x values, a different thing drawn at them.
 	for x in level.hills:
-		draw_colored_polygon(PackedVector2Array([Vector2(x-90,320),Vector2(x+50,180),Vector2(x+190,320)]), Color("e4e8e3"))
+		_draw_alcove(float(x))
+	# Torches are placed off a fixed stride rather than off elapsed time, and
+	# they do NOT flicker. A flicker would make two renders of the same frame
+	# differ, and the capture pipeline diffs frames pixel-exactly.
+	for tx in range(120, int(width) + 1, 240):
+		_draw_torch(float(tx), 150.0)
 	# Hazards are drawn BEFORE the solids so a trap that is still rising has the
 	# part still underground hidden by the ground it is rising through. The
 	# original spike sits at y 304..320 and the ground at 320..384, so they do
@@ -574,7 +630,11 @@ func _draw() -> void:
 	for entry in level.solids:
 		var r := Rect2(entry[0], entry[1], entry[2], entry[3])
 		draw_rect(r, ink)
-		draw_rect(Rect2(r.position, Vector2(r.size.x, 4)), Color("438e7d"))
+		# The lit top edge, warm against the cold stone body: 6.96:1 against
+		# the wall and 4.88:1 against the platform it caps. In the dungeon the
+		# floor is read from this 4 px strip, not from the body, which is only
+		# 1.43:1 against the wall.
+		draw_rect(Rect2(r.position, Vector2(r.size.x, 4)), Color("c89a5a"))
 		# The hatch marks run from y+12 to y+19, so they need a block at least
 		# 16 px tall. The starter's 16 px step already overhangs by 3 px onto the
 		# dark ground beneath it, where it cannot be seen; the 8 px high-road
@@ -584,7 +644,7 @@ func _draw() -> void:
 				draw_line(Vector2(x, r.position.y+12), Vector2(x+7, r.position.y+19), Color("405166"), 1)
 	_draw_enemies()
 	var finish_x: float = level.finish[0]
-	draw_line(Vector2(finish_x+3, 320), Vector2(finish_x+3, 250), ink, 3)
+	draw_line(Vector2(finish_x+3, 320), Vector2(finish_x+3, 250), chalk, 3)
 	draw_colored_polygon(PackedVector2Array([Vector2(finish_x+5,250),Vector2(finish_x+32,260),Vector2(finish_x+5,274)]), Color("287c68"))
 	for entry in level.labels:
-		draw_string(font, Vector2(entry[0], entry[1]), entry[3], HORIZONTAL_ALIGNMENT_LEFT, -1, int(entry[2]), ink)
+		draw_string(font, Vector2(entry[0], entry[1]), entry[3], HORIZONTAL_ALIGNMENT_LEFT, -1, int(entry[2]), chalk)

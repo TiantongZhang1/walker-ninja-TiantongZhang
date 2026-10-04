@@ -1,6 +1,13 @@
 extends Control
 var game: Node2D
 const INK := Color("25354a")
+# CONCEPT revision 1.3. The two HUD bands now sit on a dungeon instead of a
+# cream sky, so they are dark and their text is light. The pop-up CARDS (menu,
+# pause, complete, death) stay light with INK text: they are overlays that
+# bring their own background, and a light card on a dark world is the clearest
+# thing in the build. Only the bands changed.
+const BAND := Color("1b1620")
+const CHALK := Color("c6cedb")
 # Death-screen geometry as named constants so the overlay and the starter's
 # death panel can be asserted not to overlap. The first build put the cat
 # straight over the panel and hid the death reason.
@@ -21,24 +28,24 @@ func centered(text: String, y: float, font_size: int, color: Color = INK) -> voi
 func _draw() -> void:
 	if not is_instance_valid(game):
 		return
-	draw_rect(Rect2(0,0,640,74), Color("f6f3ec"))
-	text_at("WALKER / JUMPMAN", Vector2(22,27), 18)
-	text_at("FIRST STEPS", Vector2(497,27), 14)
-	text_at("A/D move   Space jump x2   Shift dash   L-click slash   R retry   Esc pause", Vector2(22,50), 13)
-	draw_rect(Rect2(22,63,596,3), Color("daddd6"))
+	draw_rect(Rect2(0,0,640,74), BAND)
+	text_at("WALKER / JUMPMAN", Vector2(22,27), 18, CHALK)
+	text_at("FIRST STEPS", Vector2(497,27), 14, CHALK)
+	text_at("A/D move   Space jump x2   Shift dash   L-click slash   R retry   Esc pause", Vector2(22,50), 13, CHALK)
+	draw_rect(Rect2(22,63,596,3), Color("3a3344"))
 	# Derived from the level instead of the starter's hard-coded 852, which was
 	# (finish 916 - spawn 64) and stopped being true when the finish moved.
 	var span: float = maxf(1.0, float(game.level.finish[0]) - float(game.level.spawn[0]))
 	var progress: float = clampf((game.player.position.x - float(game.level.spawn[0])) / span, 0, 1)
 	draw_rect(Rect2(22,63,596*progress,3), Color("287c68"))
-	draw_rect(Rect2(0,335,640,25), Color("f6f3ec"))
-	text_at("No lives. Just another try.", Vector2(22,353), 13)
-	text_at("RETRIES %02d     %04.1fs" % [game.deaths, game.elapsed], Vector2(440,353), 13)
+	draw_rect(Rect2(0,335,640,25), BAND)
+	text_at("No lives. Just another try.", Vector2(22,353), 13, CHALK)
+	text_at("RETRIES %02d     %04.1fs" % [game.deaths, game.elapsed], Vector2(440,353), 13, CHALK)
 	# Death reaction. Drawn BEFORE the PLAYING early-return, because the
 	# overlay is meant to outlast the 0.55 s respawn and stay up for as long
 	# as the laugh is still going.
 	if game.death_fx_remaining > 0.0 and game.cat_texture:
-		draw_rect(DEATH_CAT.grow(4.0), INK)
+		draw_rect(DEATH_CAT.grow(4.0), CHALK)
 		draw_texture_rect(game.cat_texture, DEATH_CAT, false)
 	if game.state == game.State.PLAYING:
 		return

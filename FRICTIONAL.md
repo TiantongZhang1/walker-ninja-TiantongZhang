@@ -341,3 +341,77 @@ generator replaces it is mine to decide; the shortlist and the reasons are
 Claude's.
 
 **Traceability:** `ASSET-LOG.md` correction dated 2026-10-04.
+
+---
+
+## 2026-10-04 — a dungeon, and the contrast table I got backwards
+
+**Wanted:** the game to look like a dungeon instead of a bright outdoor slope.
+
+**Decided: a dungeon**, and it went into the build the same day.
+
+**The part worth writing down is not the decision, it is what the decision
+exposed.** `CHARACTER-SHEET.md` section 3 opened with "the body is effectively
+invisible against the platforms it stands on", quoting 1.12:1, and I built a
+whole rule set on it — the scarf is mandatory, the outline is non-negotiable.
+The arithmetic was right. **The claim about the game was wrong.**
+
+Platforms here sit at y 320 and are 64 tall. The character's body is 28 px
+above its feet. Standing on the floor it occupies 292–320; the platform
+occupies 320–384. **They never touch.** The character's background is the
+backdrop, essentially always, and against the cream sky that was 10.03:1. The
+crisis I wrote a specification around almost never happened.
+
+I only found it because the dungeon forced the question *what is actually
+behind the character* — which is the question that should have come before the
+table, not two days after it. A number measured correctly and a claim about the
+game are different things, and a table makes the second look like the first.
+The sentence stays in the file with the correction under it.
+
+**And then it became true.** The dungeon wall takes the backdrop from 10.03:1
+to **1.60:1**. Worse than the number I had been calling the crisis, and now it
+happens constantly.
+
+**So the fix had to come with the setting, not after it.** Three things, all
+measured before anything was drawn:
+
+1. **The rim inverts.** The outline was `shade` — 14.12:1 on a cream sky,
+   **1.14:1** on a dungeon wall. It becomes `steel_edge`: 7.31:1 against the
+   wall and 4.57:1 against the body it outlines. It was already one of the
+   eight colours, so the dungeon cost no new colour at all.
+2. **The floor reads from its lit top edge.** The stone body is 1.43:1 against
+   the wall — the floor would be invisible, which is a fairness bug under
+   pillar 2, not a style complaint. The 4 px cap goes teal → torchlit warm,
+   6.96:1.
+3. **The background is made the quietest thing on screen** — mortar 1.18:1,
+   arches 1.10:1. Strong contrast is spent only on what the player touches.
+
+**What the screenshots caught that I could not.** The first torch glow was four
+nested translucent discs. Rendered, that is visible ring banding — it looks
+cheap. Sixteen discs is smooth. Nothing in the source said so. Second time this
+project that rendering and *looking* beat reasoning about the code.
+
+**The timing was luck, and I should say so.** This cost almost nothing because
+**no environment art had been generated yet**. Two days later it would have
+thrown the environment assets away. That is an argument for the order the
+assignment asks for — specs before generation — and I only half followed it
+with the music.
+
+**What I am not pretending.** Revision 2.0.0 of the brief said the before/after
+comparison would isolate the assets, because every gameplay number was frozen.
+The numbers *are* still frozen — 79 checks pass unchanged. But the setting
+moved, so the comparison is no longer "same game, new art". The film has to say
+that out loud instead of letting a dungeon be mistaken for what generation did.
+
+**Human / Claude / model:** the setting is mine. Claude researched the genre,
+found the contrast inversion before anything was drawn, caught its own earlier
+overstatement, wrote the code, and verified it with the suite and with rendered
+frames rather than by assertion. The reference games I was shown — and the rule
+that none of their names may appear in a prompt — are the assignment's rule,
+followed.
+
+**Still unresolved:** what the music does during the 0.55 s retry. Unchanged
+since 1.1. The loop is in the project now but nothing plays it yet.
+
+**Traceability:** `CONCEPT.md` revision 1.3, `CHANGE-BRIEF.md` revision 2.1.0,
+`CHARACTER-SHEET.md` section 3b and its correction, `evidence/screens/`.

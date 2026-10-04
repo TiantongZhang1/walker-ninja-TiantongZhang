@@ -114,6 +114,25 @@ against platform is 1.12:1 — that is not "low contrast", that is the same
 brightness. The visor is the mirror image: it carries the character against
 slate at 8.50:1 and vanishes into the sky at 1.32:1.
 
+> **CORRECTION, 2026-10-04 — the sentence above overstates its case, and it is
+> left standing so the overstatement is visible.** The colour arithmetic is
+> right; the claim about the *game* is not. Platforms in this level sit at
+> y 320 with height 64, and the character's body spans 28 px above its feet, so
+> standing on the floor it occupies y 292–320 while the platform occupies
+> 320–384. **The body essentially never overlaps a platform**, and the 1.12:1
+> case I called the crisis barely occurs. What is behind the character almost
+> always is the backdrop — 10.03:1 against the cream sky.
+>
+> I found this only when the dungeon decision forced me to ask what is actually
+> behind the character, which is the question I should have asked before
+> putting a contrast table in a specification. A measured number in a table is
+> not the same as a measured claim about the game.
+>
+> **It matters now because it has become true.** `CONCEPT.md` revision 1.3
+> replaces the cream sky with a dungeon wall, so the backdrop drops from 10.03
+> to 1.60 — worse than the figure above, and happening constantly rather than
+> almost never. Section 3b carries the numbers that now govern.
+
 Three things follow, and they are binding on every prompt below:
 
 1. **The scarf is the silhouette.** It is the only colour above 2.5:1 against
@@ -123,7 +142,8 @@ Three things follow, and they are binding on every prompt below:
 2. **The 1 px outline is `shade`, and it is non-negotiable.** Against the cream
    sky it is the strongest colour on the sheet (14.12:1); against slate it does
    nothing, which is exactly where the scarf and visor take over. No pose ships
-   without the outline.
+   without the outline. — **Superseded 2026-10-04: the outline is now
+   `steel_edge`. See section 3b.**
 3. **Neither the visor nor the scarf alone is sufficient**, so a pose may not
    trade one for the other for the sake of a nicer composition.
 
@@ -131,6 +151,47 @@ These are the numbers a generated frame is checked against. They are not a
 preference.
 
 ---
+
+## 3b. The dungeon palette — governing from 2026-10-04
+
+`CONCEPT.md` revision 1.3 replaced the cream sky with a stone wall. Section 3's
+table above is kept because it is the record of what the build looked like when
+the sheet was written; **this table is the one a generated pose is checked
+against.**
+
+Backdrop `#1b1620`, platform stone `#25354a` (unchanged), lit platform edge
+`#c89a5a`.
+
+| colour | vs wall `#1b1620` | vs stone `#25354a` |
+|---|---|---|
+| plate `#1f3a6e` | **1.60** | 1.12 |
+| shade `#16233d` | **1.14** | 1.26 |
+| visor `#7fe3ff` | 12.12 | 8.50 |
+| glint `#d8f7ff` | 15.79 | 11.07 |
+| scarf `#8a5cf0` | 4.12 | 2.89 |
+| scarf_tip `#6a3fbf` | 2.60 | 1.82 |
+| steel `#4a5468` | 2.33 | 1.64 |
+| **steel_edge `#9aa7bd`** | **7.31** | 5.12 |
+
+**The rim is `steel_edge`, not `shade`.** Against the wall, `shade` is 1.14:1 —
+the dark shading that used to separate the character from a bright sky now
+separates it from nothing. `steel_edge` is 7.31:1 against the wall **and 4.57:1
+against the plate it outlines**, so it works from both sides, and it costs no
+new colour because it is already one of the eight.
+
+**The scarf is still the silhouette's last line of defence** — 4.12:1 against the
+wall, better than it ever managed against the old backgrounds. Rule 1 of
+section 3 is unchanged and now easier to satisfy.
+
+**`shade` keeps its other job.** It is still the interior shading — legs, rear
+shoulder, crest — where it reads against `plate` rather than against the
+background. Only the *outline* changed colour.
+
+**Checked in the build, not only on paper.** The rim was implemented in
+`player.gd` and the backdrop in `session.gd`, and the result was rendered and
+inspected at 8× in `evidence/screens/`. The first torch glow used four nested
+discs and showed visible ring banding in the render that the code did not
+suggest; it is sixteen now. That is the kind of thing only a screenshot finds.
 
 ## 4. The reference image comes first
 
@@ -220,13 +281,13 @@ In this order. A pose that fails an earlier check is rejected without the later
 ones being run — the rejection and its reason go in `ASSET-LOG.md`.
 
 1. **Silhouette.** Fill every non-transparent pixel solid black, place it on
-   both backgrounds at 1x game size. If the pose is not identifiable against P1,
+   the dungeon wall and on the lit platform edge at 1x game size. If the pose is not identifiable against P1,
    it fails. (Pillar 4.)
 2. **Scale.** Viewed at 1x on a 640 x 360 viewport, not zoomed. Detail that
    disappears here is detail that should not have been drawn.
 3. **Contrast.** The scarf is unoccluded and reads on slate; the `shade` outline
    is present and unbroken; the visor is asymmetric and forward.
-4. **Palette.** Exactly the eight colours of section 3, no anti-aliased
+4. **Palette.** Exactly the eight colours of section 3 / 3b, no anti-aliased
    intermediates. A generator that returns 40 colours is re-quantised, and the
    re-quantisation is recorded as an edit in `ASSET-LOG.md`, not left implied.
 5. **Anchor.** Feet land on (20, 30) in the cell; the character does not drift

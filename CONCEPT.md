@@ -289,3 +289,94 @@ mush.
 
 - **`[TZ DECIDE]` #3 — what the music does during the 0.55 s retry.** Still
   cannot be judged until the loop is in the project. Unchanged from 1.1.
+
+
+---
+
+# Revision 1.3 — 2026-10-04 — the setting: a dungeon
+
+**v1, revision 1.1 and revision 1.2 are unchanged.** This revision replaces the
+*setting*, not the style: revision 1.2's pixel art and v1's "near-future
+industrial" materials vocabulary both still hold. What changes is where the
+game takes place, and therefore what is behind the character.
+
+## The decision
+
+A dungeon. Stone wall rather than open sky; blind arches cut into it; torches
+in brackets; platforms that read as lit stone ledges. No sky, no hills, no
+horizon.
+
+## Why it is not a free change: it inverts the entire contrast argument
+
+v1's art-direction section set the test as *"the generated character must stay
+readable against cream and against slate"*, and `CHARACTER-SHEET.md` section 3
+treated the body's 1.12:1 against the dark platform as the crisis.
+
+**That framing was wrong, and checking the level geometry is what showed it.**
+Platforms in this level sit at y 320 with height 64; the character's body spans
+28 px above its feet, so standing on the floor it occupies y 292–320 and the
+platform occupies 320–384. **The body essentially never overlaps a platform.**
+What is behind it, almost always, is the backdrop. Against the cream sky that
+was 10.03:1, which is why the character read easily and why the 1.12:1 figure
+never actually bit.
+
+A dungeon makes the backdrop dark, and that is the case that happens
+constantly:
+
+| | character plate `#1f3a6e` vs the backdrop |
+|---|---|
+| cream sky `#f6f3ec` (v1) | **10.03** |
+| dungeon wall `#1b1620` (this revision) | **1.60** |
+
+So the dungeon takes the one number that was genuinely carrying the character
+and destroys it. This revision exists because that had to be solved before the
+setting could be accepted, not after.
+
+## The three things that solve it
+
+**1. The rim inverts — from dark to light.** The 1 px outline was `shade`
+`#16233d`, which is 14.12:1 against a cream sky and **1.14:1** against a dungeon
+wall. It becomes `steel_edge` `#9aa7bd`: **7.31:1 against the wall and 4.57:1
+against the plate it outlines**, so it separates the character from the
+background *and* from itself. It costs no new colour — `steel_edge` is already
+one of the eight.
+
+**2. The floor is read from its lit top edge, not its body.** The platform body
+is 1.43:1 against the wall, which would make the floor invisible — a fairness
+problem under pillar 2, not a style problem. The 4 px top edge changes from
+teal `#438e7d` to a torchlit warm `#c89a5a`: **6.96:1 against the wall and
+4.88:1 against the stone it caps**. Cold character, warm floor edge; they
+cannot be confused.
+
+**3. The background is deliberately the quietest thing on screen.** Mortar is
+1.18:1 against the wall and the arches 1.10:1 — barely there. The strong
+contrast is spent only on what the player interacts with: the lit ledge at
+6.96, the spikes at 4.15, the character's rim at 7.31, the visor at 12.12.
+
+## What this does not change
+
+- **No level geometry moves.** Same solids, same traps, same patrols, same
+  trigger distances. The arches are drawn at the x positions the hills used, so
+  `level.hills` keeps its data and only its meaning changes.
+- **No gameplay number moves.** `CHANGE-BRIEF.md` section 0 still holds.
+- **The storyboard is not redrawn.** The six panels specify composition, scale
+  and where the eye goes. A dungeon changes colour and material, not where
+  anything sits in the frame.
+- **Pixel art and the eight-colour palette stand** (revision 1.2).
+
+## What it costs, honestly
+
+Almost nothing, because of *when* it happened: **no environment art had been
+generated yet**, so there is no rework. Had this come two days later it would
+have thrown away the environment assets.
+
+What it does cost is that v1's "flat overhead light with no visible source" is
+now false — a dungeon has visible sources, the torches. That sentence is
+superseded here rather than quietly left to rot: **the light has a source now,
+and it is warm, low and local.**
+
+## Still open
+
+- **`[TZ DECIDE]` #3 — what the music does during the 0.55 s retry.** Unchanged
+  from 1.1 and 1.2; still not judgeable until the loop is audible in the game.
+  The loop itself is now in the project (`ASSET-LOG.md`, 2026-10-04).

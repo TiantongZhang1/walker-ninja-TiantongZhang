@@ -233,3 +233,112 @@ README already commits to that in writing.
 | The music masks the trap warning | A fair hazard reads as unfair | C4, human playtest |
 | Download budget | 7 Suno downloads for the life of the account, 0 spent | one download, chosen after a browser audition |
 | Time | 4 days to 2026-10-07 | the optional poses P9–P11 are the slack, and are dropped first |
+
+
+---
+
+# Revision 2.1.0 — 2026-10-04 — the dungeon is in the build
+
+`CONCEPT.md` revision 1.3 changed the setting. This revision records what that
+actually cost in code, what shipped today, and what it did to the plan above.
+Revision 2.0.0 is unchanged.
+
+## Done today
+
+### C1 — texture filter: **done**
+
+`rendering/textures/canvas_textures/default_texture_filter=0` is in
+`project.godot`. The predicted non-integer-scale shimmer is still unverified
+because no texture is in the build yet; the check moves to when the first pose
+lands.
+
+`environment/defaults/default_clear_color` also changed from the cream
+`Color(0.965, 0.953, 0.925, 1)` to `Color(0.106, 0.086, 0.125, 1)` — the
+dungeon wall. Without it the engine clears to cream outside the drawn backdrop.
+
+### C8 — the dungeon backdrop (new)
+
+`session.gd:_draw()`. Wall `#1b1620`; mortar courses with staggered vertical
+joints `#2b2430`; blind arches `#241e2c` with a 2 px lighter masonry edge
+`#352c40`; wall torches with a sixteen-disc warm pool; platform top edge teal
+`#438e7d` → torchlit `#c89a5a`.
+
+Two helpers added, `_draw_alcove()` and `_draw_torch()`.
+
+**The arches stand at `level.hills`.** The level file is untouched — the same x
+values, a different thing drawn at them. A cheaper option was to delete the
+hills array; keeping it means the backdrop can be re-skinned again without
+touching level data.
+
+**The torches do not flicker, deliberately.** A time-driven flicker would make
+two renders of the same frame differ, and the capture pipeline diffs frames
+pixel-exactly (`scripts/check_trap_visibility.py` counts spike-coloured pixels
+in fixed-camera frames). Atmosphere is not worth making the evidence
+non-reproducible.
+
+**A new ink/chalk split.** `ink` `#25354a` still draws platform bodies; `chalk`
+`#9aa7bd` draws everything that has to read *against the wall* — the section
+labels and the finish pole. Before this, `ink` did both jobs because the
+backdrop was bright. At 1.43:1 against the wall it would have done neither.
+
+### C9 — the character's rim (new, and a prerequisite not a polish)
+
+`player.gd:_draw()` gains a rim pass before everything else: the body's four
+rects and four polygons, grown 1 px, in `steel_edge` `#9aa7bd`. The body paints
+over the middle and only the rim survives.
+
+**This is load-bearing.** Without it the character is 1.60:1 against the wall
+and the game is unplayable, not merely uglier. `CHARACTER-SHEET.md` section 3b
+has the numbers.
+
+The rim puts one pixel outside the 18 × 28 collider, at x −10..10. It carries
+no hitbox, exactly like the scarf and the sword, and the collider contract
+comment in `player.gd` says so now.
+
+### C10 — the HUD bands (new)
+
+`hud.gd`: the top (0–74) and bottom (335–360) bands go dark `#1b1620` with
+light `#c6cedb` text; the progress track `#daddd6` → `#3a3344`; the death-cat
+border `INK` → `CHALK`.
+
+**The pop-up cards stay light.** Menu, pause, complete and death panels bring
+their own background, and a light card on a dark world is the most readable
+thing in the build. Only the bands changed — the ones that sit *on* the
+dungeon.
+
+## Verified, not asserted
+
+| check | result |
+|---|---|
+| `tests/test_game.gd` | **79 checks / 0 failures** |
+| `scripts/check_trap_visibility.py` | **PASS** — 0 spike pixels buried, 767 risen |
+| `scripts/check_enemy_visibility.py` | **PASS** — all 5 captured enemies drawn at their live position |
+| Rendered frames | `evidence/screens/01-menu` … `06-trap-risen`, re-captured on the dungeon |
+
+The spike colour `#d24e42` was **not** changed, because
+`check_trap_visibility.py` hard-codes that RGB. It is 4.15:1 against the wall,
+which is fine, so there was no reason to change it and a concrete reason not
+to.
+
+## What the screenshots caught that the code did not
+
+The first torch pool used four nested translucent discs. In the rendered frame
+that is **visible ring banding**, which reads as a cheap effect; at sixteen
+discs it is smooth. Nothing in the source suggested a problem. This is the
+second time in this project that rendering and looking has caught something
+arithmetic could not.
+
+## What revision 2.0.0 said that is now wrong
+
+Section 0 said every gameplay number is frozen and the comparison would isolate
+the assets. **The gameplay numbers are still frozen** — tuning, geometry,
+patrols and trigger distances are all untouched, and the 79 checks passing
+unchanged is the evidence. But the before/after comparison is no longer
+"same game, new assets": the setting changed too. The film has to say so
+plainly rather than let a dungeon be mistaken for what generated art did.
+
+## Still open from 2.0.0
+
+C2 (sprite swap), C3 (death pose), C4 (music wiring — the loop file is in the
+project but nothing plays it yet), C5 (sound effects), C6 (mute), C7 (replace
+the placeholder death assets).

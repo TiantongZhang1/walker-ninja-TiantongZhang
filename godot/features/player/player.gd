@@ -236,6 +236,28 @@ func _physics_process(delta: float) -> void:
 	position.x = maxf(position.x, 10.0)
 	queue_redraw()
 
+## The rim colour. steel_edge, already in the eight-colour palette, so the
+## dungeon rim costs no new colour (CHARACTER-SHEET section 3).
+const RIM := Color("9aa7bd")
+
+## The same rect, grown 1 px on every side, in rim colour.
+func _mrect_o(x: float, y: float, w: float, h: float) -> void:
+	_mrect(x - 1.0, y - 1.0, w + 2.0, h + 2.0, RIM)
+
+## The same polygon, pushed 1.4 px out from its own centroid, in rim colour.
+## Centroid expansion rather than true offsetting: for the four small convex
+## shapes this is called on, the difference is under a pixel.
+func _mpoly_o(points: PackedVector2Array) -> void:
+	var c := Vector2.ZERO
+	for p in points:
+		c += p
+	c /= float(points.size())
+	var out := PackedVector2Array()
+	for p in points:
+		var d: Vector2 = p - c
+		out.append((p + d.normalized() * 1.4) if d.length() > 0.01 else p)
+	_mpoly(out, RIM)
+
 func _mrect(x: float, y: float, w: float, h: float, c: Color) -> void:
 	# One set of coordinates serves both facings: x is measured forward from the
 	# body centre, and the rect is mirrored about that centre when facing left.
@@ -265,9 +287,10 @@ func _draw() -> void:
 	# sheathed or swung, never both (CHANGE-BRIEF 0.3.0 P6).
 	#
 	# Collider contract: the 18x28 box spans x -9..9, y -28..0. The torso, helm,
-	# shoulders and legs stay within its width. The scarf and the sword are
-	# deliberately drawn outside it. Measured extents are recorded in
-	# CHANGE-BRIEF revision 0.2.0.
+	# shoulders and legs stay within its width -- the 1 px rim added in
+	# revision 1.3 puts a single pixel outside it at x -10..10, which is
+	# decoration and carries no hitbox, exactly like the scarf and the sword.
+	# Measured extents are recorded in CHANGE-BRIEF revision 0.2.0.
 	var plate := Color("1f3a6e")
 	var shade := Color("16233d")
 	var visor := Color("7fe3ff")
@@ -282,6 +305,23 @@ func _draw() -> void:
 	var flutter: float = sin(float(tick) * 0.45) * 2.0
 	var trail: float = 12.0 if grounded else 15.0
 	var phase := attack_phase()
+
+	# Rim pass (CONCEPT revision 1.3). On the cream backdrop the body read at
+	# 10.03:1 and the dark `shade` shapes did the separating. Against a dungeon
+	# wall the body is 1.60:1 and `shade` is 1.14:1, so the dark shading now
+	# separates the character from nothing. A 1 px light halo is laid down
+	# under everything; the body paints over its middle and only the rim
+	# survives. The colour is steel_edge, already one of the eight -- 7.31:1
+	# against the wall and 4.57:1 against the plate, so it reads against the
+	# background AND against the body it outlines.
+	_mrect_o(-5.0, -9.0, 4.0, 9.0 + stride)
+	_mrect_o(1.0, -9.0, 4.0, 9.0 - stride)
+	_mrect_o(-5.0, -20.0, 10.0, 11.0)
+	_mrect_o(-5.0, -27.0, 10.0, 8.0)
+	_mpoly_o(PackedVector2Array([Vector2(5.0, -19.0), Vector2(8.0, -15.0), Vector2(5.0, -11.0)]))
+	_mpoly_o(PackedVector2Array([Vector2(-5.0, -20.0), Vector2(-9.0, -18.0), Vector2(-5.0, -15.0)]))
+	_mpoly_o(PackedVector2Array([Vector2(5.0, -20.0), Vector2(9.0, -18.0), Vector2(5.0, -15.0)]))
+	_mpoly_o(PackedVector2Array([Vector2(-5.0, -27.0), Vector2(-9.0, -24.0), Vector2(-5.0, -23.0)]))
 
 	if phase == 0:
 		# Sheathed: drawn first so the body occludes its middle and only the
