@@ -312,7 +312,8 @@ six. Platform bodies run from their top edge down past the frame's bottom.
 | trap spike 3 | 183.6 – 190.8 | 91.2 |
 
 Both labels are drawn in the level and both belong in this panel:
-`HIGH ROAD - GUARDED` at 82.8 mm, `HIGH`/`LOW ROAD - IT BITES` at 60.0 mm.
+`HIGH ROAD - GUARDED` at x 82.8 mm, y 64.2 mm, and `LOW ROAD - IT BITES` at
+x 60.0 mm, y 90.0 mm.
 
 ### Panel 04 — camera 1720, frame = world x 1400–2040
 
