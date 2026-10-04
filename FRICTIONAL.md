@@ -232,3 +232,64 @@ revision 1.2. No image has been generated yet.
 judgeable until the loop is actually in the game.
 
 **Traceability:** `CONCEPT.md` revision 1.2.
+
+---
+
+## 2026-10-03 — the two specs, written late, and said so
+
+**Wanted:** the character sheet and the change brief, in that order, before
+anything else is generated.
+
+**The ordering problem, stated plainly.** The music was generated on 10-01.
+`CHARACTER-SHEET.md` and `CHANGE-BRIEF.md` were written on 10-03. So the music
+ran ahead of its specification and there is no way to make that not true. What
+I am not doing is dating the files 09-30 and pretending otherwise — the
+repository's commit history would contradict it anyway, and a log that can be
+checked against git and lose is worth less than no log. For the art and the
+sound effects the order is the right way round, and that is the part I can still
+control.
+
+**The deadline moved to Wednesday 10-07**, which is four days. That is the
+reason the character sheet splits its poses into eight required and three
+optional instead of listing eleven as if they were equally likely to happen.
+The optional three are the slack, and they are named as the first thing to drop
+rather than discovered as a shortfall at the end.
+
+**What came out of actually measuring the game instead of describing it.**
+Three things I did not know this morning:
+
+1. **The character is almost invisible against the platforms it stands on.**
+   Plate `#1f3a6e` against platform `#25354a` is 1.12:1 — not low contrast, the
+   same brightness. The visor is the exact mirror: 8.50:1 on slate, 1.32:1
+   against the cream sky. The scarf is the only colour on the sheet above 2.5:1
+   against both, at 2.89:1. So the scarf is not decoration, it is the
+   silhouette, and the sheet now makes it mandatory and unoccluded in every
+   pose. I had been treating it as the character's flourish.
+
+2. **The sword must not be generated.** The swung blade is drawn from the same
+   pivot, angle and reach the kill hitbox is built from, on purpose, so what you
+   see and what kills you cannot drift apart. A static image of the blade would
+   quietly sever that. So the generated sprite is body-and-scarf only and the
+   code keeps drawing the sword over it — which also drops the frame from
+   56 × 56 to 32 × 32.
+
+3. **There is no death pose.** On death the player is disabled and the sprite
+   freezes on whatever frame it was on, for 0.55 s. I had assumed the reaction
+   covered this; the reaction is an overlay at the session level and the
+   character does nothing. That is new wiring, not a texture swap, and it is why
+   the death pose is in the required eight while the celebration is not.
+
+**Human / Claude / model:** the two documents were drafted by Claude from
+measurements of my build; every number in them names the file and lines it came
+from, and I spot-checked the line references. The three findings above are
+Claude's, found by reading the code rather than by asking me. The decisions they
+feed — eight required poses, scarf mandatory, sword stays code-drawn, tuning
+frozen — I am accepting, and the reason I am accepting the frozen tuning is that
+the assignment compares the slice before and after its assets, so moving a
+gameplay number at the same time would measure two things and prove neither.
+
+**Still unresolved:** which generator to use for the art and the sound effects.
+It has to record a seed, which Suno could not, and that is the one requirement I
+am treating as non-negotiable after the music turned out to be unreproducible.
+
+**Traceability:** `CHARACTER-SHEET.md`, `CHANGE-BRIEF.md` revision 2.0.0.
