@@ -207,3 +207,162 @@ simultaneously.
 - Panels 01 and 06 are the two that must be drawn first: 01 is the contrast
   test and 06 is the fairness argument. If time runs out, those two plus 04 are
   the set that still proves something.
+
+---
+
+# Appendix — how the six panels are drawn
+
+Written with the panels, so the method is on the record rather than implied by
+six photographs.
+
+## The scale, and why it is not negotiable
+
+**1 game pixel = 0.3 mm.** The frame is therefore **192 x 108 mm**, which is the
+640 x 360 viewport at a fixed, checkable ratio.
+
+At that scale the character is **5.4 x 8.4 mm** — about the size of a lowercase
+letter. That is uncomfortable to draw and it is the entire point. Pillar 4 is
+"readable at 18 by 28 pixels"; a storyboard drawn with a 40 mm hero would
+answer a question the game never asks. **The character is not enlarged inside
+the frame under any circumstances.**
+
+The detail that cannot be drawn at 5.4 mm goes in a separate **pose box** beside
+the frame, at 1.25 mm per pixel (a 32 x 32 cell becomes 40 x 40 mm). Two scales
+on one page, each honest about what it is for:
+
+| | scale | answers |
+|---|---|---|
+| Frame, 192 x 108 mm | 0.3 mm/px | does the character read, and where does the eye go? |
+| Pose box, 40 x 40 mm | 1.25 mm/px | what is the pose? |
+
+## Where the character sits in the frame
+
+`session.gd:521` — `camera.position.x = clampf(player.position.x + 100, 320,
+level.width - 320)`. The camera leads the player by 100 px, so **the player is
+at screen x = 220 of 640 — 66 mm from the left edge** for the whole level,
+except where the camera clamps.
+
+It clamps at both ends. At the start (camera pinned to 320) the player is
+wherever its world x puts it; at the finish (camera pinned to 2752) the player
+walks rightward across a fixed frame. Panels 01 and 06 are the two that show
+this, and their player positions below differ from 66 mm accordingly.
+
+Camera y never moves (`session.gd:79`, `453`): the view is always world y 0–360,
+so **the ground line is at 96 mm from the top of every frame** and the frame's
+vertical contents can be measured once and reused.
+
+## Per-page layout
+
+One A4 **portrait** page per panel, six pages.
+
+```
+  +--------------------------------------------------+
+  |  PANEL 0n  /  <the level's own label>            |   <- heading
+  |                                                  |
+  |  +--------------------------------------------+  |
+  |  |                                            |  |
+  |  |            frame, 192 x 108 mm             |  |   <- ruled, 0.3 mm/px
+  |  |                                            |  |
+  |  +--------------------------------------------+  |
+  |                                                  |
+  |  +----------+   pose:  P_                       |
+  |  | pose box |   sound: ___                      |   <- 40 x 40 mm
+  |  | 40x40 mm |   eye:   ___                      |
+  |  +----------+   bg:    sky / slate / both       |
+  +--------------------------------------------------+
+```
+
+The four lines are the panel's actual content. "eye" is the one thing in the
+frame the player is meant to be looking at, and it is circled in the frame too.
+
+## Coordinates
+
+Every value is millimetres from the frame's **top-left corner**, derived from
+the level file at 0.3 mm/px. The ground line (world y 320) is at 96 mm in all
+six. Platform bodies run from their top edge down past the frame's bottom.
+
+### Panel 01 — camera 320 (clamped), frame = world x 0–640
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P2 Run) | 42.0 | feet on 91.2 |
+| step, 48 px wide | 48.0 – 62.4 | 91.2 |
+| fixed spike | 96.0 – 103.2 | 91.2 |
+| ground | whole width | 96.0 |
+
+### Panel 02 — camera 548, frame = world x 228–868
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P3 Rising) | 66.0 | mid-air, above 96.0 |
+| gap in the ground | 66.0 – 85.2 | — |
+| raised block | 104.4 – 118.8 | 86.4 |
+| second gap | 152.4 – 166.8 | — |
+
+### Panel 03 — camera 1140, frame = world x 820–1460
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P1 Idle, at the decision point) | 66.0 | feet on 96.0 |
+| high plank 1 | 85.2 – 121.2 | 67.2 |
+| high plank 2 | 156.0 – 186.0 | 60.0 |
+| slime, patrolling plank 2 | 160.8 – 181.2 | 60.0 |
+| trap spike 1 (low road) | 102.0 – 109.2 | 91.2 |
+| trap spike 2 | 142.8 – 150.0 | 91.2 |
+| trap spike 3 | 183.6 – 190.8 | 91.2 |
+
+Both labels are drawn in the level and both belong in this panel:
+`HIGH ROAD - GUARDED` at 82.8 mm, `HIGH`/`LOW ROAD - IT BITES` at 60.0 mm.
+
+### Panel 04 — camera 1720, frame = world x 1400–2040
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P6 windup / P7 live) | 66.0 | feet on 96.0 |
+| slime, patrol span | 54.0 – 87.0 | 96.0 |
+| flying horse, patrol span | 90.0 – 126.0 | 80.4 |
+
+### Panel 05 — camera 2370, frame = world x 2050–2690
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P5 Dash, over the gap) | 66.0 | mid-air |
+| platform | 18.6 – 57.0 | 96.0 |
+| platform | 76.2 – 114.6 | 96.0 |
+| platform | 133.8 – 172.2 | 96.0 |
+| horse holding the first gap | 52.2 – 81.0 | 80.4 |
+| slime | 82.2 – 109.2 | 96.0 |
+| horse | 109.8 – 138.6 | 80.4 |
+
+### Panel 06 — camera 2752 (clamped), frame = world x 2432–3072
+
+The last screenful is fixed, so the whole ending fits in one frame.
+
+| | x (mm) | top y (mm) |
+|---|---|---|
+| **character** (P2 Run, just past the trigger) | 89.4 | feet on 96.0 |
+| the trigger line (invisible in game — draw it dashed) | 81.6 | — |
+| trap spike, part-way up | 110.4 – 117.6 | 91.2 at full height |
+| horse | 52.8 – 81.6 | 80.4 |
+| slime | 146.4 – 170.4 | 96.0 |
+| finish | 179.4 – 186.6 | 79.2 |
+
+The gap between the trigger at 81.6 mm and the spike at 110.4 mm is **28.8 mm**
+— that is the 96 px of run-up, drawn to scale. It is the measurement the whole
+fairness argument rests on, so this panel is the one where the ruler matters
+most.
+
+## Capture
+
+Photograph or scan flat, even light, no shadow across the frame, crop to the
+page. `design/storyboard/panel-01.jpg` … `panel-06.jpg`.
+
+## When a panel is finished
+
+1. The frame is 192 x 108 mm, ruled, not eyeballed.
+2. The character is at its true 5.4 x 8.4 mm and has **not** been enlarged.
+3. The scarf is visible and separated from the body — in the frame, at true
+   size, not only in the pose box. If it is not, that is the panel telling you
+   something about the pose, not about the drawing.
+4. The pose box names a pose ID from section 5.
+5. The four lines are filled in, and the "eye" subject is circled in the frame.
