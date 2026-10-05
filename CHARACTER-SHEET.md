@@ -193,6 +193,61 @@ inspected at 8× in `evidence/screens/`. The first torch glow used four nested
 discs and showed visible ring banding in the render that the code did not
 suggest; it is sixteen now. That is the kind of thing only a screenshot finds.
 
+## 3c. Value separation — governing from 2026-10-05
+
+`CONCEPT.md` revision 1.4 rebuilt the code-drawn character so the head, torso,
+arms and legs are separable. The generated sprite inherits that structure, and
+the rule it inherits is **not** "draw gaps between the limbs".
+
+**At 18 × 28 a gap does not survive.** A 1 px rim closes any gap narrow enough
+to fit on this body. Separation is by **value**, three steps, every part in
+exactly one:
+
+| | role | parts |
+|---|---|---|
+| `shade` `#16233d` | the **far** side of the body | far arm, far leg, recessed abdomen, jawline, neck |
+| `plate` `#1f3a6e` | the **near** side | chest, near arm, near leg |
+| `steel` `#4a5468` | the **extremities** | gauntlets and boots only |
+
+`steel` now does double duty — blade *and* extremities — so the whole structure
+costs **no new colour**. The palette is still the eight of section 3.
+
+**Limb widths: 4 px legs, 3 px arms.** Narrower than that and there is nothing
+left inside for the value step to happen in.
+
+**The 2 px neck is mandatory.** It is the single reason the head reads as a
+head rather than as the top of the torso, and it is the cheapest part on the
+figure.
+
+### The rim is directional, not an outline
+
+**1 px toward the character's back and 1 px up. Nothing on the front or the
+underside.** Section 3b's `steel_edge` `#9aa7bd` is unchanged as the colour;
+what changed is where it goes.
+
+An all-sides rim costs a part 2 px of width, so a 3 px arm would keep 1 px of
+armour. Rendered, that figure was grey pipework with a hint of navy down the
+middle. A directional rim costs **0 px** of width and still breaks the
+silhouette against the wall, because the light in a dungeon comes from a torch
+above and behind rather than from everywhere.
+
+**Consequence for generation:** a prompt that asks for "1 pixel dark outline"
+is now wrong on two counts — the colour is light, and it is on two sides. The
+skeleton in section 4 is superseded by the one below.
+
+### Superseding the section 4 prompt skeleton
+
+> pixel art sprite, side view, small humanoid ninja in deep navy segmented
+> plate armour, horizontal light-blue visor slit across the helm, short neck
+> separating helm from chest, long purple scarf trailing behind, far arm and
+> far leg in a darker navy than the near arm and near leg, pale steel
+> gauntlets and boots, pale rim light along the back and the top of the
+> figure, limited palette of eight colours, flat dungeon torchlight from above
+> and behind, no gradients, no glow, no text, plain background
+
+Still no artist name, no character name, no franchise, no "in the style of",
+and the palette is still given as hex values rather than as adjectives.
+
 ## 4. The reference image comes first
 
 `CONCEPT.md` revision 1.2 commits to this: **one reference image, then every
@@ -228,8 +283,8 @@ by inventing a new state machine. The condition column is the literal test.
 | # | Pose | Condition in code | What the frame has to say |
 |---|---|---|---|
 | P1 | Idle | `is_on_floor()` and `absf(velocity.x) <= 8.0` | standing, scarf settled, visor forward |
-| P2 | Run | `is_on_floor()` and `absf(velocity.x) > 8.0` | one contact pose; scarf streams back, body leans forward |
-| P3 | Rising | `not is_on_floor()` and `velocity.y < 0` | legs tucked, scarf below and behind |
+| P2 | Run | `is_on_floor()` and `absf(velocity.x) > 8.0` | one contact pose; scarf streams back, body leans forward, **arms counter the legs** |
+| P3 | Rising | `not is_on_floor()` and `velocity.y < 0` | **bent far knee** — shin and boot lifted together at full height, not a shortened shin — scarf below and behind |
 | P4 | Falling | `not is_on_floor()` and `velocity.y >= 0` | legs reaching, scarf above and behind |
 | P5 | Dash | `dash_ticks_left > 0` | horizontal, scarf fully extended, no vertical lean |
 | P6 | Attack windup | `attack_phase() == 1` | **4 ticks (67 ms)** — arm up and back, body coiled, *no sword* |
@@ -281,12 +336,16 @@ In this order. A pose that fails an earlier check is rejected without the later
 ones being run — the rejection and its reason go in `ASSET-LOG.md`.
 
 1. **Silhouette.** Fill every non-transparent pixel solid black, place it on
-   the dungeon wall and on the lit platform edge at 1x game size. If the pose is not identifiable against P1,
+   the dungeon wall and on the lit platform edge at 1x game size. **A
+   silhouette test cannot see the value separation of section 3c** — that is
+   the point of running it first and separately: the shape has to work before
+   the three-step scheme is allowed to carry anything. If the pose is not identifiable against P1,
    it fails. (Pillar 4.)
 2. **Scale.** Viewed at 1x on a 640 x 360 viewport, not zoomed. Detail that
    disappears here is detail that should not have been drawn.
-3. **Contrast.** The scarf is unoccluded and reads on slate; the `shade` outline
-   is present and unbroken; the visor is asymmetric and forward.
+3. **Contrast.** The scarf is unoccluded and reads on slate; the **directional
+   rim of section 3c** is present along the back and the top; the visor is
+   asymmetric and forward.
 4. **Palette.** Exactly the eight colours of section 3 / 3b, no anti-aliased
    intermediates. A generator that returns 40 colours is re-quantised, and the
    re-quantisation is recorded as an edit in `ASSET-LOG.md`, not left implied.
@@ -303,7 +362,8 @@ ones being run — the rejection and its reason go in `ASSET-LOG.md`.
 - **Facial detail.** There is none — the visor is the face, and at 18 x 28 any
   feature behind it is one ambiguous pixel.
 - **Per-frame animation.** Each state is one static image. The run's stride tell
-  is currently a `sin(tick * 0.7)` 2 px leg offset (`player.gd:281`); whether
+  is currently a `sin(tick * 0.7)` 2 px offset, scissoring the legs and
+  counter-swinging the arms (`_body_parts`); whether
   that stays as code motion under a static sprite or is dropped is a
   `CHANGE-BRIEF.md` decision, not an art one.
 - **The enemies.** Slimes and flying horses are out of scope for this sheet. If

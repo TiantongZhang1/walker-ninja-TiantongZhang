@@ -470,3 +470,68 @@ script. The retry behaviour, the loop choice and the seam are mine to judge.
 
 **Traceability:** `CHANGE-BRIEF.md` revision 2.2.0, `ASSET-LOG.md` 2026-10-04,
 `evidence/screens/10-muted.png`.
+
+---
+
+## 2026-10-05 — the character got a body, and the rim had to stop being an outline
+
+**Wanted:** the same purple-scarf ninja, but finer, with the head, torso and
+four limbs tellable apart.
+
+**Done.** Head with a neck, a chest that tapers into a darker abdomen, two
+arms in three parts each, two legs in three parts each, gauntlets and boots.
+
+**The first thing I learned is that it had no arms at all.** The shipped figure
+was a helm, a torso, two shoulder triangles and two leg stubs. It read as a
+person at 18 × 28, which was enough for Assignment 1 and stops being enough the
+moment the character is the subject of a pose sheet.
+
+**The first attempt failed, and it failed arithmetically.** I added limbs and
+kept the rim as it was — 1 px grown on all four sides. Rendered, the figure was
+**grey pipework with a hint of navy down the middle**. The reason is a
+subtraction I had not done: an all-sides rim costs a part 2 px of width, so a
+3 px arm keeps 1 px of armour and a 4 px leg keeps 2. The three-value scheme
+meant to separate near limb from far limb had nowhere to happen. Nothing in the
+source said this. I only saw it in the contact sheet.
+
+**The fix was to stop thinking of the rim as an outline.** It is now
+directional — 1 px toward the back and 1 px up, nothing on the front or the
+underside. That costs **zero** width, and it is more honest about the setting
+anyway: in a dungeon the light comes from a torch above and behind, not from
+everywhere. And because `x` is measured forward and gets mirrored, the rim
+stays on the same side of the body when the character turns around, which is
+what a light source does and what an outline does not.
+
+**The second bug was a sign.** `y` is negative upward, so lifting a leg has to
+*subtract*. I added. The boot went to y +0.8 — below the feet line, into the
+floor — and the shin's height computed as `3.2 - tuck` = 0.6 px. The jump frame
+rendered as a glitch. Also found by looking.
+
+**The two pixels that did the most work** are the neck. Without them the helm is
+just the top of the torso, and no amount of detail inside the head fixes it.
+
+**One structural thing I am glad I did.** The body is a parts list now, and the
+rim pass and the paint pass walk the **same array**. The old code listed eight
+shapes twice, once for each pass, with nothing stopping the copies drifting. It
+was fine because one person wrote both lists in one sitting; it was not fine as
+a thing to keep editing.
+
+**What this says about my test suite, and I would rather write it down than
+have it noticed for me.** Eighty-seven checks pass and both of this revision's
+bugs sailed through all of them, because **every check in the suite is about
+behaviour** — where the hitbox is, whether the trap is drawn, whether an enemy
+is at its live position. **Nothing asserts what the player looks like.** The
+honest answer is not to add a pixel-diff of the player, which would fail on
+every intentional art change and get deleted within a week. The honest answer
+is that the character captures plus the contact sheet **are** the check, and
+they need a human to look at them. That is a weaker guarantee than the rest of
+the suite and the film should not pretend otherwise.
+
+**Human / Claude / model:** the brief is mine — keep the purple scarf, make it
+finer, separate the limbs. Claude did the geometry, found the rim arithmetic
+and the sign error by rendering and looking rather than by reasoning, and wrote
+the documents. No generated art is involved: this is still original vector
+drawing in code, which is also why it could be iterated three times in an hour.
+
+**Traceability:** `CONCEPT.md` revision 1.4, `CHANGE-BRIEF.md` revision 2.3.0,
+`CHARACTER-SHEET.md` section 3c, `evidence/screens/char-contact-sheet.png`.
