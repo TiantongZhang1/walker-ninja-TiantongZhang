@@ -429,3 +429,84 @@ It is now a listening decision, not a design one.
 
 C2 (sprite swap), C3 (death pose), C5 (sound effects), C7 (replace the
 placeholder death assets).
+
+
+---
+
+# Revision 2.3.0 — 2026-10-05 — C11: the character has parts now
+
+Revisions 2.0.0–2.2.0 are unchanged. `CONCEPT.md` revision 1.4 carries the
+design argument; this is what changed in the code.
+
+## C11 — the body is a parts list
+
+`player.gd`. The hand-ordered sequence of draw calls is replaced by
+`_body_parts()`, which returns the figure back-to-front as data:
+
+```
+[0, colour, rim, x, y, w, h]   a rect
+[1, colour, rim, points]       a polygon
+```
+
+**Both the rim pass and the paint pass walk the same array.** The old code
+listed eight shapes twice — once in `_mrect_o`/`_mpoly_o` calls for the rim and
+once in `_mrect`/`_mpoly` calls for the body — and nothing stopped the two
+copies drifting apart. They cannot now.
+
+New: a far arm and a near arm (upper / forearm / gauntlet each), legs split
+into thigh / shin / boot, a 2 px neck, a jawline, and a recessed abdomen. The
+`rim` flag marks the parts that form the outer silhouette; interior detail —
+visor, glint, belt, abdomen, jawline, neck — is `false` and gets no halo.
+
+## C12 — the rim is directional
+
+`_mrect_o` grows **1 px back and 1 px up**, not 1 px on four sides.
+`_mpoly_o` **translates** by (−1, −1) instead of expanding from the centroid,
+so a thin wedge keeps its thickness.
+
+**Why, in numbers.** An all-sides rim costs a part 2 px of width. The limbs
+here are 3 px (arms) and 4 px (legs), so they would keep 1 px and 2 px of
+armour respectively, and the three-value separation scheme would have nowhere
+to happen. Rendered, the figure was grey pipework. A directional rim costs
+**0 px** of width.
+
+## C13 — the air pose is a bent knee
+
+Rising lifts the far leg's shin and boot by 2.6 px and the near leg's by 0.9;
+falling reaches 0.8 px. Shin and boot move **together at full height**.
+
+**The bug this replaces.** `tuck` was *added* to y. y is negative upward, so
+that pushed the boot to y +0.8 — below the feet line, into the floor — and
+computed the shin's height as `3.2 - tuck` = 0.6 px. The jump frame rendered as
+a glitch. Caught by looking at the contact sheet, not by a test: no assertion
+in this project describes what the player looks like.
+
+## Verified
+
+| check | result |
+|---|---|
+| `tests/test_game.gd` | **87 checks / 0 failures**, unchanged |
+| `attack-hitbox-on-the-blade-right` / `-left` | PASS, worst endpoint error 3.8e-6 px |
+| `scripts/check_trap_visibility.py` | PASS |
+| `scripts/check_enemy_visibility.py` | PASS |
+| `tests/capture_character.gd` | 11 frames, every state assertion passed |
+| `scripts/build_char_sheet.py` | `evidence/screens/char-contact-sheet.png` rebuilt |
+
+## The gap this exposes in the test suite
+
+Every check above is about **behaviour**: where the hitbox is, whether the trap
+is drawn, whether an enemy is at its live position. **Nothing asserts what the
+player character looks like**, which is why both of the bugs in this revision
+were found by eye and not by the suite — and why both of them passed 87 checks
+while being obviously wrong on screen.
+
+That is a real limitation and not a thing to fix by writing a pixel-diff test
+of the player, which would fail on every intentional art change and get
+deleted. The honest answer is that `capture_character.gd` plus the contact
+sheet **is** the check, and it requires a human to look. It is recorded here so
+the film does not claim more than the suite delivers.
+
+## Still open from 2.0.0
+
+C2 (sprite swap), C3 (death pose), C5 (sound effects), C7 (replace the
+placeholder death assets).

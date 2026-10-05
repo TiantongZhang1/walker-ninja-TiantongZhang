@@ -380,3 +380,93 @@ and it is warm, low and local.**
 - **`[TZ DECIDE]` #3 — what the music does during the 0.55 s retry.** Unchanged
   from 1.1 and 1.2; still not judgeable until the loop is audible in the game.
   The loop itself is now in the project (`ASSET-LOG.md`, 2026-10-04).
+
+
+---
+
+# Revision 1.4 — 2026-10-05 — the character, rebuilt so the body has parts
+
+**v1 and revisions 1.1–1.3 are unchanged.** The identity does not change: deep
+navy plate, light-blue visor slit, **purple scarf**, back-slung blade. What
+changes is that the figure now has a **head, a torso, two arms and two legs
+that can be told apart**, where before it was a helm, a block, two stubs and no
+arms at all.
+
+## What was actually missing
+
+The shipped figure had **no arms**. It was a helm rect, a torso rect with a
+chest wedge, two shoulder triangles and two leg rects. At 18 × 28 that reads as
+a person-shaped object, which was enough for Assignment 1, and stops being
+enough the moment the character is meant to be the subject of a pose sheet.
+
+## The problem, which is arithmetic rather than taste
+
+At 18 × 28 limbs cannot be separated by **gaps**. A 1 px rim grown on every
+side closes any gap narrow enough to fit on this body, and it also costs every
+part 2 px of its own width — so a 3 px arm keeps 1 px of armour and a 4 px leg
+keeps 2. The first attempt did exactly that, and rendered, the figure came out
+as **grey pipework with a hint of navy down the middle**. The value scheme that
+was supposed to separate near limb from far limb had almost nowhere to happen.
+
+Two changes fix it, and both are measurable rather than aesthetic:
+
+**1. Separation by value, not by gaps.** Three steps, every part in exactly
+one:
+
+| | | |
+|---|---|---|
+| `shade` `#16233d` | the **far** side | far arm, far leg, plus the recessed abdomen, the jawline and the neck |
+| `plate` `#1f3a6e` | the **near** side | chest, near arm, near leg |
+| `steel` `#4a5468` | the **extremities** | gauntlets and boots only |
+
+So the near limbs read against the torso, the far limbs read against the near
+limbs, and the hands and feet read against the limbs they end. Nothing depends
+on a gap surviving. `steel` now does double duty — blade *and* extremities —
+which means the whole redesign **costs no new colour**: still the eight of
+`CHARACTER-SHEET.md` section 3.
+
+**2. The rim becomes directional.** 1 px toward the character's **back** and
+1 px **up**, nothing on the front or the underside. That costs a part **zero**
+width, and it still breaks the silhouette against the wall — because the light
+in a dungeon comes from a torch above and behind, not from everywhere. Since
+`x` is measured forward and `_mrect` mirrors it, the rim stays on the same side
+of the body when the character turns around: a light source behaves that way,
+an outline does not.
+
+## The neck is the single most load-bearing 2 pixels
+
+A 2 px `shade` neck between the helm and the chest. Without it the helm is
+simply the top of the torso, and no amount of detail inside the head fixes
+that. It is the cheapest part on the figure and the one that actually answers
+"can you tell the head from the body".
+
+## Two things that only rendering caught
+
+- **The grey-pipework problem above.** The source read correctly. Nothing in
+  the numbers said "this limb will be 80 % outline".
+- **The air pose was inverted.** `y` is negative upward, so a lift has to
+  *subtract*. The first version added, which pushed the boot to y +0.8 — below
+  the feet line, into the floor — and squeezed the shin to 0.6 px tall. The
+  jump frame read as a glitch. Fixed by moving the shin and boot **together**
+  at full height: a bent knee, not a shrinking shin.
+
+Third and fourth time in this project that rendering and looking has beaten
+reasoning about the code.
+
+## What this does not change
+
+- **No gameplay number.** 87 checks pass unchanged, including both
+  `attack-hitbox-on-the-blade` assertions at sub-micron endpoint error.
+- **The collider.** 18 × 28 at (0, −14). The directional rim puts 1 px outside
+  it at the back and top, carrying no hitbox, exactly like the scarf.
+- **The swing's geometry.** The blade still comes from `ATTACK_PIVOT`,
+  `attack_angle()` and `attack_reach`. The *arm* is now drawn along that same
+  direction, so the arm and the blade cannot disagree about which way the
+  character is swinging — they are the same two numbers.
+- **The palette.** Eight colours, unchanged.
+
+## Still open
+
+- **`[TZ DECIDE]` #3** — what the music does during the 0.55 s retry.
+  Implemented as "keeps playing" (`CHANGE-BRIEF.md` revision 2.2.0) and now a
+  listening decision.

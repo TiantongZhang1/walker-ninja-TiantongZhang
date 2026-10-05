@@ -240,22 +240,31 @@ func _physics_process(delta: float) -> void:
 ## dungeon rim costs no new colour (CHARACTER-SHEET section 3).
 const RIM := Color("9aa7bd")
 
-## The same rect, grown 1 px on every side, in rim colour.
+## The rim is DIRECTIONAL: 1 px toward the character's back and 1 px up, and
+## nothing on the front or the underside.
+##
+## Revision 1.4 changed this, and the reason is arithmetic rather than taste. A
+## rim grown on all four sides costs a part 2 px of width, so a 3 px arm keeps
+## 1 px of armour and a 4 px leg keeps 2. Rendered, the limbs came out as grey
+## pipes with a hint of navy down the middle -- the value scheme that is
+## supposed to separate near limb from far limb had almost nowhere to happen.
+## Growing in one direction only costs 0 px of width and still breaks the
+## silhouette against the wall, because the light in a dungeon comes from a
+## torch above and behind, not from everywhere.
+##
+## x is forward, so `x - 1` is toward the back for both facings: `_mrect`
+## mirrors it. The rim therefore stays on the same side of the body when the
+## character turns around, which is what a light source does and an outline
+## does not.
 func _mrect_o(x: float, y: float, w: float, h: float) -> void:
-	_mrect(x - 1.0, y - 1.0, w + 2.0, h + 2.0, RIM)
+	_mrect(x - 1.0, y - 1.0, w + 1.0, h + 1.0, RIM)
 
-## The same polygon, pushed 1.4 px out from its own centroid, in rim colour.
-## Centroid expansion rather than true offsetting: for the four small convex
-## shapes this is called on, the difference is under a pixel.
+## Same idea for a polygon: the shape translated 1 px back and 1 px up. A
+## translation rather than an expansion, so a thin wedge keeps its thickness.
 func _mpoly_o(points: PackedVector2Array) -> void:
-	var c := Vector2.ZERO
-	for p in points:
-		c += p
-	c /= float(points.size())
 	var out := PackedVector2Array()
 	for p in points:
-		var d: Vector2 = p - c
-		out.append((p + d.normalized() * 1.4) if d.length() > 0.01 else p)
+		out.append(p + Vector2(-1.0, -1.0))
 	_mpoly(out, RIM)
 
 func _mrect(x: float, y: float, w: float, h: float, c: Color) -> void:
@@ -278,6 +287,124 @@ func _bar(a: Vector2, b: Vector2, half: float) -> PackedVector2Array:
 	# is described by its endpoints instead of hand-computed corner arithmetic.
 	var n := (b - a).orthogonal().normalized() * half
 	return PackedVector2Array([a + n, b + n, b - n, a - n])
+
+## The body, back to front, as data. Both the rim pass and the paint pass walk
+## this one array, so they cannot describe different characters.
+##
+## Entry shapes: [0, colour, rim, x, y, w, h] for a rect,
+##               [1, colour, rim, points]     for a polygon.
+## x is measured FORWARD from the body centre; `_mrect`/`_mpoly` mirror it when
+## facing left. `rim` marks the parts that form the OUTER silhouette; interior
+## detail is false and gets no halo.
+##
+## Revision 1.4 (CONCEPT): limbs, torso and head are separable. At 18 x 28 that
+## cannot be done with gaps -- a 1 px rim closes any gap narrow enough to fit
+## here -- so it is done with VALUE. Three steps, and every part belongs to
+## exactly one:
+##
+##   shade  #16233d  the far side of the body, plus the recessed abdomen, the
+##                   jawline and the neck
+##   plate  #1f3a6e  the near side: chest, near arm, near leg
+##   steel  #4a5468  the extremities only -- gauntlets and boots
+##
+## So the near limbs read against the torso, the far limbs read against the
+## near limbs, and the hands and feet read against the limbs they end. None of
+## it depends on a gap surviving a rim.
+##
+## Limb widths are 4 px (legs) and 3 px (arms). The first attempt used 2.5-3 px
+## and an all-sides rim, which left 1 px of armour inside a 3 px arm; the rim
+## is directional now (see `_mrect_o`) so the full width survives and the value
+## step has somewhere to happen.
+func _body_parts(stride: float, grounded: bool, phase: int) -> Array:
+	var plate := Color("1f3a6e")
+	var shade := Color("16233d")
+	var visor := Color("7fe3ff")
+	var glint := Color("d8f7ff")
+	var scarf := Color("8a5cf0")
+	var steel := Color("4a5468")
+	# Arms counter the legs. That opposition is what makes two frames read as a
+	# walk rather than as a shiver.
+	var leg: float = stride * 0.55
+	var arm: float = -stride * 0.35
+	# Airborne the legs leave the ground pose: tucked while rising, reaching
+	# while falling. This is the P3/P4 distinction in CHARACTER-SHEET section 5,
+	# and without it the two air states are the same picture.
+	# Positive `tuck` LIFTS. y is negative upward, so a lift subtracts from y --
+	# the first version added it, which pushed the boot to y +0.8, below the
+	# feet line and into the floor, and squeezed the shin to 0.6 px tall. The
+	# jump frame read as a glitch rather than as a tuck.
+	var tuck: float = 0.0
+	if not grounded:
+		tuck = 2.6 if velocity.y < 0.0 else -0.8
+	var out: Array = []
+
+	# --- far side, in shade --------------------------------------------------
+	# Far arm: upper, forearm, gauntlet. Three parts rather than one bar, so the
+	# elbow is a value break instead of a guess.
+	_pr(out, shade, true, -8.0 + arm, -17.6, 3.0, 5.2)
+	_pr(out, shade, true, -7.8 + arm * 1.7, -12.9, 2.8, 4.2)
+	_pr(out, steel, true, -8.0 + arm * 1.7, -9.0, 3.0, 2.0)
+	# Far leg: thigh, shin, boot.
+	_pr(out, shade, true, -4.8 - leg * 0.5, -10.6, 4.0, 5.8)
+	# The shin and boot KEEP their heights and move together: a bent knee, with
+	# the shin overlapping the thigh, rather than a shin that shrinks to
+	# nothing.
+	_pr(out, shade, true, -4.6 - leg, -5.0 - tuck, 3.6, 3.2)
+	_pr(out, steel, true, -5.0 - leg, -1.8 - tuck, 4.4, 1.8)
+	# Far shoulder plate.
+	_pp(out, shade, true, PackedVector2Array([
+		Vector2(-4.0, -19.6), Vector2(-8.4, -17.2), Vector2(-4.0, -15.0)]))
+
+	# --- torso --------------------------------------------------------------
+	# Chest wide, abdomen narrow and darker. The taper is what makes the torso a
+	# torso instead of a block with a head on it, and it is interior: no rim.
+	_pr(out, plate, true, -4.2, -19.6, 8.4, 5.6)
+	_pp(out, plate, true, PackedVector2Array([
+		Vector2(4.2, -18.6), Vector2(7.4, -15.0), Vector2(4.2, -12.0)]))
+	_pr(out, shade, false, -3.0, -14.0, 6.0, 2.8)
+	_pr(out, scarf, false, -3.4, -11.6, 7.0, 1.8)
+
+	# --- near leg, in plate -------------------------------------------------
+	_pr(out, plate, true, 0.8 + leg * 0.5, -10.6, 4.0, 5.8)
+	# The near leg lifts a third as much, so the air pose is a scissor and not a
+	# crouch.
+	_pr(out, plate, true, 1.0 + leg, -5.0 - tuck * 0.35, 3.6, 3.2)
+	_pr(out, steel, true, 0.6 + leg, -1.8 - tuck * 0.35, 4.4, 1.8)
+
+	# --- neck and head ------------------------------------------------------
+	# A 2 px neck, interior. It is the whole reason the head reads as a head:
+	# without it the helm is simply the top of the torso.
+	_pr(out, shade, false, -2.0, -20.8, 4.0, 2.0)
+	_pr(out, plate, true, -4.0, -28.0, 8.4, 7.2)
+	_pp(out, shade, true, PackedVector2Array([
+		Vector2(-4.0, -28.0), Vector2(-8.8, -25.2), Vector2(-4.0, -23.2)]))
+	_pr(out, shade, false, -4.0, -21.4, 8.4, 1.4)
+	_pr(out, visor, false, -1.4, -26.0, 5.6, 2.0)
+	_pr(out, glint, false, 3.0, -26.0, 1.4, 2.0)
+
+	# --- near shoulder and near arm -----------------------------------------
+	_pp(out, plate, true, PackedVector2Array([
+		Vector2(4.2, -19.6), Vector2(8.4, -17.2), Vector2(4.2, -15.0)]))
+	if phase == 0:
+		_pr(out, plate, true, 5.0 + arm, -17.6, 3.0, 5.2)
+		_pr(out, plate, true, 5.0 + arm * 1.7, -12.9, 2.8, 4.2)
+		_pr(out, steel, true, 5.0 + arm * 1.7, -9.0, 3.0, 2.0)
+	else:
+		# Mid-swing the near arm is drawn ALONG the blade, from the shoulder to
+		# the hand that holds it. ATTACK_PIVOT is where the blade starts, so the
+		# hand goes there and the forearm reaches past it: the arm and the blade
+		# come from the same two numbers and cannot disagree about which way the
+		# character is swinging.
+		var dir := Vector2.from_angle(attack_angle())
+		_pp(out, plate, true, _bar(Vector2(3.0, -17.6), ATTACK_PIVOT + dir * 4.5, 1.8))
+		_pp(out, steel, true, _bar(ATTACK_PIVOT + dir * 3.0, ATTACK_PIVOT + dir * 5.6, 1.6))
+	return out
+
+func _pr(out: Array, c: Color, rim: bool, x: float, y: float, w: float, h: float) -> void:
+	out.append([0, c, rim, x, y, w, h])
+
+func _pp(out: Array, c: Color, rim: bool, pts: PackedVector2Array) -> void:
+	out.append([1, c, rim, pts])
 
 func _draw() -> void:
 	# Original geometric art drawn with Godot vector calls — nothing imported,
@@ -306,6 +433,13 @@ func _draw() -> void:
 	var trail: float = 12.0 if grounded else 15.0
 	var phase := attack_phase()
 
+	# Revision 1.4 rebuilds the body as a PARTS LIST instead of a hand-ordered
+	# sequence of draw calls, for one reason: the rim pass and the body are now
+	# generated from the same array, so a part can never be painted without its
+	# rim or rimmed without being painted. The old code duplicated eight shapes
+	# in two places and nothing stopped them drifting.
+	var parts: Array = _body_parts(stride, grounded, phase)
+
 	# Rim pass (CONCEPT revision 1.3). On the cream backdrop the body read at
 	# 10.03:1 and the dark `shade` shapes did the separating. Against a dungeon
 	# wall the body is 1.60:1 and `shade` is 1.14:1, so the dark shading now
@@ -314,14 +448,18 @@ func _draw() -> void:
 	# survives. The colour is steel_edge, already one of the eight -- 7.31:1
 	# against the wall and 4.57:1 against the plate, so it reads against the
 	# background AND against the body it outlines.
-	_mrect_o(-5.0, -9.0, 4.0, 9.0 + stride)
-	_mrect_o(1.0, -9.0, 4.0, 9.0 - stride)
-	_mrect_o(-5.0, -20.0, 10.0, 11.0)
-	_mrect_o(-5.0, -27.0, 10.0, 8.0)
-	_mpoly_o(PackedVector2Array([Vector2(5.0, -19.0), Vector2(8.0, -15.0), Vector2(5.0, -11.0)]))
-	_mpoly_o(PackedVector2Array([Vector2(-5.0, -20.0), Vector2(-9.0, -18.0), Vector2(-5.0, -15.0)]))
-	_mpoly_o(PackedVector2Array([Vector2(5.0, -20.0), Vector2(9.0, -18.0), Vector2(5.0, -15.0)]))
-	_mpoly_o(PackedVector2Array([Vector2(-5.0, -27.0), Vector2(-9.0, -24.0), Vector2(-5.0, -23.0)]))
+	# Only parts flagged as silhouette-forming are rimmed. Rimming everything
+	# put a light edge around the visor, the belt and the abdomen as well, and
+	# on a 3 px limb a 1 px halo on each side leaves 1 px of armour: the figure
+	# came out looking like grey pipework. Interior detail is separated by
+	# VALUE instead -- see _body_parts.
+	for part in parts:
+		if not part[2]:
+			continue
+		if part[0] == 0:
+			_mrect_o(part[3], part[4], part[5], part[6])
+		else:
+			_mpoly_o(part[3])
 
 	if phase == 0:
 		# Sheathed: drawn first so the body occludes its middle and only the
@@ -347,33 +485,11 @@ func _draw() -> void:
 		Vector2(-trail - 4.0, -20.0 + flutter * 1.5),
 	]), scarf_tip)
 
-	# Legs: longer than the starter's stubs. Stride keeps the starter's walk tell.
-	_mrect(-5.0, -9.0, 4.0, 9.0 + stride, shade)
-	_mrect(1.0, -9.0, 4.0, 9.0 - stride, shade)
-
-	# Slim torso with a forward chest wedge for the lean, purple sash at the belt.
-	_mrect(-5.0, -20.0, 10.0, 11.0, plate)
-	_mpoly(PackedVector2Array([
-		Vector2(5.0, -19.0), Vector2(8.0, -15.0), Vector2(5.0, -11.0),
-	]), plate)
-	_mrect(-5.0, -12.0, 10.0, 2.0, scarf)
-
-	# Shoulder plates break the outline right at the collider edge.
-	_mpoly(PackedVector2Array([
-		Vector2(-5.0, -20.0), Vector2(-9.0, -18.0), Vector2(-5.0, -15.0),
-	]), shade)
-	_mpoly(PackedVector2Array([
-		Vector2(5.0, -20.0), Vector2(9.0, -18.0), Vector2(5.0, -15.0),
-	]), plate)
-
-	# Helm, back-swept crest, and the visor slit. The slit sits forward of
-	# centre so facing is readable from the head alone.
-	_mrect(-5.0, -27.0, 10.0, 8.0, plate)
-	_mpoly(PackedVector2Array([
-		Vector2(-5.0, -27.0), Vector2(-9.0, -24.0), Vector2(-5.0, -23.0),
-	]), shade)
-	_mrect(-2.0, -25.0, 6.0, 2.0, visor)
-	_mrect(3.0, -25.0, 2.0, 2.0, glint)
+	for part in parts:
+		if part[0] == 0:
+			_mrect(part[3], part[4], part[5], part[6], part[1])
+		else:
+			_mpoly(part[3], part[1])
 
 	if phase != 0:
 		# Swung: drawn over the body, from the same pivot/angle/reach the
