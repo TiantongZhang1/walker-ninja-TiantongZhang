@@ -510,3 +510,101 @@ the film does not claim more than the suite delivers.
 
 C2 (sprite swap), C3 (death pose), C5 (sound effects), C7 (replace the
 placeholder death assets).
+
+
+---
+
+# Revision 2.4.0 — 2026-10-05 (later) — C3 and C5 are in the build
+
+Revisions 2.0.0–2.3.0 are unchanged.
+
+## C3 — the death pose: **done**
+
+`player.death_pose`, set by the session on a fatal contact and cleared on
+respawn. `_body_parts()` early-returns `_prone_parts()` when it is set, and
+`_draw()` swaps the standing scarf and the sheathed sword for a scarf settled
+over the legs and a blade that has skidded on past the body.
+
+The pose is the storyboard's: `design/storyboard/panel-06-death.jpg` — flat,
+face down, head pointing the way the character was travelling, limbs
+collapsed. **It is the only pose in the game wider than it is tall** — roughly
+26 × 9 against the standing figure's 18 × 28 — which is the whole reason it
+works at this size. Nothing else can be mistaken for it without reading a
+single pixel of detail.
+
+**One inversion does the work.** The visor is a band along the **bottom** edge
+of the helm. That single move is what says "face down" rather than "asleep on
+its side".
+
+**Keyed off `session.state`, not off movement**, which revision 2.0.0's C3
+predicted and this confirms: on death the body is disabled and `is_on_floor()`
+keeps whatever it last returned, so a movement-derived pose would differ
+depending on *how* the player died. Asserted across all three causes.
+
+The collider is not consulted. The body is disabled for the 0.55 s this is on
+screen, so the drawing lies outside the 18 × 28 box exactly as the scarf and
+the sword already do.
+
+## C5 — four sound effects: **wired, with placeholder audio**
+
+**The audio is not generated and does not satisfy the assignment's "generate
+sound" requirement.** It is synthesised by arithmetic in
+`scripts/synth_placeholder_sfx.py`. `ASSET-LOG.md` says so in a block quote at
+the top of its sound-effects section, and `godot/assets/README.md` lists each
+file with a "Generated?" column that reads **no**.
+
+**Why wire against placeholders instead of waiting.** `CONCEPT.md` revision 1.1
+predicted that a 124 bpm bed would mask the trap warning, and C4 turned that
+into the one check in this project that cannot be automated. **It cannot be run
+against silence either.** With placeholders in, it can be run today and re-run
+against the generated versions, which makes the two comparable rather than
+sequential. The wiring, the triggers and the assertions do not change when the
+files are replaced.
+
+A dedicated `Sfx` bus (index 2) with per-sound trim: jump −7 dB, slash −5 dB,
+**trap 0 dB**, death −2 dB. The trap is loudest deliberately — it is the only
+one of the four the player is supposed to *act* on.
+
+### Where each one fires, and why there
+
+| | trigger | why not somewhere else |
+|---|---|---|
+| jump | `player.jumps` increments | read off the player's own counter rather than fired from inside `player.gd`, so the player stays pure gameplay and the test can check against the same number |
+| slash | `player.attacks` increments | same |
+| **trap** | the tick `trap_risen[i]` leaves 0 | **the trigger crossing, not the damage.** Hung off the contact it is a death sound arriving after the information is useless — and it would still pass a check that only asked whether a sound played when the trap killed you |
+| death | the fatal contact in `resolve_contacts()` | the same single path spikes, falls and enemies already share |
+
+### The timing is measured, not asserted in prose
+
+`session.sfx_log` records `{id, tick}` for every effect and is cleared per
+attempt, so it is bounded and a test can read it without subtracting a previous
+life's events. The trap check walks the player from x 1020 into trap 0 and
+reads the log:
+
+| | |
+|---|---|
+| warning fires at tick | **24**, with the player at x **1064.6** (trigger_x = 1064) |
+| death at tick | **59** |
+| **warning lead** | **35 ticks ≈ 0.58 s** |
+| rise the warning has to beat | 15 ticks |
+
+That is the fairness argument of the whole slice, as a number, in the suite.
+
+## Verified
+
+| check | result |
+|---|---|
+| `tests/test_game.gd` | **95 checks / 0 failures** — eight new |
+| `death-pose-is-the-same-whatever-killed-you` | PASS across spike, fall and enemy |
+| `sfx-trap-fires-on-the-trigger-not-the-contact` | PASS, lead 35 ticks |
+| `scripts/check_trap_visibility.py` | PASS |
+| `scripts/check_enemy_visibility.py` | PASS |
+| captures | game 7 frames, character 11 frames, enemies 3 frames, contact sheet rebuilt |
+
+## Still open from 2.0.0
+
+- **C2** — the generated sprite swap. Blocked on art generation.
+- **C7** — the placeholder death reaction assets, and now also the four
+  placeholder effects. All of it is a file-for-file replacement.
+- The **human listen**: the seam, the retry behaviour, and the masking check
+  that C5 exists to make runnable.

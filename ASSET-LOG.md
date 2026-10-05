@@ -187,12 +187,75 @@ free daily credits do not carry over.
 
 ## Sound effects
 
-| Asset ID | Model + version | Where run | Licence / terms | Prompt + settings | Outcome | Edits | Where used |
-|---|---|---|---|---|---|---|---|
-| `SFX-JUMP` | | | | | | | |
-| `SFX-SLASH` | | | | | | | |
-| `SFX-TRAP` | | | | | | | |
-| `SFX-DEATH` | | | | | | | |
+> **These four are NOT generated assets, and they do not satisfy the
+> assignment's "generate sound" requirement.** They are synthesised by
+> arithmetic in `scripts/synth_placeholder_sfx.py` -- closed-form waveforms
+> plus one seeded noise array -- and they are placeholders in exactly the sense
+> `godot/assets/README.md` already uses for the death reaction. The generated
+> versions replace them file-for-file; the wiring, the triggers and the
+> assertions below do not change when they do.
+
+**Why they exist at all, rather than waiting for the generator.** `CONCEPT.md`
+revision 1.1 made a prediction and `CHANGE-BRIEF.md` C4 turned it into a check:
+*the trap's 15-frame warning is masked by a 124 bpm bed with pulsing bass, so
+the hazard reads as unfair with sound on even though it is fair with sound
+off.* That check is perceptual, it needs a human ear, and **it cannot be run
+against silence.** With these in place it can be run today and re-run against
+the generated versions, which makes the two comparable instead of sequential.
+
+| Asset ID | Source | Length | Design brief it answers | Where it fires |
+|---|---|---|---|---|
+| `SFX-JUMP` | `synth_placeholder_sfx.py`, seed 727001 | 0.110 s | rising pitch = leaving the ground | `player.jumps` increments |
+| `SFX-SLASH` | same | 0.140 s | band-passed air with a falling centre; the blade is already a visible arc, so the sound carries direction | `player.attacks` increments |
+| `SFX-TRAP` | same | 0.260 s | **rising inharmonic metallic sweep** -- see below | the tick `trap_risen[i]` leaves 0 |
+| `SFX-DEATH` | same | 0.450 s | low thud, burst, descending minor third; the only long one, because the retry is 0.55 s | the fatal contact |
+
+### `SFX-TRAP` is the one with an argument behind it
+
+Revision 1.1 did not just predict the masking, it specified the answer in
+advance: the warning wants **a moving pitch, which percussion does not have**,
+so it is told apart by motion rather than by level. So:
+
+- partials at **inharmonic ratios 1, 1.41, 1.93, 2.57** -- struck metal, not a
+  musical note the score could swallow
+- the fundamental sweeps **420 Hz -> 2100 Hz**
+- amplitude **rises** across the sound rather than decaying: the hazard is still
+  arriving, so the warning should not be fading
+- **0.260 s = 15.6 frames at 60 Hz** -- the sound lasts the warning
+
+### Levels
+
+Per-sound trim on a dedicated `Sfx` bus: jump −7 dB, slash −5 dB, **trap
+0 dB**, death −2 dB. The trap is loudest deliberately: it is the only one of
+the four the player is supposed to *act* on.
+
+### Reproducibility, and a claim I had to walk back
+
+Re-running the script produces **byte-identical WAVs**. It does **not** produce
+byte-identical OGGs, and the script's first docstring said it did. An Ogg page
+header carries a stream serial number that ffmpeg picks at random and exposes
+no flag to pin.
+
+What is identical is the audio: decoding two runs' OGGs to raw PCM gives a
+byte-for-byte match on all four. That was **checked, not assumed** -- the exact
+commands are in the script's docstring. So the reproducible artefact is the
+waveform, and an OGG's hash fingerprints one particular encode rather than the
+sound.
+
+| file | SHA-256 of this encode |
+|---|---|
+| `godot/assets/sfx-jump.ogg` | `fb8988a0ad17181289c1d4eaeeabdfcadece9bcf689cd26fbaa02fabf76ac4e0` |
+| `godot/assets/sfx-slash.ogg` | `48133c472fd2120b1028c4c5597d73dd38739ad0ca8e5d627db07e84e3fa919c` |
+| `godot/assets/sfx-trap.ogg` | `06d6218290628e4061fdbf77256f9814ff6232d6d121d4cf6c1663409399697f` |
+| `godot/assets/sfx-death.ogg` | `37ba2eb0fe913792e1a902053cfeb11e65c6292ee03798c33d59f064dae46f73` |
+
+### What is still owed on the generated versions
+
+A generator that **records a seed**, which is the requirement `CHARACTER-SHEET.md`
+section 8 has carried since the Suno music turned out to be unreproducible, and
+which the correction dated 2026-10-04 made binding rather than preferred. The
+prompts go in this table when they are run, verbatim as the tool records them --
+the same discipline the music section had to be rebuilt to follow.
 
 ## Art
 

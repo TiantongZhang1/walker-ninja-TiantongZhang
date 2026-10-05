@@ -59,6 +59,14 @@ func fresh() -> void:
 	game.player.test_control = true
 	await steps(3)
 
+## How many times `id` fired during the current attempt.
+func _sfx_count(g, id: String) -> int:
+	var n := 0
+	for e in g.sfx_log:
+		if e["id"] == id:
+			n += 1
+	return n
+
 func run() -> void:
 	await fresh()
 	check("launch-grounded", game.player.is_on_floor() and game.state == Game.State.PLAYING, {"position": str(game.player.position), "engine": Engine.get_version_info().string})
@@ -729,6 +737,104 @@ func run() -> void:
 	game.resolve_contacts(false, true)
 	await steps(2)
 	check("music-stops-at-the-finish", game.state == Game.State.COMPLETE and not game.music.playing, {"state":game.state, "playing":game.music.playing, "pos_at_pause_unused":pos_paused})
+
+	# --- C3: the death pose (CHANGE-BRIEF revision 2.4.0) --------------------
+	# Keyed off the session state, so it must be identical however the player
+	# died. Three causes, one pose.
+	var pose_states: Array = []
+	for cause in ["spike", "fall", "enemy"]:
+		await fresh()
+		if cause == "spike":
+			game.player.position = Vector2(275, 320)
+			game.player.test_axis = 1.0
+		elif cause == "fall":
+			game.player.position = Vector2(470, 300)
+			game.player.test_axis = 0.0
+		else:
+			game.player.position = Vector2(game.enemy_x[1] - 60.0, 320)
+			game.player.test_axis = 1.0
+		for i in range(240):
+			await steps(1)
+			if game.state == Game.State.DYING:
+				break
+		pose_states.append({"cause": cause, "state": game.state, "pose": game.player.death_pose})
+	var all_prone: bool = true
+	for e in pose_states:
+		if e["state"] != Game.State.DYING or not e["pose"]:
+			all_prone = false
+	check("death-pose-is-the-same-whatever-killed-you", all_prone, {"causes": pose_states})
+	# And it must clear, or the character stays face down for the rest of the run.
+	for i in range(80):
+		await steps(1)
+		if game.state == Game.State.PLAYING:
+			break
+	check("death-pose-clears-on-respawn", game.state == Game.State.PLAYING and not game.player.death_pose, {"state": game.state, "pose": game.player.death_pose})
+
+	# --- C5: the four sound effects -----------------------------------------
+	await fresh()
+	var lens := {"jump": 0.110, "slash": 0.140, "trap": 0.260, "death": 0.450}
+	var loaded: bool = true
+	var observed := {}
+	for id in lens:
+		var pl = game.sfx.get(id)
+		if pl == null or pl.stream == null or absf(pl.stream.get_length() - lens[id]) > 0.02:
+			loaded = false
+		observed[id] = pl.stream.get_length() if (pl and pl.stream) else -1.0
+	check("sfx-all-four-are-loaded-at-their-synthesised-lengths", loaded, observed)
+	# Their own bus, separate from the music's, so the masking balance is one
+	# slider rather than four.
+	var own_bus: bool = true
+	for id in lens:
+		if game.sfx[id].bus != Game.SFX_BUS:
+			own_bus = false
+	check("sfx-is-on-its-own-bus", own_bus and AudioServer.get_bus_index(Game.SFX_BUS) > 0 and Game.SFX_BUS != Game.MUSIC_BUS, {"bus": Game.SFX_BUS, "index": AudioServer.get_bus_index(Game.SFX_BUS), "music_bus": Game.MUSIC_BUS})
+
+	# One jump, one jump sound. Read off the player's own counter.
+	await fresh()
+	game.sfx_log.clear()
+	game.player.test_jump_pressed = true
+	await steps(1)
+	game.player.test_jump_pressed = false
+	await steps(6)
+	check("sfx-jump-fires-once-per-jump", _sfx_count(game, "jump") == 1 and game.player.jumps == 1, {"jumps": game.player.jumps, "sounds": _sfx_count(game, "jump"), "log": game.sfx_log})
+
+	await fresh()
+	game.sfx_log.clear()
+	game.player.test_attack_pressed = true
+	await steps(1)
+	game.player.test_attack_pressed = false
+	await steps(6)
+	check("sfx-slash-fires-on-the-swing", _sfx_count(game, "slash") == 1 and game.player.attacks == 1, {"attacks": game.player.attacks, "sounds": _sfx_count(game, "slash")})
+
+	# THE one that matters. The warning has to fire on the trigger crossing, so
+	# the player can act on it; fired on the damage instead it is a death sound
+	# arriving after the information is useless -- and it would still pass a
+	# check that only asked whether a sound played when the trap killed you.
+	await fresh()
+	game.player.position = Vector2(1020, 320)
+	game.player.test_axis = 0.0
+	for i in range(20):
+		await steps(1)
+		if game.player.is_on_floor():
+			break
+	game.sfx_log.clear()
+	game.player.test_axis = 1.0
+	var trap_tick: int = -1
+	var death_tick: int = -1
+	var trap_x: float = -1.0
+	for i in range(240):
+		await steps(1)
+		for e in game.sfx_log:
+			if e["id"] == "trap" and trap_tick < 0:
+				trap_tick = e["tick"]
+				trap_x = game.player.position.x
+			if e["id"] == "death" and death_tick < 0:
+				death_tick = e["tick"]
+		if game.state == Game.State.DYING:
+			break
+	var lead: int = death_tick - trap_tick
+	check("sfx-trap-fires-on-the-trigger-not-the-contact", trap_tick > 0 and death_tick > trap_tick and lead >= Game.TRAP_RISE_TICKS, {"trap_tick": trap_tick, "death_tick": death_tick, "lead_ticks": lead, "rise_ticks": Game.TRAP_RISE_TICKS, "trigger_x": game.level.traps[0].trigger_x, "player_x_at_warning": trap_x})
+	check("sfx-death-fires-on-the-fatal-contact", _sfx_count(game, "death") == 1 and game.state == Game.State.DYING, {"deaths": game.deaths, "sounds": _sfx_count(game, "death"), "state": game.state})
 
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)

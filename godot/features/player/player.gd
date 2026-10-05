@@ -31,6 +31,12 @@ var attack_dir: float = 1.0
 var attacks: int = 0
 var attack_hitbox: Area2D
 var attack_shape: CollisionShape2D
+## C3 (CHANGE-BRIEF revision 2.4.0). Set by the session on a fatal contact and
+## cleared on respawn. It is keyed off the SESSION state rather than off
+## movement, because on death the body is disabled and `is_on_floor()` keeps
+## whatever it last returned -- so a pose derived from movement would differ
+## depending on HOW the player died.
+var death_pose: bool = false
 var test_control: bool = false
 var test_axis: float = 0.0
 var test_jump_pressed: bool = false
@@ -337,6 +343,8 @@ func _body_parts(stride: float, grounded: bool, phase: int) -> Array:
 	if not grounded:
 		tuck = 2.6 if velocity.y < 0.0 else -0.8
 	var out: Array = []
+	if death_pose:
+		return _prone_parts()
 
 	# --- far side, in shade --------------------------------------------------
 	# Far arm: upper, forearm, gauntlet. Three parts rather than one bar, so the
@@ -400,6 +408,51 @@ func _body_parts(stride: float, grounded: bool, phase: int) -> Array:
 		_pp(out, steel, true, _bar(ATTACK_PIVOT + dir * 3.0, ATTACK_PIVOT + dir * 5.6, 1.6))
 	return out
 
+## P8, the death pose. Specified by the storyboard sketch
+## (design/storyboard/panel-06-death.jpg): flat on the ground, face down, head
+## pointing the way the character was travelling, limbs collapsed.
+##
+## It is the only pose in the game that is WIDER THAN IT IS TALL -- roughly
+## 26 x 9 against the standing figure's 18 x 28 -- which is the whole reason it
+## works at this size. No other state can be mistaken for it even at 5 mm,
+## without reading a single pixel of detail.
+##
+## The collider does not change and is not consulted: the body is disabled for
+## the 0.55 s this is on screen, so the drawing is free to lie outside the
+## 18 x 28 box exactly as the scarf and the sword already do.
+func _prone_parts() -> Array:
+	var plate := Color("1f3a6e")
+	var shade := Color("16233d")
+	var visor := Color("7fe3ff")
+	var glint := Color("d8f7ff")
+	var scarf := Color("8a5cf0")
+	var steel := Color("4a5468")
+	var out: Array = []
+	# Far leg and boot, trailing behind.
+	_pr(out, shade, true, -13.0, -6.0, 7.0, 3.0)
+	_pr(out, steel, true, -16.0, -6.2, 3.5, 2.6)
+	# Near leg and boot, lower: the legs have fallen apart rather than stacked.
+	_pr(out, plate, true, -12.5, -3.0, 7.0, 3.0)
+	_pr(out, steel, true, -15.5, -3.0, 3.5, 2.6)
+	# Torso lying on its front, with the darker abdomen and the sash across it.
+	_pr(out, plate, true, -7.0, -7.0, 9.0, 7.0)
+	_pr(out, shade, false, -6.0, -4.0, 4.5, 3.0)
+	_pr(out, scarf, false, -6.4, -6.2, 1.4, 5.4)
+	# Near arm folded back under the chest.
+	_pr(out, shade, true, -5.0, -2.2, 5.0, 2.2)
+	# Far arm thrown forward along the floor, gauntlet open.
+	_pr(out, plate, true, 1.0, -2.4, 7.0, 2.4)
+	_pr(out, steel, true, 7.0, -2.6, 3.0, 2.6)
+	# Head. The visor is a band along the BOTTOM edge, because the face is in
+	# the floor; that single inversion is what says "face down" rather than
+	# "asleep on its side".
+	_pr(out, plate, true, 2.0, -7.2, 8.0, 5.4)
+	_pp(out, shade, true, PackedVector2Array([
+		Vector2(2.0, -7.2), Vector2(-1.6, -8.6), Vector2(2.0, -5.2)]))
+	_pr(out, visor, false, 4.6, -3.4, 5.0, 1.4)
+	_pr(out, glint, false, 8.4, -3.4, 1.2, 1.4)
+	return out
+
 func _pr(out: Array, c: Color, rim: bool, x: float, y: float, w: float, h: float) -> void:
 	out.append([0, c, rim, x, y, w, h])
 
@@ -461,7 +514,20 @@ func _draw() -> void:
 		else:
 			_mpoly_o(part[3])
 
-	if phase == 0:
+	if death_pose:
+		# The blade has skidded on past the body, and the scarf has settled over
+		# the legs. Both are drawn flat: nothing about this pose should still be
+		# standing up.
+		_mpoly(_bar(Vector2(13.0, -1.1), Vector2(23.0, -0.7), 1.3), steel)
+		_mpoly(_bar(Vector2(14.0, -1.1), Vector2(23.0, -0.7), 0.5), steel_edge)
+		_mpoly(PackedVector2Array([
+			Vector2(-6.0, -6.4), Vector2(-6.0, -3.4),
+			Vector2(-17.0, -5.0), Vector2(-16.0, -7.4),
+		]), scarf)
+		_mpoly(PackedVector2Array([
+			Vector2(-17.0, -5.0), Vector2(-16.0, -7.4), Vector2(-21.0, -6.6),
+		]), scarf_tip)
+	elif phase == 0:
 		# Sheathed: drawn first so the body occludes its middle and only the
 		# grip and the scabbard tip protrude, which is what makes it read as
 		# carried rather than held.
@@ -475,15 +541,17 @@ func _draw() -> void:
 		_mpoly(_bar(hilt.lerp(guard, 0.35), hilt.lerp(guard, 0.65), 1.4), scarf_tip)
 		_mpoly(_bar(guard + perp * 2.9, guard - perp * 2.9, 0.9), steel_dark)
 
-	# Scarf next: over the blade's middle, under the body.
-	_mpoly(PackedVector2Array([
-		Vector2(-2.0, -22.0), Vector2(-2.0, -16.0),
-		Vector2(-trail + 2.0, -18.0 + flutter), Vector2(-trail, -23.0 + flutter),
-	]), scarf)
-	_mpoly(PackedVector2Array([
-		Vector2(-trail + 2.0, -18.0 + flutter), Vector2(-trail, -23.0 + flutter),
-		Vector2(-trail - 4.0, -20.0 + flutter * 1.5),
-	]), scarf_tip)
+	# Scarf next: over the blade's middle, under the body. Skipped when prone --
+	# that pose draws its own, lying down.
+	if not death_pose:
+		_mpoly(PackedVector2Array([
+			Vector2(-2.0, -22.0), Vector2(-2.0, -16.0),
+			Vector2(-trail + 2.0, -18.0 + flutter), Vector2(-trail, -23.0 + flutter),
+		]), scarf)
+		_mpoly(PackedVector2Array([
+			Vector2(-trail + 2.0, -18.0 + flutter), Vector2(-trail, -23.0 + flutter),
+			Vector2(-trail - 4.0, -20.0 + flutter * 1.5),
+		]), scarf_tip)
 
 	for part in parts:
 		if part[0] == 0:
@@ -491,7 +559,7 @@ func _draw() -> void:
 		else:
 			_mpoly(part[3], part[1])
 
-	if phase != 0:
+	if phase != 0 and not death_pose:
 		# Swung: drawn over the body, from the same pivot/angle/reach the
 		# hitbox uses. The arc wedge only appears once the swing is live, so
 		# the bright sweep marks exactly the ticks that can kill.

@@ -535,3 +535,90 @@ drawing in code, which is also why it could be iterated three times in an hour.
 
 **Traceability:** `CONCEPT.md` revision 1.4, `CHANGE-BRIEF.md` revision 2.3.0,
 `CHARACTER-SHEET.md` section 3c, `evidence/screens/char-contact-sheet.png`.
+
+---
+
+## 2026-10-05 (later) — a body on the floor, and four sounds I did not generate
+
+**Wanted:** both of the two things still blocking the slice — a death pose, and
+sound effects.
+
+**Got one of them properly and one of them honestly.**
+
+### The death pose
+
+Flat, face down, head the way it was going, as I drew it on sheet frame 7. The
+thing that surprised me is how little it took: **the whole pose rests on the
+visor being a band along the BOTTOM of the helm.** Put it on the side and the
+character is asleep. Put it underneath and it is face down in the floor. One
+inversion.
+
+The other half of why it works is that it is **the only pose in the game wider
+than it is tall** — about 26 × 9 against 18 × 28 standing. At the size this
+game draws at, that is worth more than any amount of detail, because you can
+tell it apart without reading a single pixel.
+
+### The sound effects, and what I am not going to pretend about them
+
+**I did not generate them.** They are synthesised by arithmetic in a script —
+closed-form waveforms and one seeded noise array. **They do not satisfy the
+assignment's "generate sound" requirement and nothing in this repository claims
+they do**: `ASSET-LOG.md` opens its sound section with that sentence and
+`godot/assets/README.md` has a "Generated?" column that reads *no* four times.
+
+**Why I did it anyway.** Revision 1.1 of CONCEPT made a prediction back on
+10-01 — that a 124 bpm bed with pulsing bass would drown the trap's 15-frame
+warning — and CHANGE-BRIEF turned it into the only check in this project that
+cannot be automated, because masking is perceptual. **And it cannot be run
+against silence.** So the choice was: wait for a generator and run the check
+once at the end, or put something audible in now and run the check twice, with
+the second run comparable to the first. The second is better and it is not
+close.
+
+The replacement is file-for-file. No trigger, no assertion, no level and no
+balance changes when the generated versions land.
+
+### The one sound that had a brief to answer
+
+`SFX-TRAP` is not a guess. Revision 1.1 did not only predict the masking, it
+specified the fix in advance: **a moving pitch, which percussion does not
+have**, so the warning is told apart by motion rather than by volume. So it is
+a rising sweep, 420 → 2100 Hz, with partials at inharmonic ratios so it reads
+as struck metal rather than as a note the score could swallow, and its
+amplitude **rises** instead of decaying, because the hazard is still arriving.
+0.260 s, which is 15.6 frames — the sound lasts exactly as long as the warning.
+
+Writing the prediction down four days ago is the only reason that sound has a
+design instead of a vibe.
+
+### The thing I am most pleased about is a number
+
+`sfx_log` records which effect fired on which tick. The trap check now reads:
+**warning at tick 24 with the player at x 1064.6, death at tick 59, lead 35
+ticks** against a 15-tick rise. The fairness argument of the whole slice —
+*you were told before it could kill you* — is in the suite as an integer
+instead of in a paragraph as a claim. That is the first audio assertion here
+that would catch a real design mistake rather than a missing file.
+
+### A claim I had to walk back within the hour
+
+The synthesis script's first docstring said the OGGs were byte-reproducible.
+They are not: an Ogg page header carries a stream serial number ffmpeg picks at
+random, with no flag to pin it. I checked instead of arguing — decoded both
+runs to raw PCM and compared — and all four match byte for byte. So the
+reproducible thing is the waveform and an OGG hash fingerprints one encode. The
+corrected wording and the exact commands are in the script.
+
+Small, but it is the same mistake as the download counter: a confident sentence
+about reproducibility that nobody had tested.
+
+**Human / Claude / model:** the death pose is my drawing, implemented by Claude.
+The sound-effect *design* for the trap is CONCEPT revision 1.1, which was my
+decision about the music and Claude's working-out of what it cost. The
+synthesis, the wiring, the eight tests and the documents are Claude's, and so
+is the decision to label the audio as not-generated rather than let it pass.
+Running an actual generator is mine and still outstanding.
+
+**Traceability:** `CHANGE-BRIEF.md` revision 2.4.0, `ASSET-LOG.md` sound-effects
+section, `scripts/synth_placeholder_sfx.py`, `godot/assets/README.md`,
+`evidence/screens/02-failure.png`.

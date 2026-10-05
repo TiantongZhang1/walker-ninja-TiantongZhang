@@ -37,6 +37,17 @@ var death_fx_remaining: float = 0.0
 const MUSIC_BUS := "Music"
 var music: AudioStreamPlayer
 var muted: bool = false
+# C5 (CHANGE-BRIEF revision 2.4.0). Four effects on their own bus, and a log of
+# WHEN each fired. The log is what makes the trap's timing assertable: the
+# assignment's fairness argument is that the warning arrives before the hazard
+# can kill, and "a sound played at some point during the death" would pass a
+# test while being useless to the player.
+const SFX_BUS := "Sfx"
+var sfx: Dictionary = {}
+var sfx_log: Array = []
+var frame_tick: int = 0
+var last_jumps: int = 0
+var last_attacks: int = 0
 var death_fx_total: float = 0.0
 var cat_texture: Texture2D
 
@@ -117,6 +128,25 @@ func _ready() -> void:
 		music_stream.loop = true
 		music.stream = music_stream
 	add_child(music)
+	# C5. A second bus, so the effects can be balanced against the music without
+	# touching either one's own level, and so the masking question from CONCEPT
+	# revision 1.1 is one slider rather than four.
+	if AudioServer.get_bus_index(SFX_BUS) < 0:
+		AudioServer.add_bus(2)
+		AudioServer.set_bus_name(2, SFX_BUS)
+	# Per-sound trim in dB. The trap is loudest on purpose: it is the only one
+	# of the four that has to be HEARD rather than merely noticed, because the
+	# player is supposed to act on it.
+	var sfx_files := {"jump": -7.0, "slash": -5.0, "trap": 0.0, "death": -2.0}
+	for id in sfx_files:
+		var pl := AudioStreamPlayer.new()
+		pl.name = "Sfx_" + str(id)
+		pl.bus = SFX_BUS
+		pl.volume_db = sfx_files[id]
+		pl.stream = AudioStreamOggVorbis.load_from_file(
+			ProjectSettings.globalize_path("res://assets/sfx-%s.ogg" % id))
+		add_child(pl)
+		sfx[id] = pl
 	var cat_image := Image.load_from_file(
 		ProjectSettings.globalize_path("res://assets/death-laugh-cat.png"))
 	cat_texture = ImageTexture.create_from_image(cat_image) if cat_image else null
@@ -221,6 +251,13 @@ func advance_traps() -> void:
 		if trap_risen[i] == 0 and player.position.x < trap_triggers[i]:
 			continue
 		if trap_risen[i] < TRAP_RISE_TICKS:
+			# C5. The warning fires on the tick the spike STARTS to rise -- the
+			# tick trap_risen leaves 0 -- not on the contact. Hung off the
+			# damage instead it would be a death sound arriving after the
+			# information is useless, and it would still pass a test that only
+			# asserted "a sound played when the trap killed me".
+			if trap_risen[i] == 0:
+				play_sfx("trap")
 			trap_risen[i] += 1
 			moved = true
 		trap_areas[i].position = trap_rects[i].position + Vector2(0.0, _trap_rise_offset(i))
@@ -488,6 +525,15 @@ func stop_death_fx() -> void:
 		laugh.stop()
 		laugh.stream_paused = false
 
+## Fire one effect and record the tick it fired on. The log is cleared per
+## attempt, so it is bounded and so a test can read it without subtracting a
+## previous life's events.
+func play_sfx(id: String) -> void:
+	sfx_log.append({"id": id, "tick": frame_tick})
+	var pl = sfx.get(id)
+	if pl and pl.stream:
+		pl.play()
+
 func stop_music() -> void:
 	if music:
 		music.stop()
@@ -518,7 +564,14 @@ func restart_attempt() -> void:
 	reset_traps()
 	reset_enemies()
 	player.reset_at(Vector2(level.spawn[0], level.spawn[1]))
+	player.death_pose = false
 	player.enabled = true
+	sfx_log.clear()
+	# Synced AFTER reset_at, so whether reset_at zeroes these counters or leaves
+	# them running makes no difference here -- a question I would otherwise have
+	# had to answer correctly twice.
+	last_jumps = player.jumps
+	last_attacks = player.attacks
 	camera.position = Vector2(320, 180)
 	# C4. restart_attempt() runs on EVERY death, so this guard is the whole
 	# point of the line: a loop that jumps back to bar 1 every 0.55 s is worse
@@ -561,6 +614,11 @@ func resolve_contacts(fatal: bool, finished: bool) -> void:
 		retry_remaining = 0.55
 		player.enabled = false
 		player.velocity = Vector2.ZERO
+		# C3. Keyed off the session state, not off movement: a disabled body
+		# keeps whatever `is_on_floor()` last returned, so a movement-derived
+		# pose would differ depending on how the player died.
+		player.death_pose = true
+		play_sfx("death")
 		# One reaction per death: the laugh restarts from the top and the
 		# overlay lives exactly as long as the laugh. The 0.55 s retry is
 		# unchanged, so the overlay outlasts the respawn on purpose.
@@ -576,6 +634,7 @@ func resolve_contacts(fatal: bool, finished: bool) -> void:
 		player.velocity = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
+	frame_tick += 1
 	if death_fx_remaining > 0.0 and state != State.PAUSED:
 		death_fx_remaining = maxf(0.0, death_fx_remaining - delta)
 	if state == State.DYING:
@@ -584,6 +643,16 @@ func _physics_process(delta: float) -> void:
 			restart_attempt()
 	elif state == State.PLAYING:
 		elapsed += delta
+		# C5. The jump and the slash are read off the player's own counters
+		# rather than fired from inside player.gd: the player stays pure
+		# gameplay, and a counter that moved is a fact the test can check
+		# against the same number.
+		if player.jumps != last_jumps:
+			last_jumps = player.jumps
+			play_sfx("jump")
+		if player.attacks != last_attacks:
+			last_attacks = player.attacks
+			play_sfx("slash")
 		advance_traps()
 		advance_enemies(delta)
 		resolve_slash()
