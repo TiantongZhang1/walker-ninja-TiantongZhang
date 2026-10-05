@@ -91,6 +91,9 @@ python scripts/check_trap_visibility.py     # spike drawn only while lethal
 python scripts/check_enemy_visibility.py    # enemies drawn at their live positions
 python scripts/build_char_sheet.py          # the 11-pose contact sheet
 python scripts/synth_placeholder_sfx.py     # re-synthesise the placeholder effects
+
+# once a pose has been generated -- see PROMPTS.md
+python scripts/import_pose.py design/character/CHAR-P1.png --id p1-idle
 ```
 
 Requires Python 3.12 with numpy, scipy and Pillow, plus `ffmpeg` on PATH.
@@ -112,6 +115,7 @@ revisions are added and earlier text is never rewritten.
 | **`TEST-REPORT.md`** | 110 checks with their observed values, the three defects they caught, and **what was not checked** |
 | **`SOURCES.md`** | provenance for every file, in four categories, with the one open rights question flagged |
 | **`FRICTIONAL.md`** | the honest log. What was wanted, what was decided, what went wrong, and for each entry what was mine and what was Claude's |
+| **`PROMPTS.md`** | everything still to be generated, in the order to generate it, as text to paste — derived from the two documents above it, never a decision of its own |
 
 ---
 
@@ -119,8 +123,8 @@ revisions are added and earlier text is never rewritten.
 
 ```
 CONCEPT.md  CHARACTER-SHEET.md  STORYBOARD.md  CHANGE-BRIEF.md
-ASSET-LOG.md  TEST-REPORT.md  SOURCES.md  FRICTIONAL.md  README.md
-run-game.bat
+ASSET-LOG.md  TEST-REPORT.md  SOURCES.md  FRICTIONAL.md  PROMPTS.md
+README.md  run-game.bat
 
 godot/
   project.godot              640x360, nearest texture filter, dark clear colour
@@ -147,6 +151,7 @@ evidence/
   keyboard-*.json
 
 scripts/
+  import_pose.py             a generated pose -> a checked 32x32 sprite
   synth_placeholder_sfx.py   the four placeholder effects, deterministically
   check_trap_visibility.py   pixel check: the spike is drawn only while lethal
   check_enemy_visibility.py  pixel check: enemies are drawn where they really are

@@ -12,6 +12,9 @@
 *.wav
 exports/
 builds/
+# Intermediates: synthesis WAVs, pose previews. Everything here is
+# reproducible by re-running the script that made it.
+build/
 
 # Local credentials/configuration
 .env
