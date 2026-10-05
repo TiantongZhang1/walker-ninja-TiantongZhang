@@ -229,6 +229,16 @@ Per-sound trim on a dedicated `Sfx` bus: jump −7 dB, slash −5 dB, **trap
 0 dB**, death −2 dB. The trap is loudest deliberately: it is the only one of
 the four the player is supposed to *act* on.
 
+**And the mix needed a limiter.** The music loop peaks at 0.702 and `SFX-TRAP`
+at 0.810 after its trim, so an aligned pair sums to **1.512** — half again over
+full scale. Turning the music down does not fix it (even −9 dB leaves 1.059),
+so the music carries **−3 dB** of headroom and an `AudioEffectHardLimiter` sits
+on Master at a −0.5 dB ceiling. On a 14-second test with the trap fired three
+times over the loop at the game's levels, the limiter touches **9 samples out
+of 672 000**. Found by building an offline mix to run the masking check — not
+by playing, where a few clipped samples inside a 0.26 s sweep go unnoticed.
+`CHANGE-BRIEF.md` revision 2.4.1.
+
 ### Reproducibility, and a claim I had to walk back
 
 Re-running the script produces **byte-identical WAVs**. It does **not** produce

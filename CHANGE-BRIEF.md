@@ -608,3 +608,56 @@ That is the fairness argument of the whole slice, as a number, in the suite.
   placeholder effects. All of it is a file-for-file replacement.
 - The **human listen**: the seam, the retry behaviour, and the masking check
   that C5 exists to make runnable.
+
+
+---
+
+# Revision 2.4.1 — 2026-10-05 (later still) — C14: two sources at 0 dB clip
+
+Found within the hour of shipping 2.4.0, by building an offline mix of
+`SFX-TRAP` over the music loop in order to run the masking check. **The render
+clipped at 1.172.**
+
+## The arithmetic
+
+| | peak |
+|---|---|
+| `music-loop.ogg` | 0.702 |
+| `sfx-trap.ogg` after its 0 dB trim | 0.810 |
+| sum, if those peaks land on the same sample | **1.512** |
+
+**Turning the music down does not fix it.** Even at −9 dB the bound is 1.059,
+and a −9 dB bed is not the "the score supplies the pressure" of `CONCEPT.md`
+revision 1.1. The trade on offer was *a quiet score* against *rare clipping*,
+and both answers are bad.
+
+## The fix
+
+An `AudioEffectHardLimiter` on **Master**, ceiling −0.5 dB, plus **−3 dB** on
+the music player for ordinary headroom. The limiter is a safety net for the
+rare alignment, not something squashing the mix:
+
+> On a 14-second test with `SFX-TRAP` fired three times over the loop at the
+> game's own levels, the limiter would touch **9 samples out of 672 000 —
+> 0.0013 %**.
+
+## Why this needed a limiter rather than a louder ear
+
+**Playing the game would not have shown it.** A handful of clipped samples
+inside a 0.26 s sweep is not something an ear reliably catches, and nothing in
+the suite was listening to the mix — every audio check until now was about
+*whether* and *when* a sound plays, never about what the sum of them looks
+like.
+
+So it is asserted now:
+`master-bus-has-a-limiter-because-two-sources-at-0db-clip` checks the effect is
+present, its ceiling is at or below 0 dB, and the music is at −3 dB. **96
+checks / 0 failures.**
+
+## The pattern worth naming
+
+This is the third thing in two days that was found by **rendering an artefact
+and measuring it** rather than by reading code or playing the game: the torch
+banding, the grey-pipework limbs, and now the clipping. In each case the source
+was correct and the output was wrong, and in each case the thing that caught it
+was building the output in order to check something else.

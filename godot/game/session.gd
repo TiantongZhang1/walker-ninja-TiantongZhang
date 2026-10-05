@@ -119,6 +119,8 @@ func _ready() -> void:
 	music = AudioStreamPlayer.new()
 	music.name = "Music"
 	music.bus = MUSIC_BUS
+	# -3 dB of headroom for the effects to land in. See the limiter note above.
+	music.volume_db = -3.0
 	var music_stream := AudioStreamOggVorbis.load_from_file(
 		ProjectSettings.globalize_path("res://assets/music-loop.ogg"))
 	if music_stream:
@@ -134,6 +136,29 @@ func _ready() -> void:
 	if AudioServer.get_bus_index(SFX_BUS) < 0:
 		AudioServer.add_bus(2)
 		AudioServer.set_bus_name(2, SFX_BUS)
+	# A limiter on MASTER, because two sources at 0 dB clip.
+	#
+	# Measured: the music loop peaks at 0.702 and SFX-TRAP at 0.810 after its
+	# trim, so if those peaks land on the same sample the sum is 1.512 -- half
+	# again over full scale. Pulling the music down does not fix it: even at
+	# -9 dB the bound is still 1.059, and a -9 dB bed is not the "music supplies
+	# the pressure" of CONCEPT revision 1.1. So the music keeps a modest -3 dB
+	# of headroom and the rare alignment is caught here instead of being traded
+	# for a quiet score.
+	#
+	# Found while building an offline mix of the trap over the music to run the
+	# masking check -- the render clipped at 1.172. Playing the game would not
+	# have shown it: a few clipped samples inside a 0.26 s sweep are not
+	# something an ear reliably catches, and nothing in the suite was listening.
+	var master := AudioServer.get_bus_index("Master")
+	var has_limiter := false
+	for i in range(AudioServer.get_bus_effect_count(master)):
+		if AudioServer.get_bus_effect(master, i) is AudioEffectHardLimiter:
+			has_limiter = true
+	if not has_limiter:
+		var lim := AudioEffectHardLimiter.new()
+		lim.ceiling_db = -0.5
+		AudioServer.add_bus_effect(master, lim)
 	# Per-sound trim in dB. The trap is loudest on purpose: it is the only one
 	# of the four that has to be HEARD rather than merely noticed, because the
 	# player is supposed to act on it.

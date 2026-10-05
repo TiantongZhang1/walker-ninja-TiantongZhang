@@ -836,6 +836,19 @@ func run() -> void:
 	check("sfx-trap-fires-on-the-trigger-not-the-contact", trap_tick > 0 and death_tick > trap_tick and lead >= Game.TRAP_RISE_TICKS, {"trap_tick": trap_tick, "death_tick": death_tick, "lead_ticks": lead, "rise_ticks": Game.TRAP_RISE_TICKS, "trigger_x": game.level.traps[0].trigger_x, "player_x_at_warning": trap_x})
 	check("sfx-death-fires-on-the-fatal-contact", _sfx_count(game, "death") == 1 and game.state == Game.State.DYING, {"deaths": game.deaths, "sounds": _sfx_count(game, "death"), "state": game.state})
 
+	# The master limiter. Two sources at 0 dB clip: the music loop peaks at
+	# 0.702 and SFX-TRAP at 0.810 after trim, so an aligned pair sums to 1.512.
+	# Asserted because it is invisible -- a few clipped samples inside a 0.26 s
+	# sweep are not something an ear catches, and the only reason this is here
+	# at all is that an offline mix of the two rendered at 1.172.
+	await fresh()
+	var master_bus: int = AudioServer.get_bus_index("Master")
+	var lim = null
+	for i in range(AudioServer.get_bus_effect_count(master_bus)):
+		if AudioServer.get_bus_effect(master_bus, i) is AudioEffectHardLimiter:
+			lim = AudioServer.get_bus_effect(master_bus, i)
+	check("master-bus-has-a-limiter-because-two-sources-at-0db-clip", lim != null and lim.ceiling_db <= 0.0 and absf(game.music.volume_db + 3.0) < 0.01, {"limiter": lim != null, "ceiling_db": lim.ceiling_db if lim else 999.0, "music_volume_db": game.music.volume_db, "worst_unlimited_sum": 1.512})
+
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)
 	var file := FileAccess.open(out + "/mechanics-" + str(Time.get_unix_time_from_system()) + ".json", FileAccess.WRITE)
