@@ -1,0 +1,957 @@
+{
+ "metadata": {
+  "title": "NewWalkerArtVideo_TiantongZhang",
+  "slug": "claude-liam-walker-ninja-gamedev",
+  "topic": "WALKER - GODOT GAMEDEV TEARDOWN",
+  "kind": "gamedev",
+  "playlist": "Brutalist",
+  "brand": "claude-liam",
+  "audience": "Course reviewers and Brutalist fellows reading a Godot asset-generation pass",
+  "register": "Teardown",
+  "engine": "kokoro",
+  "voice": "am_onyx",
+  "voice_kokoro": "am_onyx",
+  "palette": "claude",
+  "style_preset": "claude",
+  "ground": "#FAF9F5",
+  "aspect_ratio": "16:9",
+  "fit": "contain",
+  "captions": false,
+  "channel_title": "@NikBearBrown",
+  "channel": "@NikBearBrown",
+  "folderLabel": "@NikBearBrown",
+  "greeting": "Sawubona, Liam",
+  "greeting_note": "hello lexicon: Sawubona (Zulu), one word, the Liam persona budget. Wagwan is Bear's alone and is not used.",
+  "mode": "walker",
+  "teaching_contract": "code-then-result-v1",
+  "game": "godot"
+ },
+ "beats": [
+  {
+   "beat_id": "B00",
+   "act": "ASK",
+   "role_note": "WALKER BOOKEND 1/4 - ClaudeComposerAsk. The prompt begins 'Please use Walker to convert my game design document about ...' and describes THIS game. It is an illustrative RECONSTRUCTION and the narration says so out loud; no fabricated build receipts. IN-FOR-BEAR LAW: Liam is named in the first breath.",
+   "narration_text": "Sawubona - this is Liam, in for Bear. This one is a teardown, not a playthrough. The prompt on screen is a reconstruction, written to be illustrative, and it is not a transcript of anything. The game under it is real. It is a dungeon slice running in Godot four, and this time the character you are looking at was generated.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 21,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "type-on",
+    "show": [
+     {
+      "at": "0.03",
+      "event": "composer card fades in"
+     },
+     {
+      "at": "0.12",
+      "event": "greeting 'Sawubona, Liam' lands"
+     },
+     {
+      "at": "0.28",
+      "event": "the Walker prompt types on"
+     },
+     {
+      "at": "0.78",
+      "event": "RECONSTRUCTION label stays visible"
+     }
+    ],
+    "remotion": {
+     "pattern": "ClaudeComposerAsk",
+     "props": {
+      "greeting": "Sawubona, Liam",
+      "topic": "WALKER - GODOT GAMEDEV TEARDOWN",
+      "segment": "Walker Ninja, Generated",
+      "command": "Please use Walker to convert my game design document about a cyber-ninja in a torchlit dungeon - a second jump, one air dash, a sword on his back, spikes that pop out of the floor and enemies that patrol - into a playable Godot project, and then help me replace the code-drawn character with generated art without letting the blade and its hitbox come apart.",
+      "runningText": "reconstructed prompt - illustrative, not a transcript",
+      "output": [
+       "1 music loop + 9 character images, generated",
+       "8 poses bound to 8 states the engine already names",
+       "the blade stays in code, on purpose"
+      ],
+      "folderLabel": "@NikBearBrown",
+      "modelLabel": "Claude Opus 5",
+      "effortLabel": "High"
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B01",
+   "act": "RESULT",
+   "role_note": "WALKER BOOKEND 2/4 - hesitant-writer overview of what actually exists, with a MEANINGFUL single-word correction: the writer first types 'a generated game', strikes 'game' and writes 'character'. States the slice's limits rather than the assignment's ambitions.",
+   "narration_text": "Here is what actually changed. The level is the same three thousand and seventy-two pixels it was, and the eight movement values are the same eight. What is new is the art, the sound and the music. The character is nine generated images - one reference and eight poses, one per state the engine can already tell apart. The music is one generated loop. The four sound effects are not generated at all; they are synthesised by arithmetic, and I will say that again when you hear one. The dungeon is not generated either. Neither is his sword, and that is the most interesting decision in the project.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 38,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "hesitant-write",
+    "show": [
+     {
+      "at": "0.02",
+      "event": "heading framed, cards below"
+     },
+     {
+      "at": "0.22",
+      "event": "'a generated game' is written"
+     },
+     {
+      "at": "0.34",
+      "event": "'game' is struck through"
+     },
+     {
+      "at": "0.40",
+      "event": "'character' is written in its place"
+     },
+     {
+      "at": "0.66",
+      "event": "the placeholder line lands, greyed"
+     }
+    ],
+    "remotion": {
+     "pattern": "BrutalistHesitantWriter",
+     "props": {
+      "contextTitle": "What Assignment 2 generated",
+      "text": "Walker generated my game.\nHere is what it actually generated.",
+      "face": "serif",
+      "fontSize": 92,
+      "lineSpacing": 1.35,
+      "align": "center",
+      "triggerWords": "game",
+      "replacementWords": "character",
+      "mistakeRate": 0,
+      "hesitateWithin": 0,
+      "hesitateBetween": 6,
+      "charMs": 28,
+      "jitter": 15,
+      "contextItems": [
+       {
+        "label": "Generated",
+        "detail": "1 music loop, 16 bars - 9 character images, 1 reference + 8 poses"
+       },
+       {
+        "label": "Unchanged",
+        "detail": "3072 px level - the same 8 movement values - the 18x28 collider"
+       },
+       {
+        "label": "NOT generated",
+        "detail": "all 4 sound effects - the dungeon, enemies, traps - and the blade"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B02",
+   "act": "BUILD",
+   "role_note": "C1 CODE. pose_key() verbatim from player.gd. Paired with B03.",
+   "narration_text": "Eight generated sprites, one per state. The function that picks one returns a string, not a texture - and that is the whole reason the mapping can be tested. Death is checked first, because on death the body is disabled and is on floor keeps whatever it last returned; a pose read off movement would depend on how you died. Then the swing, then the dash, then the sign of vertical velocity for rising or falling, and idle is what is left.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 23,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "code-highlight",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the excerpt is already readable"
+     },
+     {
+      "at": "0.09",
+      "event": "line 119 highlights - death_pose"
+     },
+     {
+      "at": "0.30",
+      "event": "line 128 highlights - dash_ticks_left"
+     },
+     {
+      "at": "0.48",
+      "event": "line 130 highlights - not is_on_floor()"
+     },
+     {
+      "at": "0.65",
+      "event": "line 134 highlights - idle"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "code",
+      "title": "One sprite per state the engine can already name",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/features/player/player.gd  lines 118-134",
+      "source": "godot/features/player/player.gd",
+      "code": "func pose_key() -> String:\n\tif death_pose:\n\t\treturn \"death\"\n\tvar phase := attack_phase()\n\tif phase == 1:\n\t\treturn \"windup\"\n\tif phase >= 2:\n\t\t# P10 (recovery) is one of the three optional poses and was not\n\t\t# generated; three ticks of the live frame is the honest substitute.\n\t\treturn \"live\"\n\tif dash_ticks_left > 0:\n\t\treturn \"dash\"\n\tif not is_on_floor():\n\t\treturn \"rise\" if velocity.y < 0.0 else \"fall\"\n\tif absf(velocity.x) > 8.0:\n\t\treturn \"run\"\n\treturn \"idle\"",
+      "startLine": 118,
+      "codeFontSize": 23,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "Why a string and not a texture",
+        "value": "A string can be asserted without a renderer. The check drives the game through all eight states and reads the key back."
+       },
+       {
+        "label": "Why death is tested first",
+        "value": "On death the body is disabled and is_on_floor() keeps whatever it last returned, so a pose derived from movement would differ by cause of death."
+       },
+       {
+        "label": "Cost",
+        "value": "One dictionary lookup per frame, and the names live in two places. A mismatch is a missing texture, not a wrong one."
+       }
+      ],
+      "cues": [
+       {
+        "at": 2.0,
+        "line": 119,
+        "label": "death first"
+       },
+       {
+        "at": 7.0,
+        "line": 128,
+        "label": "dash outranks the air"
+       },
+       {
+        "at": 11.0,
+        "line": 130,
+        "label": "rise or fall by velocity sign"
+       },
+       {
+        "at": 15.0,
+        "line": 134,
+        "label": "idle is the fallthrough"
+       }
+      ],
+      "durationSeconds": 23
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B03",
+   "act": "RESULT",
+   "role_note": "C1 RESULT. take-p, native 3840x2160, the pose sequence the input log records: idle, run, rise, fall, run, idle, rise, dash, fall, idle.",
+   "narration_text": "And here is that table in motion. Idle, run, rise, fall, back to run, idle again, then the air dash at the top of the second jump. Those transitions are not read off the picture: the capture driver logs pose key every time it changes, with the tick it changed on.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 17,
+   "shot": {
+    "type": "FOOTAGE",
+    "class": "SHOW",
+    "source": "own",
+    "motion": "gameplay",
+    "capture": "take-p",
+    "window_s": [
+     0.2,
+     3.3
+    ],
+    "show": [
+     {
+      "at": "0.04",
+      "event": "idle on the opening platform"
+     },
+     {
+      "at": "0.20",
+      "event": "run - the scarf streams back"
+     },
+     {
+      "at": "0.36",
+      "event": "rise, then fall, over the 16 px step"
+     },
+     {
+      "at": "0.58",
+      "event": "idle again, facing right"
+     },
+     {
+      "at": "0.74",
+      "event": "jump, then the air dash - body level, scarf straight"
+     }
+    ],
+    "evidence_media": "capture/take-p.mp4"
+   }
+  },
+  {
+   "beat_id": "B04",
+   "act": "BUILD",
+   "role_note": "C2 CODE. The directional rim verbatim from player.gd. Paired with B05.",
+   "narration_text": "The character is navy armour on a dark wall - one point six to one. Something has to break the silhouette. The first attempt grew a one pixel rim on all four sides, and that costs a part two pixels of width, so a three pixel arm keeps one pixel of armour. Rendered, the limbs were grey pipes. So the rim stopped being an outline: one pixel toward the back and one up, which costs nothing, and because x is measured forward it mirrors with the body - a light source behaves that way and an outline does not.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 27,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "code-highlight",
+    "show": [
+     {
+      "at": "0.04",
+      "event": "the excerpt and the four notes are framed"
+     },
+     {
+      "at": "0.12",
+      "event": "line 318 highlights - the one-way growth"
+     },
+     {
+      "at": "0.45",
+      "event": "line 313 highlights - x is forward"
+     },
+     {
+      "at": "0.70",
+      "event": "line 322 highlights - the polygon case"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "code",
+      "title": "The rim is a light, not an outline",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/features/player/player.gd  lines 313-326",
+      "source": "godot/features/player/player.gd",
+      "code": "## x is forward, so `x - 1` is toward the back for both facings: `_mrect`\n## mirrors it. The rim therefore stays on the same side of the body when the\n## character turns around, which is what a light source does and an outline\n## does not.\nfunc _mrect_o(x: float, y: float, w: float, h: float) -> void:\n\t_mrect(x - 1.0, y - 1.0, w + 1.0, h + 1.0, RIM)\n\n## Same idea for a polygon: the shape translated 1 px back and 1 px up. A\n## translation rather than an expansion, so a thin wedge keeps its thickness.\nfunc _mpoly_o(points: PackedVector2Array) -> void:\n\tvar out := PackedVector2Array()\n\tfor p in points:\n\t\tout.append(p + Vector2(-1.0, -1.0))\n\t_mpoly(out, RIM)",
+      "startLine": 313,
+      "codeFontSize": 23,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "The arithmetic",
+        "value": "A rim grown on four sides costs a part 2 px of width. A 3 px arm keeps 1 px of armour. Rendered, the limbs came out as grey pipes."
+       },
+       {
+        "label": "Measured on the generated sprite",
+        "value": "Figure reading at 3:1 or better against the wall: 6.3% without the rim, 24.2% with it. The code-drawn character measures 9.1%."
+       },
+       {
+        "label": "The same rule, twice",
+        "value": "player.gd applies it to the fallback body; scripts/import_pose.py applies it to every generated pose. An edit to a generated asset, declared in ASSET-LOG."
+       },
+       {
+        "label": "Also restored",
+        "value": "The visor. At a 28 px figure height the slit averages into the helm and snaps to plate: 0 visor pixels in seven of the first eight imports. 6-9 px restored per pose."
+       }
+      ],
+      "cues": [
+       {
+        "at": 3.0,
+        "line": 318,
+        "label": "grown one way only"
+       },
+       {
+        "at": 12.0,
+        "line": 313,
+        "label": "x is forward, so it mirrors"
+       },
+       {
+        "at": 19.0,
+        "line": 322,
+        "label": "polygons translate, not expand"
+       }
+      ],
+      "durationSeconds": 27
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B05",
+   "act": "RESULT",
+   "role_note": "C2 RESULT. The importer's own acceptance strip for p1-idle: on the dungeon wall, as a silhouette, on the lit platform edge, and its silhouette. Written by scripts/import_pose.py, not redrawn.",
+   "narration_text": "Here are all eight at the size the player actually sees them. Top row on the dungeon wall, middle row as solid silhouettes, bottom row on the torchlit platform edge. Six point three per cent of the figure read against that wall before the rim was added. Twenty four point two after. The code-drawn character it replaced measures nine point one on the same test - and the prone pose at the end is the only one in the game wider than it is tall.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 24,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "asset-preview",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the four-panel strip is framed"
+     },
+     {
+      "at": "0.30",
+      "event": "the two contrast numbers land"
+     },
+     {
+      "at": "0.72",
+      "event": "the 9.1% comparison lands"
+     }
+    ],
+    "evidence_media": "media/B05-poses.png",
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "asset",
+      "title": "All eight, at the size the player sees them",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/assets/poses/p1-idle.png ... p8-death.png",
+      "source": "scripts/import_pose.py",
+      "code": "",
+      "startLine": 1,
+      "image": "data:image/png;base64,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",
+      "imageLabel": "on the dungeon wall / as a silhouette / on the torchlit edge",
+      "notes": [],
+      "cues": [],
+      "durationSeconds": 24
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B06",
+   "act": "BUILD",
+   "role_note": "C3 CODE. advance_traps() verbatim from session.gd. Paired with B07.",
+   "narration_text": "A trap arms when the player crosses its trigger, and the spike rises over fifteen ticks. The sound fires on the tick that counter leaves zero - the arming, not the contact. That distinction is the whole fairness argument, because a sound hung off the damage is a death sound, arriving after the information is useless, and it would still pass a check that only asked whether something played when the trap killed you.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 25,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "code-highlight",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the excerpt is framed with four notes"
+     },
+     {
+      "at": "0.12",
+      "event": "line 276 highlights - the trigger comparison"
+     },
+     {
+      "at": "0.40",
+      "event": "line 284 highlights - trap_risen[i] == 0"
+     },
+     {
+      "at": "0.72",
+      "event": "line 288 highlights - the rise offset"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "code",
+      "title": "The warning fires on the arming tick",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/game/session.gd  lines 276-288",
+      "source": "godot/game/session.gd",
+      "code": "\t\tif trap_risen[i] == 0 and player.position.x < trap_triggers[i]:\n\t\t\tcontinue\n\t\tif trap_risen[i] < TRAP_RISE_TICKS:\n\t\t\t# C5. The warning fires on the tick the spike STARTS to rise -- the\n\t\t\t# tick trap_risen leaves 0 -- not on the contact. Hung off the\n\t\t\t# damage instead it would be a death sound arriving after the\n\t\t\t# information is useless, and it would still pass a test that only\n\t\t\t# asserted \"a sound played when the trap killed me\".\n\t\t\tif trap_risen[i] == 0:\n\t\t\t\tplay_sfx(\"trap\")\n\t\t\ttrap_risen[i] += 1\n\t\t\tmoved = true\n\t\ttrap_areas[i].position = trap_rects[i].position + Vector2(0.0, _trap_rise_offset(i))",
+      "startLine": 276,
+      "codeFontSize": 23,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "Why not on the damage",
+        "value": "Hung off the contact it is a death sound arriving after the information is useless - and it would still pass a test that only asked whether a sound played when the trap killed you."
+       },
+       {
+        "label": "Recorded",
+        "value": "Warning at tick 24 with the player at x 1064.6 against a trigger at 1064. Death at tick 59. Lead 35 ticks, about 0.58 s, against a 15-tick rise."
+       },
+       {
+        "label": "The sound was specified first",
+        "value": "CONCEPT revision 1.1 predicted on 2026-10-01 that a 124 bpm bed would mask it, and called for a moving pitch - which percussion does not have. 420 to 2100 Hz, inharmonic partials, amplitude rising."
+       },
+       {
+        "label": "Declared",
+        "value": "That effect is synthesised, not generated. A placeholder."
+       }
+      ],
+      "cues": [
+       {
+        "at": 3.0,
+        "line": 276,
+        "label": "the trigger gate"
+       },
+       {
+        "at": 10.0,
+        "line": 284,
+        "label": "the tick trap_risen leaves 0"
+       },
+       {
+        "at": 18.0,
+        "line": 288,
+        "label": "the spike moves by its rise offset"
+       }
+      ],
+      "durationSeconds": 25
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B07",
+   "act": "RESULT",
+   "role_note": "C3 RESULT. take-t, the arming at t=6.800 x=1064.9, the death at t=7.383, and the prone pose held through the 0.55 s retry. The 35-tick lead is in the input log and in test_game.gd independently.",
+   "narration_text": "Watch the floor. The trigger is at one thousand and sixty four, the spike starts at one thousand one hundred and sixty, and the warning you just heard fired thirty five ticks before the hit - a little over half a second. The capture driver read that number out of the sound log on its own, and the test suite reports the same thirty five from a different path. The pose on the floor afterwards is the one the storyboard asked for.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 20,
+   "shot": {
+    "type": "FOOTAGE",
+    "class": "SHOW",
+    "source": "own",
+    "motion": "gameplay",
+    "capture": "take-t",
+    "window_s": [
+     6.2,
+     8.88
+    ],
+    "show": [
+     {
+      "at": "0.08",
+      "event": "crossing the trigger - the spike begins to rise"
+     },
+     {
+      "at": "0.30",
+      "event": "the spike is fully up, still ahead of him"
+     },
+     {
+      "at": "0.46",
+      "event": "contact - the prone pose, wider than it is tall"
+     },
+     {
+      "at": "0.70",
+      "event": "the reason panel and the reaction"
+     },
+     {
+      "at": "0.90",
+      "event": "respawn at the start"
+     }
+    ],
+    "evidence_media": "capture/take-t.mp4"
+   }
+  },
+  {
+   "beat_id": "B08",
+   "act": "BUILD",
+   "role_note": "C4 CODE. The music guard verbatim from session.gd. Paired with B09.",
+   "narration_text": "This function runs on every single death. Call play here and a sixteen bar loop restarts at bar one every half second, which is worse than silence - so it resumes instead. And the guard was still wrong. Playing reports false while a stream is paused, so testing playing alone was correct for an ordinary death and wrong for pause then retry, where the track jumped back to the top. I found that by printing what the engine actually reports in each state, before writing the assertion. The code reads correctly.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 25,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "code-highlight",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the excerpt is framed with four notes"
+     },
+     {
+      "at": "0.16",
+      "event": "line 604 highlights - the guard"
+     },
+     {
+      "at": "0.44",
+      "event": "line 605 highlights - playing or stream_paused"
+     },
+     {
+      "at": "0.72",
+      "event": "line 611 highlights - the cold start"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "code",
+      "title": "One if, because this runs on every death",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/game/session.gd  lines 601-611",
+      "source": "godot/game/session.gd",
+      "code": "\t# C4. restart_attempt() runs on EVERY death, so this guard is the whole\n\t# point of the line: a loop that jumps back to bar 1 every 0.55 s is worse\n\t# than no music at all. Retries leave the track running.\n\tif music and music.stream:\n\t\tif music.playing or music.stream_paused:\n\t\t\t# Already running, or frozen by a pause. Resume where it was.\n\t\t\t# `playing` reports FALSE while `stream_paused` is true, so testing\n\t\t\t# `playing` alone made R-while-paused restart the track at bar 1.\n\t\t\tmusic.stream_paused = false\n\t\telse:\n\t\t\tmusic.play()",
+      "startLine": 601,
+      "codeFontSize": 23,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "The failure it prevents",
+        "value": "restart_attempt() runs on every death. A naive play() restarts a 16-bar loop at bar 1 every 0.55 s, which is worse than silence."
+       },
+       {
+        "label": "The bug inside the fix",
+        "value": "AudioStreamPlayer.playing reports FALSE while stream_paused is true. So 'if not playing' was right for an ordinary death and wrong for pause-then-R: the track jumped to bar 1."
+       },
+       {
+        "label": "How it was found",
+        "value": "By printing what the engine reports in each state before writing the assertions. The code reads correctly; only the engine's own answer showed it."
+       },
+       {
+        "label": "Recorded",
+        "value": "a-retry-does-not-restart-the-track: position 0.467 s before, 0.557 s after. It went forward."
+       }
+      ],
+      "cues": [
+       {
+        "at": 4.0,
+        "line": 604,
+        "label": "guarded, not unconditional"
+       },
+       {
+        "at": 11.0,
+        "line": 605,
+        "label": "playing OR stream_paused"
+       },
+       {
+        "at": 18.0,
+        "line": 611,
+        "label": "play() only on a cold start"
+       }
+      ],
+      "durationSeconds": 25
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B09",
+   "act": "RESULT",
+   "role_note": "C4 RESULT. Recorded suite output, not a re-run claim. Two checks: the ordinary retry and the pause-then-retry regression.",
+   "narration_text": "Both of those are checks now, and this is the recorded output, not a terminal I am driving for the camera. An ordinary retry moves the playhead forward. Pause, then retry, and it resumes at exactly the position it was paused at - the same reading to the millisecond. That second check exists because once, it did not.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 17,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "output-lines",
+    "show": [
+     {
+      "at": "0.08",
+      "event": "the first recorded line lands"
+     },
+     {
+      "at": "0.45",
+      "event": "the regression check lands"
+     },
+     {
+      "at": "0.80",
+      "event": "the suite total lands"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "asset",
+      "title": "Recorded output - tests/test_game.gd",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/tests/test_game.gd  (recorded run)",
+      "source": "godot/tests/test_game.gd",
+      "code": "",
+      "startLine": 1,
+      "codeFontSize": 24,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "What this is",
+        "value": "Quoted from a headless run and hashed into the evidence ledger. Not a live terminal, and not re-run inside the film."
+       },
+       {
+        "label": "Why the positions are not round",
+        "value": "They are audio-clock readings and move slightly run to run. An earlier draft of this card carried numbers typed from memory of a different run; they disagreed with this file."
+       }
+      ],
+      "cues": [],
+      "durationSeconds": 17,
+      "treeLabel": "Recorded output - godot --headless --script res://tests/test_game.gd",
+      "tree": [
+       "Recorded from: godot --headless --path godot --script res://tests/test_game.gd",
+       "",
+       "a-retry-does-not-restart-the-track   PASS",
+       "  {\"after\": 0.650666654109955, \"before\": 0.55733335018158, \"went_backwards\": false}",
+       "",
+       "retry-while-paused-resumes-rather-than-restarts   PASS",
+       "  {\"after_retry\": 0.744000017642975, \"at_pause\": 0.744000017642975, \"stream_paused\": false}",
+       "",
+       "WALKER TESTS: 99 checks / 0 failures"
+      ],
+      "output": [
+       "99 checks",
+       "0 failures",
+       "recorded, not re-run"
+      ],
+      "image": "data:image/png;base64,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",
+      "imageLabel": "recorded output, rendered verbatim"
+     }
+    },
+    "evidence_media": "media/B09-suite-output.png"
+   }
+  },
+  {
+   "beat_id": "B10",
+   "act": "BUILD",
+   "role_note": "C5 CODE. _draw_swing() verbatim from player.gd. Paired with B11.",
+   "narration_text": "The sprites carry the body, the scarf, the rim and the visor. They do not carry the blade. This function draws it from the same three numbers the kill hitbox is built from, and the bright wedge only appears while the swing can actually kill. Bake a blade into a sprite and it stops tracking that hitbox the moment anyone changes the tuning - and nothing reports it, because both hitbox checks measure the hitbox against the numbers, not against the picture.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 24,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "code-highlight",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the excerpt is framed with four notes"
+     },
+     {
+      "at": "0.17",
+      "event": "line 678 highlights - ATTACK_PIVOT"
+     },
+     {
+      "at": "0.42",
+      "event": "line 680 highlights - phase >= 2"
+     },
+     {
+      "at": "0.71",
+      "event": "line 689 highlights - the bar from a to b"
+     }
+    ],
+    "remotion": {
+     "pattern": "GodotDevWorkbench",
+     "props": {
+      "mode": "code",
+      "title": "The blade is not in the sprites, on purpose",
+      "project": "walker-ninja-TiantongZhang",
+      "path": "godot/features/player/player.gd  lines 674-690",
+      "source": "godot/features/player/player.gd",
+      "code": "func _draw_swing() -> void:\n\tvar steel := Color(\"4a5468\")\n\tvar steel_dark := Color(\"2a3246\")\n\tvar steel_edge := Color(\"9aa7bd\")\n\tvar a := ATTACK_PIVOT\n\tvar b := attack_tip()\n\tif attack_phase() >= 2:\n\t\tvar wedge := PackedVector2Array()\n\t\twedge.append(a)\n\t\tvar samples := 7\n\t\tfor i in range(samples + 1):\n\t\t\tvar t: float = lerpf(ATTACK_ANGLE_START, attack_angle(), float(i) / float(samples))\n\t\t\twedge.append(a + Vector2.from_angle(t) * tuning.attack_reach)\n\t\t_mpoly(wedge, Color(0.49, 0.89, 1.0, 0.28))\n\t_mpoly(_bar(a - Vector2.from_angle(attack_angle()) * 4.0, a, 1.3), steel_dark)\n\t_mpoly(_bar(a, b, 2.0), steel)\n\t_mpoly(_bar(a.lerp(b, 0.14), b, 0.7), steel_edge)",
+      "startLine": 674,
+      "codeFontSize": 23,
+      "inspectorLabel": "Source notes - not Inspector values",
+      "notes": [
+       {
+        "label": "Three numbers, two consumers",
+        "value": "ATTACK_PIVOT, attack_angle() and attack_reach drive both this drawing and the kill hitbox. The poses were prompted 'empty hand, NO weapon' to keep it that way."
+       },
+       {
+        "label": "What baking it in would cost",
+        "value": "The picture would stop tracking the hitbox the moment anyone touched the tuning - and nothing would report it. Both hitbox checks would still pass, because they measure the hitbox against the numbers, not against the picture."
+       },
+       {
+        "label": "Measured",
+        "value": "attack-hitbox-on-the-blade: 9 active ticks sampled each facing, worst endpoint error 3.8e-6 px right and 3.9e-6 px left."
+       },
+       {
+        "label": "The honest cost",
+        "value": "In a film about generated art, the character's most characteristic object is not generated."
+       }
+      ],
+      "cues": [
+       {
+        "at": 4.0,
+        "line": 678,
+        "label": "the pivot the hitbox uses"
+       },
+       {
+        "at": 10.0,
+        "line": 680,
+        "label": "the wedge only while it can kill"
+       },
+       {
+        "at": 17.0,
+        "line": 689,
+        "label": "the blade itself"
+       }
+      ],
+      "durationSeconds": 24
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B11",
+   "act": "RESULT",
+   "role_note": "C5 RESULT. take-p's swing. The generated windup and live poses with the code-drawn blade over them, from the same pivot the hitbox uses.",
+   "narration_text": "There it is at sixty frames a second: the wind-up pose, then the live window with the bright arc, and the blade leaving the hand the sprite is holding out. Nine active ticks, sampled both facings, and the worst disagreement between where the blade is drawn and where the hitbox sits is under four millionths of a pixel.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 19,
+   "shot": {
+    "type": "FOOTAGE",
+    "class": "SHOW",
+    "source": "own",
+    "motion": "gameplay",
+    "capture": "take-p",
+    "window_s": [
+     3.28,
+     4.32
+    ],
+    "show": [
+     {
+      "at": "0.10",
+      "event": "windup - arm back, no sword in the sprite"
+     },
+     {
+      "at": "0.34",
+      "event": "the live window - the arc wedge appears"
+     },
+     {
+      "at": "0.60",
+      "event": "the blade sweeps down and forward"
+     },
+     {
+      "at": "0.85",
+      "event": "recovery, and back to idle"
+     }
+    ],
+    "evidence_media": "capture/take-p.mp4"
+   }
+  },
+  {
+   "beat_id": "B12",
+   "act": "VERDICT",
+   "role_note": "WALKER BOOKEND 3/4. Separates implemented work, limitations and human judgment. The placeholder sound effects and the missing seed are stated here, not buried.",
+   "narration_text": "So. Generated and in the game: one music loop and nine character images, each pose bound to a state the engine already names. Not generated, and I am not going to imply otherwise: all four sound effects, the dungeon, the enemies, the traps and the blade. Neither generator exposed a seed, so both reproduce as a request and not as an output - and that broke a rule this project had written down for itself. The test suite is a hundred and thirteen checks with no failures, and it asserts nothing at all about what the character looks like. Two real art bugs passed all of them.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 34,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "verdict-columns",
+    "show": [
+     {
+      "at": "0.05",
+      "event": "the artifact card rules on"
+     },
+     {
+      "at": "0.18",
+      "event": "the generated lines fill"
+     },
+     {
+      "at": "0.48",
+      "event": "the not-generated lines fill, greyed"
+     },
+     {
+      "at": "0.74",
+      "event": "the seed line lands"
+     },
+     {
+      "at": "0.88",
+      "event": "the open question closes the card"
+     }
+    ],
+    "remotion": {
+     "pattern": "ClaudeVerdictArtifact",
+     "props": {
+      "artifactTitle": "Verdict",
+      "artifactHeading": "Generated, not generated, and not checked",
+      "artifactLines": [
+       "Generated: 1 music loop, 16 bars, measured at 124.018 BPM.",
+       "Generated: 9 character images - 1 reference, 8 poses.",
+       "Generated art edits, declared: directional rim, visor restored.",
+       "NOT generated: all four sound effects. Synthesised placeholders.",
+       "NOT generated: dungeon, HUD, enemies, traps, and the blade.",
+       "No seed from either generator - request reproduces, output does not.",
+       "113 automated checks, 0 failures - and none of them sees the art.",
+       "Still open: two art bugs passed all 113. A human had to look."
+      ],
+      "brandLabel": "@NikBearBrown"
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B13",
+   "act": "TURN",
+   "role_note": "WALKER BOOKEND 4/4. Reads a usable Walker prompt aloud and invites ONE bounded change plus a prediction and the check that settles it. Liam signs off here, not on the outro card.",
+   "narration_text": "Your turn. Here is the prompt, and here is the change. Add the ninth pose - attack recovery - and wire it to phase three. Before you run it, predict this: recovery is three ticks, fifty milliseconds, so will you see it at all? Then run the pose key check and look at the contact sheet, because the suite will pass either way. That is the lesson, and it was mine before it was yours. This has been Liam, in for Bear.",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 27,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "turn-card",
+    "show": [
+     {
+      "at": "0.06",
+      "event": "the prompt card types on"
+     },
+     {
+      "at": "0.42",
+      "event": "the one change lands"
+     },
+     {
+      "at": "0.62",
+      "event": "the prediction lands"
+     },
+     {
+      "at": "0.82",
+      "event": "the check that settles it lands"
+     }
+    ],
+    "remotion": {
+     "pattern": "ClaudeComposerAsk",
+     "props": {
+      "greeting": "Your turn, Liam",
+      "topic": "WALKER - ONE MORE POSE",
+      "segment": "Generate The Ninth",
+      "command": "In walker-ninja, generate the ninth pose - attack recovery - from CHAR-REF-01, run it through scripts/import_pose.py, and wire 'recovery' into pose_key() for attack_phase() == 3. Tell me whether you can see it before you change its length.",
+      "runningText": "one pose - one prediction - one look",
+      "output": [
+       "predict first: recovery is 3 ticks, 50 ms",
+       "pose-key-matches-the-state-it-claims will pass either way",
+       "so LOOK at the contact sheet"
+      ],
+      "folderLabel": "@NikBearBrown",
+      "modelLabel": "Claude Opus 5",
+      "effortLabel": "High"
+     }
+    }
+   }
+  },
+  {
+   "beat_id": "B14",
+   "act": "OUTRO",
+   "role_note": "LOCKED ClaudeTitleOutro. Exact title, @NikBearBrown, one slug-seeded mascot, no subline. No narration, no game SFX, no themed voice on the card. Existing stock jingle only.",
+   "narration_text": "",
+   "voice": "am_onyx",
+   "engine": "kokoro",
+   "estimated_duration_s": 5,
+   "shot": {
+    "type": "GRAPHIC",
+    "class": "SHOW",
+    "source": "remotion",
+    "motion": "title-outro",
+    "show": [
+     {
+      "at": "0.10",
+      "event": "the title card rules on"
+     },
+     {
+      "at": "0.55",
+      "event": "the mascot settles"
+     }
+    ],
+    "remotion": {
+     "pattern": "ClaudeTitleOutro",
+     "props": {
+      "title": "NewWalkerArtVideo_TiantongZhang",
+      "channel": "@NikBearBrown",
+      "slug": "claude-liam-walker-ninja-gamedev"
+     }
+    }
+   }
+  }
+ ]
+}
