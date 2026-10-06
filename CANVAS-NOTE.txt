@@ -15,12 +15,12 @@ Submitted commit: tag `a2-submitted` on branch `main`
   git clone https://github.com/TiantongZhang1/walker-ninja-TiantongZhang.git
   git -C walker-ninja-TiantongZhang checkout a2-submitted
 
-  The tag resolves to 040c9f2c44ff0766bfd55bff57d4d055131bca58.
-
-  It is a tag rather than a SHA typed into this file because filling the SHA in
-  moves the tip past the value just written - the first attempt at this line
-  named 8226d93 while the tip was already 040c9f2. The tag is a fixed name for
-  the tip of main at submission.
+  `git rev-parse a2-submitted` prints the SHA. This file does not, on purpose.
+  A SHA typed in here is stale the moment it is committed - writing it moves
+  the tip past the value just written. The first attempt at this line named
+  8226d93 while the tip was already 040c9f2; the second named 040c9f2 and the
+  tag had already moved again. The tag is the tip of main at submission and it
+  is the only name that stays correct.
 
   The two commits whose work the sections below describe:
     8226d93  Finish the gamedev film: a 4:54 master, and the two defects a
