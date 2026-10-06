@@ -118,6 +118,9 @@ def main():
                     help="lay the figure out across the cell instead of up it (P8)")
     ap.add_argument("--write", action="store_true",
                     help="actually write godot/assets/poses/<id>.png")
+    ap.add_argument("--no-rim", action="store_true",
+                    help="do NOT add the directional rim (CHARACTER-SHEET 3c makes it"
+                         " mandatory, so this is only for comparing against)")
     args = ap.parse_args()
 
     src = Path(args.source)
@@ -150,6 +153,35 @@ def main():
         return 1
 
     snapped, names, dist = snap(col, mask)
+
+    # The directional rim, added here rather than asked of the generator.
+    #
+    # CHARACTER-SHEET section 3c makes it mandatory and specifies it exactly:
+    # 1 px toward the character's back and 1 px up, in steel_edge, because the
+    # dungeon's light is a torch above and behind. A model cannot be relied on
+    # to place a one-pixel light edge correctly at a 28 px figure height -- the
+    # reference came back with a near-black outline instead, which snaps to
+    # `shade` at 1.14:1 against the wall and so does nothing at all.
+    #
+    # Doing it here is deterministic, identical for every pose, and derived
+    # from the same rule the code-drawn character uses. It IS an edit to a
+    # generated asset and belongs in ASSET-LOG's "Edits" column.
+    rim_added = 0
+    if not args.no_rim:
+        right = np.zeros_like(mask)
+        right[:, :-1] = mask[:, 1:]      # an opaque pixel immediately to the RIGHT
+        below = np.zeros_like(mask)
+        below[:-1, :] = mask[1:, :]      # an opaque pixel immediately BELOW
+        # The sprite is generated facing right, so "the back" is -x: the rim
+        # lands on the left and top boundary of the silhouette.
+        edge = (~mask) & (right | below)
+        rim_i = PAL_NAMES.index(RIM)
+        snapped[edge] = PAL_RGB[rim_i]
+        names[edge] = rim_i
+        mask = mask | edge
+        rim_added = int(edge.sum())
+        print("  rim: added %d px of %s along the back and top edges"
+              " (CHARACTER-SHEET 3c)" % (rim_added, RIM))
 
     print("\nacceptance checks -- CHARACTER-SHEET.md section 6")
 
@@ -197,8 +229,9 @@ def main():
         ry = np.where(has_rim.any(axis=1))[0]
         body_x = np.where(mask.any(axis=0))[0]
         back_third = rx.min() <= body_x.min() + max(1, (body_x.max() - body_x.min()) // 3)
-        print("  [rim     ] %d px of %s, columns %d-%d, rows %d-%d"
-              % (has_rim.sum(), RIM, rx.min(), rx.max(), ry.min(), ry.max()))
+        print("  [rim     ] %d px of %s (%d added by this script), columns %d-%d,"
+              " rows %d-%d"
+              % (has_rim.sum(), RIM, rim_added, rx.min(), rx.max(), ry.min(), ry.max()))
         print("             %s" % ("ok -- it reaches the back edge" if back_third else
                                    "WARN -- no rim on the back edge; it is facing right,"
                                    " so the light is on the LEFT"))
