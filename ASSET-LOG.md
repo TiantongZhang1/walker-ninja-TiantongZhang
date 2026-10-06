@@ -364,9 +364,73 @@ every pose, and derived from the same rule the code already uses — but it is
 distinction matters for anyone reading this log to find out what the model
 actually produced.
 
+### `CHAR-P1` … `CHAR-P8` — all eight accepted
+
+Generated from `CHAR-REF-01` supplied back as a reference image, one pose per
+request, with the same opening sentence every time — *same character, same
+style, same palette, same size, same white background, side view facing right*
+— and a single pose line appended. Same model as the reference, same absence of
+a seed.
+
+| ID | pose line | imported as | visor px | reads at 3:1+ against the wall |
+|---|---|---|---|---|
+| `CHAR-P1` | standing still, weight even, scarf settled | `p1-idle` | 8 | 24.0 % |
+| `CHAR-P2` | mid-stride running, leaning forward, scarf streaming back, arms swinging opposite to the legs | `p2-run` | 8 | 25.5 % |
+| `CHAR-P3` | airborne rising, far knee bent and lifted, scarf hanging below and behind | `p3-rising` | 7 | 25.6 % |
+| `CHAR-P4` | airborne falling, legs reaching down, scarf blown above and behind | `p4-falling` | 8 | 28.8 % |
+| `CHAR-P5` | horizontal dash, body level with no vertical lean, scarf fully extended straight back | `p5-dash` | 6 | 27.6 % |
+| `CHAR-P6` | arm raised up and back, body coiled, about to strike, empty hand, NO weapon | `p6-windup` | 6 | 26.4 % |
+| `CHAR-P7` | arm swept down and forward through a strike, body committed, empty hand, NO weapon | `p7-live` | 9 | 24.4 % |
+| `CHAR-P8` | lying face down flat on the ground, head to the right, limbs collapsed, seen from the side | `p8-death` | 6 | 29.5 % |
+
+**Accepted on the first attempt, all eight.** Every one is side-on facing
+right, on a plain white background, with the hood, the visor slit, the purple
+scarf and the steel extremities intact, and **none of the two attack poses
+contains a sword** — which was the constraint most likely to be lost, because
+the blade and the kill hitbox are built from the same three numbers and a blade
+baked into a sprite would stop tracking it silently.
+
+Automated checks on all eight: the feet land on row 30 of 30 in every pose,
+contrast against the wall runs 24.0–29.5 % against a 6 % floor (the shipped
+code-drawn character measures 9.1 %), and the rim reaches the back edge
+everywhere.
+
+`p5-dash` and `p8-death` are imported with `--prone`, which scales by **width**
+instead of height, because both are laid out across rather than up. `p8-death`
+ends up 11 px tall and 26 wide — the only pose in the game wider than it is
+tall, which is the property `CONCEPT.md` revision 1.4 relies on.
+
+### Edits — a second one, and the fix it needed
+
+Beyond the directional rim described above, the importer **restores the visor
+through the downscale**, and the reason is measured rather than assumed.
+
+The slit is 1–2 px tall once the figure is 28 px high. An area resample
+averages it into the navy helm, the result snaps to `plate`, and it disappears:
+**0 visor pixels in seven of the first eight imports, 1 in the eighth.** That
+is not cosmetic. Section 3b has the visor at 12.12:1 against the wall, the
+strongest colour the character has, and section 5 makes it the reason facing is
+readable from the head alone.
+
+So the visor mask is taken from the **source** image before any scaling, then
+resampled by area coverage and thresholded low, so a target pixel covering even
+a sliver of slit stays a slit. Restored: 6–9 px per pose.
+
+**The first version of that fix was wrong, and the way it was wrong is worth
+keeping.** Bright highlights on the steel boots also snap to `glint`, so
+restoring everything put stray cyan specks at the feet of `p1-idle` and
+`p6-windup` — which reads as a rendering bug rather than as armour. The obvious
+guard, "only the top 45 % of the figure", **silently zeroed `p8-death`**: in the
+prone pose the head is at the *right*, not the top, and the top 45 % is scarf.
+Taking the largest connected component of the source mask instead keeps the
+slit, drops the specks, and does not care which way the character is lying.
+
+Both of these are **edits to generated assets, not properties of the
+generation**. What the model produced is a visor slit in a 1254 px image; what
+the importer does is keep it alive at 28 px.
+
 ### Still owed
 
-- `CHAR-P1` … `CHAR-P8`, derived from `CHAR-REF-01` as the reference.
 - The model, version and licence rows above, filled in.
 - The Civitai rejection screenshots.
 

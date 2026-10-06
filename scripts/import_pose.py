@@ -27,6 +27,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -133,6 +134,32 @@ def main():
     if not mask.any():
         print("  FAIL  nothing left after background removal")
         return 1
+
+    # Which source pixels are the visor, decided BEFORE anything is scaled.
+    #
+    # The slit is 1-2 px tall once the figure is 28 px high, and an area
+    # resample averages it into the navy helm around it -- the result snaps to
+    # `plate` and the visor disappears completely. Measured on the first eight
+    # imported poses: 0 visor pixels in seven of them, 1 in the eighth.
+    #
+    # That is not a cosmetic loss. CHARACTER-SHEET section 3b has the visor at
+    # 12.12:1 against the dungeon wall, the strongest colour on the character,
+    # and section 5 makes it the reason facing is readable from the head alone.
+    _, src_names, _ = snap(col, mask)
+    vis_i = PAL_NAMES.index("visor")
+    gl_i = PAL_NAMES.index("glint")
+    src_visor = (src_names == vis_i) | (src_names == gl_i)
+    # Only the biggest blob. A bright highlight on a steel boot also snaps to
+    # `glint`, and restoring those put stray cyan pixels at the feet of P1 and
+    # P6 -- which reads as a rendering bug rather than as armour. Taking the
+    # largest connected component keeps the slit and drops the specks, and
+    # unlike a "top 45% of the figure" rule it still works for the prone pose,
+    # where the head is at the RIGHT rather than the top.
+    if src_visor.any():
+        lab, n = ndimage.label(src_visor)
+        if n > 1:
+            sizes = ndimage.sum(src_visor, lab, range(1, n + 1))
+            src_visor = lab == (int(np.argmax(sizes)) + 1)
     ys, xs = np.where(mask)
     y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
     print("  found the figure at %dx%d px in the source" % (x1 - x0, y1 - y0))
@@ -144,6 +171,15 @@ def main():
         np.dstack([col.astype(np.uint8), (mask * 255).astype(np.uint8)])[y0:y1, x0:x1]
     ).resize((nw, nh), Image.LANCZOS)
 
+    # The visor mask is resampled with BOX (area coverage) and thresholded low,
+    # so a target pixel that covers even a sliver of slit stays a slit. Nearest
+    # would drop it and LANCZOS would blur it back into the helm.
+    vcrop = Image.fromarray((src_visor[y0:y1, x0:x1] * 255).astype(np.uint8)).resize(
+        (nw, nh), Image.BOX)
+    vcell = Image.new("L", (CELL, CELL), 0)
+    vcell.paste(vcrop, (ANCHOR[0] - nw // 2, ANCHOR[1] - nh))
+    visor_mask = np.array(vcell) > 38          # ~15% of the target pixel's area
+
     cell = Image.new("RGBA", (CELL, CELL), (0, 0, 0, 0))
     cell.paste(crop, (ANCHOR[0] - nw // 2, ANCHOR[1] - nh), crop)
     a = np.array(cell)
@@ -153,6 +189,19 @@ def main():
         return 1
 
     snapped, names, dist = snap(col, mask)
+
+    # Stamp the visor back on. Like the rim below, this is an EDIT to a
+    # generated asset rather than something the model produced at this size,
+    # and it belongs in ASSET-LOG's "Edits" column. What the model produced is
+    # the slit in the source image; what is restored here is its survival
+    # through the downscale.
+    visor_mask = visor_mask & mask
+    restored = int(visor_mask.sum())
+    if restored:
+        snapped[visor_mask] = PAL_RGB[vis_i]
+        names[visor_mask] = vis_i
+    print("  visor: %d px restored through the downscale (CHARACTER-SHEET 3b)"
+          % restored)
 
     # The directional rim, added here rather than asked of the generator.
     #
