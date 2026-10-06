@@ -191,9 +191,18 @@ crossfaded at the wrap. Method and numbers in `ASSET-LOG.md` under 2026-10-04.
 |---|---|
 | Model | **GPT-6**, as I reported it — an instruction-following image model rather than a diffusion UI, which is why its instruction was written as prose with hard requirements instead of comma-separated tags. Recorded as reported; I did not verify the version string myself. |
 | Seed | **none exposed.** Same gap as the music: these reproduce as a request, not as an output |
-| Licence | **TO CONFIRM — the last open provenance question in this project.** `ASSET-LOG.md` records it in the same place it records that the art broke this project's own seed requirement |
+| Licence | **OpenAI Terms of Use** — *"You own the Output, and OpenAI hereby assigns to you all its right, title, and interest, **if any**, in and to Output."* Read 2026-10-06. See the note below |
 | Sources | `design/character/CHAR-REF-01.png` and `CHAR-P1` … `CHAR-P8.png`, 1254 × 1254 each |
 | In the project | `godot/assets/poses/p1-idle.png` … `p8-death.png`, 32 × 32 |
+
+> **On that `if any`.** It is the operative qualifier and it is worth not
+> skipping. OpenAI assigns whatever rights it holds in the output and
+> **warrants nothing about holding any** — the same terms note that output may
+> not be unique and that other users may receive similar output. So this is an
+> assignment of rights, not a guarantee that the sprites are copyrightable or
+> exclusive to this project. Adequate for a non-commercial course submission,
+> and not a claim of exclusivity. Read 2026-10-06 from
+> <https://openai.com/policies/terms-of-use/>.
 
 The eight poses were generated from `CHAR-REF-01` supplied back as a reference
 image, one request each, with the same opening sentence every time and a single
@@ -306,8 +315,9 @@ the game draws. No font file is bundled, downloaded, or redistributed.
 
 ## 8. What a reader should check first
 
-1. **The one open provenance question**: the licence terms of the model that
-   generated the art, in section 3. Everything else is settled.
+1. `godot/assets/README.md`, the shortest honest answer to "which of these did
+   you actually generate". **There is no open provenance question left in this
+   file.**
 2. `ASSET-LOG.md`, which has the full per-asset history including every
    rejection and two corrections that are left standing above the text they
    correct.

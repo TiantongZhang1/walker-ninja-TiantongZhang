@@ -365,7 +365,7 @@ is the evidence — it is the one where the prompt got short enough.
 |---|---|
 | Model | **GPT-6**, as I reported it. An instruction-following image model rather than a diffusion UI, which is why its instruction was written as prose with hard requirements instead of comma-separated tags. Recorded as reported — I did not verify the version string myself. |
 | Seed | **none exposed.** See the note above |
-| Licence | **STILL TO CONFIRM.** The last open provenance question in the project. |
+| Licence | **OpenAI Terms of Use**: *"You own the Output, and OpenAI hereby assigns to you all its right, title, and interest, **if any**, in and to Output."* Read 2026-10-06. The `if any` is the operative qualifier — OpenAI assigns whatever rights it holds and **warrants nothing about holding any**, so this is an assignment of rights rather than a guarantee that the output is copyrightable or exclusive. The same terms note that output may not be unique and other users may receive similar output. Adequate for a non-commercial course submission; it is not a claim of exclusivity. |
 | File | `design/character/CHAR-REF-01.png`, 1254 × 1254 |
 | SHA-256 | `7bc5e6428fec00e3107bf5fb9b2df141657ebe6d8263933492510a7984841971` |
 
@@ -485,8 +485,10 @@ the importer does is keep it alive at 28 px.
 
 ### Still owed
 
-- **The licence terms of the model that generated the art.** Model and version
-  are recorded now; its terms are not. Last open provenance question here.
+- Nothing. Every asset in this log has its model, its terms and its edits
+  recorded, and the two gaps that remain are stated rather than open: neither
+  Suno nor the art model exposes a seed, so both reproduce as a request and not
+  as an output.
 - ~~The Civitai rejection screenshots.~~ **Done, 2026-10-06** — three of four,
   in `design/rejected/`. The fourth had already aged out of Civitai's 30-day
   generator history.
