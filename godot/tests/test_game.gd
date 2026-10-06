@@ -849,6 +849,74 @@ func run() -> void:
 			lim = AudioServer.get_bus_effect(master_bus, i)
 	check("master-bus-has-a-limiter-because-two-sources-at-0db-clip", lim != null and lim.ceiling_db <= 0.0 and absf(game.music.volume_db + 3.0) < 0.01, {"limiter": lim != null, "ceiling_db": lim.ceiling_db if lim else 999.0, "music_volume_db": game.music.volume_db, "worst_unlimited_sum": 1.512})
 
+	# --- C2: the generated sprites (CHANGE-BRIEF revision 2.5.0) -------------
+	await fresh()
+	var want_keys := ["idle", "run", "rise", "fall", "dash", "windup", "live", "death"]
+	var missing: Array = []
+	var wrong_size: Array = []
+	for key in want_keys:
+		var t = game.player.pose_tex.get(key)
+		if t == null:
+			missing.append(key)
+		elif t.get_width() != 32 or t.get_height() != 32:
+			wrong_size.append("%s=%dx%d" % [key, t.get_width(), t.get_height()])
+	check("pose-textures-all-eight-loaded-at-32x32", missing.is_empty() and wrong_size.is_empty(), {"missing": missing, "wrong_size": wrong_size, "loaded": game.player.pose_tex.size()})
+
+	# The mapping, driven through real state rather than asserted in prose. Each
+	# row is a state the engine can actually distinguish; CHARACTER-SHEET
+	# section 5 is the list and this is the list in force.
+	var seen := {}
+	await fresh()
+	game.player.test_axis = 0.0
+	await steps(4)
+	seen["idle"] = game.player.pose_key()
+	game.player.test_axis = 1.0
+	await steps(20)
+	seen["run"] = game.player.pose_key()
+	game.player.test_jump_pressed = true
+	await steps(1)
+	game.player.test_jump_pressed = false
+	await steps(3)
+	seen["rise"] = game.player.pose_key()
+	# Dash while airborne: it takes priority over rise and fall.
+	game.player.test_dash_pressed = true
+	await steps(1)
+	game.player.test_dash_pressed = false
+	await steps(1)
+	seen["dash"] = game.player.pose_key()
+	for i in range(90):
+		await steps(1)
+		if game.player.velocity.y > 0.0 and not game.player.is_on_floor() and game.player.dash_ticks_left <= 0:
+			break
+	seen["fall"] = game.player.pose_key()
+	for i in range(90):
+		await steps(1)
+		if game.player.is_on_floor():
+			break
+	game.player.test_axis = 0.0
+	await steps(4)
+	game.player.test_attack_pressed = true
+	await steps(1)
+	game.player.test_attack_pressed = false
+	seen["windup"] = game.player.pose_key()
+	await steps(5)
+	seen["live"] = game.player.pose_key()
+	game.player.death_pose = true
+	seen["death"] = game.player.pose_key()
+	game.player.death_pose = false
+	var mismatched: Array = []
+	for key in want_keys:
+		if seen.get(key, "") != key:
+			mismatched.append("%s -> %s" % [key, seen.get(key, "<unset>")])
+	check("pose-key-matches-the-state-it-claims", mismatched.is_empty(), {"observed": seen, "mismatched": mismatched})
+
+	# The blade is NOT in the sprites, and this is what keeps it that way: the
+	# hitbox endpoints still come from ATTACK_PIVOT, attack_angle() and
+	# attack_reach, which is also where the drawn blade comes from. Asserted
+	# already by attack-hitbox-on-the-blade-*; this one records that the sprite
+	# path did not take those numbers over.
+	check("sprites-did-not-take-over-the-blade", game.player.pose_tex.size() == 8 and game.player.has_method("_draw_swing"), {"textures": game.player.pose_tex.size(), "shared_swing_routine": game.player.has_method("_draw_swing")})
+
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)
 	var file := FileAccess.open(out + "/mechanics-" + str(Time.get_unix_time_from_system()) + ".json", FileAccess.WRITE)

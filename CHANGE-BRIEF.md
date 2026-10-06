@@ -661,3 +661,97 @@ and measuring it** rather than by reading code or playing the game: the torch
 banding, the grey-pipework limbs, and now the clipping. In each case the source
 was correct and the output was wrong, and in each case the thing that caught it
 was building the output in order to check something else.
+
+
+---
+
+# Revision 2.5.0 — 2026-10-05 (later still) — C2: the generated sprites are in
+
+Revisions 2.0.0–2.4.1 are unchanged. **This is the change the whole assignment
+was for**: the character the player sees is now generated art rather than
+geometry written in GDScript.
+
+## C2 — the sprite swap: **done**
+
+`player.gd` loads the eight PNGs from `godot/assets/poses/` in `_ready()` and
+`_draw()` picks one per tick. Where they are read from and how is the same
+no-import trick `session.gd` uses for audio — straight off disk with
+`Image.load_from_file`, because a `--headless --script` run does not rescan the
+filesystem and `load()` on an unimported asset fails in exactly the situation
+the assignment asks to verify: a fresh checkout.
+
+### The mapping is a value, not a branch
+
+`pose_key()` returns a **string**, and `_draw()` looks the texture up from it.
+That is deliberate: it means the mapping from state to pose can be asserted
+without a renderer, and `pose-key-matches-the-state-it-claims` drives the game
+through all eight states and reads it back.
+
+Priority order, and `death` is first for the reason revision 2.0.0 predicted:
+on death the body is disabled and `is_on_floor()` keeps whatever it last
+returned, so anything derived from movement would differ by cause of death.
+
+### The blade stayed in code, and that is the point
+
+The sprites carry the body, the scarf, the rim and the visor. **The blade does
+not.** It is still drawn from `ATTACK_PIVOT`, `attack_angle()` and
+`tuning.attack_reach` — the same three numbers the kill hitbox is built from.
+
+`CHARACTER-SHEET.md` section 2 argued for this before any art existed, and the
+poses were prompted with *"empty hand, NO weapon"* to keep it true. A blade
+baked into a sprite would stop tracking the hitbox the moment anyone touched
+the tuning, and **nothing would say so** — the two
+`attack-hitbox-on-the-blade-*` checks would still pass, because they measure
+the hitbox against the numbers, not against the picture.
+
+The swing routine was also extracted to `_draw_swing()` and is now shared by
+the sprite path and the code-drawn fallback, so those two cannot disagree about
+the blade either.
+
+### The code-drawn body is kept as a fallback
+
+If `godot/assets/poses/` is absent, `_draw()` falls through to `_body_parts()`
+exactly as before. The project still runs from a checkout without the art, and
+the parts list, the directional rim and the prone layout all stay live and
+tested.
+
+### One thing that had to be re-aimed
+
+The sheathed blade's endpoints are **not** the code-drawn body's. That
+silhouette was 18 px wide with a flat-topped helm and the blade was tuned to be
+occluded by it; the generated sprite has a taller hood and a narrower waist, so
+the same line left **the grip floating in the air above the head**. Pulled from
+`(-9, -32) → (11, -4)` to `(-7.5, -27) → (10, -5)`, so it emerges from behind
+the shoulder.
+
+Found by rendering it and looking. The fourth time in three days.
+
+## Verified
+
+| check | result |
+|---|---|
+| `tests/test_game.gd` | **99 checks / 0 failures** — three new |
+| `pose-textures-all-eight-loaded-at-32x32` | 8 loaded, none missing, none the wrong size |
+| `pose-key-matches-the-state-it-claims` | all eight states return their own key, driven through real movement |
+| `sprites-did-not-take-over-the-blade` | the shared swing routine is still there |
+| `tests/test_keyboard.gd` | 14 / 14 |
+| `check_trap_visibility.py` / `check_enemy_visibility.py` | PASS |
+| captures | game 7, character 11, enemies 3, contact sheet rebuilt |
+
+**The feet were measured, not eyeballed.** The lit platform edge begins at
+logical y 320 and the player's `position.y` is 319.93; the sprite's anchor at
+cell row 30 puts its lowest opaque row exactly there.
+
+## What this does NOT change
+
+- **No gameplay number.** 99 checks pass, including both blade-hitbox
+  assertions at sub-micron endpoint error.
+- **The collider.** 18 × 28 at (0, −14). The sprite cell is 32 × 32 and the
+  overhang is decoration, exactly as the scarf and the blade already were.
+- **The dungeon, the HUD, the enemies, the traps.** All still code-drawn.
+
+## Still open from 2.0.0
+
+- **C7** — the placeholder death reaction (`death-laugh.ogg`,
+  `death-laugh-cat.png`) and the four placeholder sound effects.
+- The four human checks of `TEST-REPORT.md` section 6.

@@ -49,6 +49,20 @@ func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1
 	floor_snap_length = 1.0
+	# Read straight off disk rather than through res:// import, for the same
+	# reason session.gd loads its audio that way: a `--headless --script` run
+	# does not rescan the filesystem, so `load()` on an unimported asset fails
+	# in exactly the situation the assignment asks to verify -- a fresh
+	# checkout. An absent directory is not an error: the code-drawn body is
+	# still there and `_draw` falls back to it.
+	for key in POSE_FILES:
+		var path := ProjectSettings.globalize_path(
+			"res://assets/poses/%s.png" % POSE_FILES[key])
+		if not FileAccess.file_exists(path):
+			continue
+		var img := Image.load_from_file(path)
+		if img:
+			pose_tex[key] = ImageTexture.create_from_image(img)
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(18, 28)
 	var collider := CollisionShape2D.new()
@@ -94,6 +108,31 @@ func reset_at(spawn: Vector2) -> void:
 	queue_redraw()
 
 ## 0 = not swinging, 1 = windup, 2 = active (hitbox live), 3 = recovery.
+## Which pose this tick. Returns a key rather than a texture so the mapping can
+## be asserted without a renderer -- the states are exactly the ones in
+## CHARACTER-SHEET section 5, in priority order.
+##
+## `death` comes first because on death the body is disabled and `is_on_floor()`
+## keeps whatever it last returned, so anything derived from movement would
+## differ by cause of death.
+func pose_key() -> String:
+	if death_pose:
+		return "death"
+	var phase := attack_phase()
+	if phase == 1:
+		return "windup"
+	if phase >= 2:
+		# P10 (recovery) is one of the three optional poses and was not
+		# generated; three ticks of the live frame is the honest substitute.
+		return "live"
+	if dash_ticks_left > 0:
+		return "dash"
+	if not is_on_floor():
+		return "rise" if velocity.y < 0.0 else "fall"
+	if absf(velocity.x) > 8.0:
+		return "run"
+	return "idle"
+
 func attack_phase() -> int:
 	if attack_ticks_left <= 0:
 		return 0
@@ -246,6 +285,19 @@ func _physics_process(delta: float) -> void:
 ## dungeon rim costs no new colour (CHARACTER-SHEET section 3).
 const RIM := Color("9aa7bd")
 
+## C2 (CHANGE-BRIEF revision 2.5.0). One generated sprite per state the code can
+## already distinguish, in a 32 x 32 cell whose anchor -- the point the engine
+## places at `position` -- is at (20, 30) from the cell's top-left. Both numbers
+## come from CHARACTER-SHEET section 2 and are what `scripts/import_pose.py`
+## places every frame against.
+const POSE_CELL := 32.0
+const POSE_ANCHOR := Vector2(20.0, 30.0)
+const POSE_FILES := {
+	"idle": "p1-idle", "run": "p2-run", "rise": "p3-rising", "fall": "p4-falling",
+	"dash": "p5-dash", "windup": "p6-windup", "live": "p7-live", "death": "p8-death",
+}
+var pose_tex: Dictionary = {}
+
 ## The rim is DIRECTIONAL: 1 px toward the character's back and 1 px up, and
 ## nothing on the front or the underside.
 ##
@@ -321,6 +373,54 @@ func _bar(a: Vector2, b: Vector2, half: float) -> PackedVector2Array:
 ## and an all-sides rim, which left 1 px of armour inside a 3 px arm; the rim
 ## is directional now (see `_mrect_o`) so the full width survives and the value
 ## step has somewhere to happen.
+## The generated-sprite path. The sprite carries the body, the scarf, the rim
+## and the visor; the BLADE is still drawn in code, before and after it.
+##
+## That is not a leftover. The swung blade comes from `ATTACK_PIVOT`,
+## `attack_angle()` and `tuning.attack_reach` -- the same three numbers the kill
+## hitbox is built from -- so a blade baked into a sprite would stop tracking
+## the hitbox the moment anyone touched the tuning, and nothing would say so.
+## The generated poses were prompted with "empty hand, NO weapon" for this
+## reason, and `attack-hitbox-on-the-blade-*` still measures the agreement.
+func _draw_sprite(sprite: Texture2D, phase: int) -> void:
+	var steel := Color("4a5468")
+	var steel_dark := Color("2a3246")
+	var steel_edge := Color("9aa7bd")
+	var scarf_tip := Color("6a3fbf")
+
+	if death_pose:
+		# The blade has skidded on past the body.
+		_mpoly(_bar(Vector2(13.0, -1.1), Vector2(23.0, -0.7), 1.3), steel)
+		_mpoly(_bar(Vector2(14.0, -1.1), Vector2(23.0, -0.7), 0.5), steel_edge)
+	elif phase == 0:
+		# Sheathed, behind the sprite, so only the grip and the scabbard tip
+		# protrude -- which is what makes it read as carried rather than held.
+		#
+		# These endpoints are NOT the code-drawn body's. That silhouette was
+		# 18 px wide with a flat-topped helm, and the blade was tuned to be
+		# occluded by it; the generated sprite has a taller hood and a narrower
+		# waist, so the same line left the grip floating in the air above the
+		# head. Pulled down and in so it emerges from behind the shoulder.
+		var hilt := Vector2(-7.5, -27.0)
+		var tip := Vector2(10.0, -5.0)
+		var guard := hilt.lerp(tip, 0.22)
+		var perp := (tip - hilt).orthogonal().normalized()
+		_mpoly(_bar(guard, tip, 1.7), steel)
+		_mpoly(_bar(guard.lerp(tip, 0.10), tip, 0.6), steel_edge)
+		_mpoly(_bar(hilt, guard, 1.3), steel_dark)
+		_mpoly(_bar(hilt.lerp(guard, 0.35), hilt.lerp(guard, 0.65), 1.4), scarf_tip)
+		_mpoly(_bar(guard + perp * 2.9, guard - perp * 2.9, 0.9), steel_dark)
+
+	# The cell, placed so its anchor lands on the node's position. Mirrored by
+	# scaling x, because `draw_texture_rect` has no flip argument -- and the
+	# transform is reset immediately, or the blade below would mirror twice.
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(facing, 1.0))
+	draw_texture_rect(sprite, Rect2(-POSE_ANCHOR, Vector2(POSE_CELL, POSE_CELL)), false)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+	if phase != 0 and not death_pose:
+		_draw_swing()
+
 func _body_parts(stride: float, grounded: bool, phase: int) -> Array:
 	var plate := Color("1f3a6e")
 	var shade := Color("16233d")
@@ -491,6 +591,11 @@ func _draw() -> void:
 	# generated from the same array, so a part can never be painted without its
 	# rim or rimmed without being painted. The old code duplicated eight shapes
 	# in two places and nothing stopped them drifting.
+	var sprite: Texture2D = pose_tex.get(pose_key())
+	if sprite != null:
+		_draw_sprite(sprite, phase)
+		return
+
 	var parts: Array = _body_parts(stride, grounded, phase)
 
 	# Rim pass (CONCEPT revision 1.3). On the cream backdrop the body read at
@@ -560,19 +665,26 @@ func _draw() -> void:
 			_mpoly(part[3], part[1])
 
 	if phase != 0 and not death_pose:
-		# Swung: drawn over the body, from the same pivot/angle/reach the
-		# hitbox uses. The arc wedge only appears once the swing is live, so
-		# the bright sweep marks exactly the ticks that can kill.
-		var a := ATTACK_PIVOT
-		var b := attack_tip()
-		if phase >= 2:
-			var wedge := PackedVector2Array()
-			wedge.append(a)
-			var samples := 7
-			for i in range(samples + 1):
-				var s: float = lerpf(ATTACK_ANGLE_START, attack_angle(), float(i) / float(samples))
-				wedge.append(a + Vector2.from_angle(s) * tuning.attack_reach)
-			_mpoly(wedge, Color(0.49, 0.89, 1.0, 0.28))
-		_mpoly(_bar(a - Vector2.from_angle(attack_angle()) * 4.0, a, 1.3), steel_dark)
-		_mpoly(_bar(a, b, 2.0), steel)
-		_mpoly(_bar(a.lerp(b, 0.14), b, 0.7), steel_edge)
+		_draw_swing()
+
+## The swung blade, over the body, from the same pivot/angle/reach the hitbox
+## uses. The arc wedge only appears once the swing is LIVE, so the bright sweep
+## marks exactly the ticks that can kill. One copy, shared by the sprite path
+## and the code-drawn fallback, so the two cannot disagree about the blade.
+func _draw_swing() -> void:
+	var steel := Color("4a5468")
+	var steel_dark := Color("2a3246")
+	var steel_edge := Color("9aa7bd")
+	var a := ATTACK_PIVOT
+	var b := attack_tip()
+	if attack_phase() >= 2:
+		var wedge := PackedVector2Array()
+		wedge.append(a)
+		var samples := 7
+		for i in range(samples + 1):
+			var t: float = lerpf(ATTACK_ANGLE_START, attack_angle(), float(i) / float(samples))
+			wedge.append(a + Vector2.from_angle(t) * tuning.attack_reach)
+		_mpoly(wedge, Color(0.49, 0.89, 1.0, 0.28))
+	_mpoly(_bar(a - Vector2.from_angle(attack_angle()) * 4.0, a, 1.3), steel_dark)
+	_mpoly(_bar(a, b, 2.0), steel)
+	_mpoly(_bar(a.lerp(b, 0.14), b, 0.7), steel_edge)

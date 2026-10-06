@@ -12,7 +12,7 @@ horses. It continues the Assignment 1 build rather than starting a new game.
 | Engine | Godot **4.7.2.stable.official** `ed1daf0bf`, GL Compatibility |
 | Resolution | 640 × 360 logical, 1280 × 720 windowed, `canvas_items` stretch |
 | Physics | 60 Hz fixed |
-| Automated checks | **110 — 0 failures** |
+| Automated checks | **113 — 0 failures** |
 
 ---
 
@@ -58,7 +58,7 @@ By hand, if you prefer:
 | **A character with parts** — head, torso, two arms, two legs, directional rim light | **done**, original vector art |
 | **A death pose** — prone, face down, the only pose wider than it is tall | **done**, original vector art |
 | **Four sound effects** — jump, slash, trap warning, death | **wired; the audio is a placeholder, not generated** |
-| **Generated art** | **not started.** Specified in `CHARACTER-SHEET.md`; no image has been generated |
+| **Generated art** | **done** — a reference plus eight poses, imported, checked and wired in. The blade is still drawn in code on purpose |
 | **The film** | not started |
 
 `SOURCES.md` is the authoritative answer to *which of these did you actually
@@ -71,7 +71,7 @@ generate*. `godot/assets/README.md` is the one-table version.
 ```bash
 GODOT="…/Godot_v4.7.2-stable_win64.exe"
 
-"$GODOT" --headless --path godot --script res://tests/test_game.gd      # 96 checks
+"$GODOT" --headless --path godot --script res://tests/test_game.gd      # 99 checks
 "$GODOT" --headless --path godot --script res://tests/test_keyboard.gd  # 14 checks
 ```
 
@@ -136,7 +136,7 @@ godot/
   levels/first_steps.json    geometry, traps, enemies, labels — data, not code
   assets/                    music loop, four sound effects, two placeholders
   assets/README.md           which of these is generated: one table
-  tests/test_game.gd         96 checks
+  tests/test_game.gd         99 checks
   tests/test_keyboard.gd     14 checks, through the real InputMap
   tests/capture_*.gd         real rendered-viewport captures, each asserting its state
   tests/route_driver.gd      the input route that completes the level
@@ -169,9 +169,18 @@ assignment yet.** They are here because the Assignment 2 film will use them.
 
 ## Known state, stated plainly
 
-- **No art has been generated.** The character and the dungeon are original
-  vector drawing in code. `CHARACTER-SHEET.md` sections 3c and 4 hold the
-  prompt and the pose spec that generation will run against.
+- **The character is generated art; the dungeon is not.** Eight poses are
+  imported and wired in (`godot/assets/poses/`). The dungeon, the HUD, the
+  enemies and the traps are still original vector drawing in code. The
+  character's **blade** is also still code-drawn, deliberately: it and the kill
+  hitbox come from the same three numbers.
+- **Two edits are applied to every generated pose** by
+  `scripts/import_pose.py` — the directional rim, and restoring the visor
+  through the downscale. Both are edits to generated assets rather than
+  properties of the generation, and `ASSET-LOG.md` says so.
+- **The art was generated on a tool that exposes no seed**, which breaks this
+  project's own requirement. Deliberate, and the reasoning is in
+  `ASSET-LOG.md` rather than silent.
 - **The four sound effects are placeholders**, synthesised by arithmetic, and
   they do not satisfy the assignment's "generate sound" requirement. They exist
   so the masking check from `CONCEPT.md` revision 1.1 can be run at all, since
