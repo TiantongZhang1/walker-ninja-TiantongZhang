@@ -5,7 +5,17 @@
 | Commit | `11fcc29a170536e783c6a2d84ccc192992c61e88` |
 | Date | 2026-10-05 |
 | Engine | Godot 4.7.2.stable.official.`ed1daf0bf`, GL Compatibility |
-| **Automated checks** | **110 — 96 in `test_game.gd`, 14 in `test_keyboard.gd`** |
+> **Correction, 2026-10-06.** This report said **110 checks — 96 in
+> `test_game.gd`** until today. Both numbers were stale: three checks were added
+> with the sprite wiring and the count here was never re-read off a run. The
+> suite reports `WALKER TESTS: 99 checks / 0 failures`, and `test_keyboard.gd`
+> reports 14, so the total is **113**. Caught because the film's FACTCHECK table
+> cites section 1 of this report as the source for 113 and the two disagreed.
+> The numbers below are re-read from a run of
+> `Godot_v4.7.2-stable_win64.exe --headless --path godot --script
+> res://tests/test_game.gd` on 2026-10-06, not edited to match the film.
+
+| **Automated checks** | **113 — 99 in `test_game.gd`, 14 in `test_keyboard.gd`** |
 | **Failures** | **0** |
 | Pixel checks | 2, both PASS |
 | Rendered evidence | 21 frames + 1 contact sheet |
@@ -44,7 +54,7 @@ and disagreed with. Several of the numbers quoted below are how the mistakes in
 
 ---
 
-## 2. `test_game.gd` — 96 checks, 0 failures
+## 2. `test_game.gd` — 99 checks, 0 failures
 
 ### Movement, inherited and unchanged (checks 1–14, 41–44)
 
@@ -171,7 +181,7 @@ not decoration.
 | `mute-is-a-master-bus-mute` | toggles bus 0, both directions |
 | `music-stops-at-the-finish` | PASS — not left looping under the results card |
 
-### The death pose and the sound effects (88–96) — new in Assignment 2
+### The death pose and the sound effects (88–97) — new in Assignment 2
 
 | check | observed |
 |---|---|
@@ -189,6 +199,26 @@ The trap row is the most useful check added this assignment. "A sound played
 when the trap killed me" would have passed while being useless to the player;
 this one says the warning arrived **35 ticks early** and would fail if it were
 ever moved onto the damage.
+
+Nine rows over a ten-check range: position 93 in the run is a record the suite
+emits under the bare id `jump`, inside `sfx-jump-fires-once-per-jump`. It
+counts toward the 99 the suite reports, so it counts here, but it has nothing
+of its own to show and naming it `jump` was not a good idea.
+
+### The generated sprites (98–99) — new in Assignment 2
+
+| check | observed |
+|---|---|
+| `pose-textures-all-eight-loaded-at-32x32` | 8 textures, all `32 × 32` |
+| **`pose-key-matches-the-state-it-claims`** | PASS for idle, run, rise, fall, dash, windup, live and death — the key the drawing code asks for is the key the physics state implies |
+
+**These two are the whole automated guarantee about the generated art, and
+neither of them looks at a pixel.** The first counts textures and measures
+their dimensions. The second drives the player into each of eight states and
+checks that `pose_key()` returns the matching string — which is testable
+precisely because it returns a string rather than a `Texture2D`. A pose file
+could contain the wrong drawing, or a blank cell, and both would pass. That is
+the subject of section 6.
 
 ---
 
@@ -260,11 +290,11 @@ Listed because a report of only passes is not a test report.
 
 ### The suite does not assert what the player character looks like
 
-**Every one of the 110 checks is about behaviour** — where the hitbox is,
+**Every one of the 113 checks is about behaviour** — where the hitbox is,
 whether the trap is drawn, whether an enemy is at its live position, which tick
 a sound fired on. None of them describes the figure on screen.
 
-Two real defects in the character rebuild passed all 110 checks while being
+Two real defects in the character rebuild passed all 113 checks while being
 obviously wrong on screen: the air-pose sign error above, and a rim that left
 1 px of armour inside a 3 px arm so the limbs rendered as grey pipework.
 
@@ -355,7 +385,7 @@ capture commands in §1 use `--quit-after 200000` for this reason.
 
 | | |
 |---|---|
-| Automated | **110 checks, 0 failures.** Gameplay, input bindings, audio behaviour and audio *timing* are covered, and three of the checks measure an invariant rather than asserting it. |
+| Automated | **113 checks, 0 failures.** Gameplay, input bindings, audio behaviour and audio *timing* are covered, and three of the checks measure an invariant rather than asserting it. |
 | Rendered | 21 frames and a contact sheet, with 2 pixel checks over them, both PASS. |
 | Human | **4 of 4 run, 2026-10-06, all acceptable** — including H2, the masking prediction the assignment's argument rests on. Reported as one sentence without per-check detail, which is recorded as such in section 6. |
 | Rights | 1 open item — the Suno download-pack terms. |

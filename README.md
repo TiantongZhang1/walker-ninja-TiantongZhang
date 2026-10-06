@@ -70,7 +70,7 @@ comment in that file explains the Assignment 1 failure it exists to prevent.
 | **A death pose** — prone, face down, the only pose wider than it is tall | **done**, original vector art |
 | **Four sound effects** — jump, slash, trap warning, death | **wired; the audio is a placeholder, not generated** |
 | **Generated art** | **done** — a reference plus eight poses, imported, checked and wired in. The blade is still drawn in code on purpose |
-| **The film** | not started |
+| **The film** | **done** — `NewWalkerArt_TiantongZhang.mp4`, 4:54, 3840×2160. Built in `youtube/claude-liam-walker-ninja-gamedev/`; the master itself is gitignored with the rest of the media, and its SHA-256 is in that folder's `SOURCES.md` |
 
 `SOURCES.md` is the authoritative answer to *which of these did you actually
 generate*. `godot/assets/README.md` is the one-table version.
@@ -123,7 +123,7 @@ revisions are added and earlier text is never rewritten.
 | **`STORYBOARD.md`** | six panels on the level's own signage, with the method and per-panel coordinates, plus seven hand-drawn frames |
 | **`CHANGE-BRIEF.md`** | what changed in the code, revision by revision, each one naming its **predicted failure** and the check for it before the change was made |
 | **`ASSET-LOG.md`** | one row per generation kept or seriously considered, including every rejection, with two corrections left standing above the text they correct |
-| **`TEST-REPORT.md`** | 110 checks with their observed values, the three defects they caught, and **what was not checked** |
+| **`TEST-REPORT.md`** | 113 checks with their observed values, the three defects they caught, and **what was not checked** |
 | **`SOURCES.md`** | provenance for every file, in four categories, with the one open rights question flagged |
 | **`FRICTIONAL.md`** | the honest log. What was wanted, what was decided, what went wrong, and for each entry what was mine and what was Claude's |
 | **`PROMPTS.md`** | everything still to be generated, in the order to generate it, as text to paste — derived from the two documents above it, never a decision of its own |
@@ -170,11 +170,16 @@ scripts/
   build_level_map.py         the level as one wide image
 ```
 
-`scripts/` also holds the Assignment 1 film pipeline — `build_coverage.py`,
+`scripts/` also holds the film pipeline — `build_coverage.py`,
 `build_media_clips.py`, `build_source_snapshot.py`, `encode_captures.py`,
-`mix_death_laugh.py`, `render_takes.py`, `record-build.cjs` — and
-`godot/tests/capture_walkthrough.gd`. **Carried over, not used by this
-assignment yet.** They are here because the Assignment 2 film will use them.
+`render_takes.py`, `record-build.cjs`, `build_beat_sheet.py`,
+`build_beat_bookends.py`, `build_gamedev_ledger.py`, `finalise_beat_timing.py`,
+`fit_beat_panels.py`, `compose_b05_evidence.py`, `compose_b09_evidence.py` —
+and the capture driver `godot/tests/capture_gamedev.gd`. All of it was used to
+build this assignment's film; `youtube/claude-liam-walker-ninja-gamedev/BUILD-PROMPT.md`
+is the order to run them in. `mix_death_laugh.py` and
+`godot/tests/capture_walkthrough.gd` are carried over from Assignment 1 and
+were **not** used here.
 
 ---
 
@@ -196,13 +201,21 @@ assignment yet.** They are here because the Assignment 2 film will use them.
   they do not satisfy the assignment's "generate sound" requirement. They exist
   so the masking check from `CONCEPT.md` revision 1.1 can be run at all, since
   it cannot be run against silence.
-- **Four human checks are outstanding** — the loop seam, the masking check, the
-  retry behaviour and a muted playthrough. `TEST-REPORT.md` section 6 lists
-  them and none is done.
-- **One open rights question**: the licence terms of Suno's purchased
-  single-download pack have not been read. `SOURCES.md` section 3.
+- **Four human checks were run on 2026-10-06** — the loop seam, the masking
+  check, the retry behaviour and a muted playthrough. All four came back
+  acceptable, in one sentence covering all four. `TEST-REPORT.md` section 6
+  records it as exactly that: a pass with no detail is weaker evidence than a
+  failure with detail would have been.
+- **The music is non-commercial use only.** Suno owns it — the tracks were
+  generated on the free tier, and the single-download pack bought afterwards
+  purchased a download, not a licence upgrade. A graded submission and an
+  unmonetised film are inside that grant; selling or monetising this slice
+  would mean replacing the music first. `SOURCES.md` section 3 records what was
+  checked and what was not.
+- **One open rights question**: the licence terms of the art generator.
+  `SOURCES.md` section 3.
 - **The suite does not assert what the player character looks like.** Every one
-  of the 110 checks is behavioural. Two real art defects passed all of them.
+  of the 113 checks is behavioural. Two real art defects passed all of them.
   `TEST-REPORT.md` section 6 explains why a pixel-diff of the player is not the
   answer.
 

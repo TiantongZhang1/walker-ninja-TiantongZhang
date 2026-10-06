@@ -229,7 +229,7 @@ what the player interacts with. A beautiful, busy wall is a failed wall.
 - [ ] each run through `scripts/import_pose.py`, each check read
 - [ ] `SFX-JUMP` / `SLASH` / `TRAP` / `DEATH` generated
 - [ ] `SFX-TRAP` judged **over the music**, not alone
-- [ ] suite re-run, 110 checks still passing
+- [ ] suite re-run, 113 checks still passing
 - [ ] every generation logged in `ASSET-LOG.md` with **model, version, seed,
       verbatim prompt, settings, outcome, edits**
 - [ ] tool history screenshotted into `design/rejected/`
