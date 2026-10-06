@@ -33,3 +33,8 @@ credentials/
 youtube/*/clips/
 youtube/*/media/
 youtube/*/mp3/*.mp3
+# Lossless frame sequences from Movie Maker: 165 MB for two short takes, and
+# reproducible by `scripts/render_takes.py`. The encoded capture MP4s they
+# produce are the evidence, and their hashes are tracked even though the *.mp4
+# rule above keeps the files themselves out.
+youtube/*/capture/take-*/

@@ -11,6 +11,7 @@ prints "recording movie in 1280x720", which is how the first take of this film
 was produced.
 
     python scripts/render_takes.py a b c d --out <dir>
+    python scripts/render_takes.py p t --out <dir>         --driver res://tests/capture_gamedev.gd
 
 Each take writes <dir>/take-<letter>/frame########.png plus frame.wav, and its
 input log to <dir>/logs/take-<letter>-inputs.jsonl. The driver asserts its own
@@ -44,7 +45,11 @@ window/size/window_height_override={h}
 # Generous per-take frame bounds. The driver quits itself on success; these are
 # only the safety net --quit-after provides, so they sit well above the
 # measured tick counts (a 484, b 1389, c 705, d 1618).
-QUIT_AFTER = {"a": 600, "b": 1500, "c": 900, "d": 1800}
+QUIT_AFTER = {"a": 600, "b": 1500, "c": 900, "d": 1800, "p": 600, "t": 900}
+
+# Assignment 2's film uses a second driver. The default stays Assignment 1's,
+# so that film remains reproducible from this script unchanged.
+DEFAULT_DRIVER = "res://tests/capture_walkthrough.gd"
 
 
 def png_size(path: Path) -> tuple[int, int]:
@@ -53,7 +58,7 @@ def png_size(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", header[16:24])
 
 
-def render(godot: str, take: str, out_root: Path) -> bool:
+def render(godot: str, take: str, out_root: Path, driver: str = DEFAULT_DRIVER) -> bool:
     out = out_root / ("take-" + take)
     if out.exists():
         shutil.rmtree(out)
@@ -63,7 +68,7 @@ def render(godot: str, take: str, out_root: Path) -> bool:
     env = dict(os.environ, WALKER_TAKE=take, WALKER_LOG_DIR=str(logs))
     command = [
         godot, "--path", str(GODOT_DIR),
-        "--script", "res://tests/capture_walkthrough.gd",
+        "--script", driver,
         "--write-movie", str(out / "frame.png"),
         "--fixed-fps", "60", "--disable-vsync",
         "--quit-after", str(QUIT_AFTER.get(take, 1800)),
@@ -100,6 +105,9 @@ def main() -> int:
     parser.add_argument("--out", required=True, type=Path, help="output root directory")
     parser.add_argument("--godot", default=os.environ.get("GODOT", "godot"),
                         help="Godot executable (or set $GODOT)")
+    parser.add_argument("--driver", default=DEFAULT_DRIVER,
+                        help="res:// path of the capture driver "
+                             "(default: Assignment 1's walkthrough driver)")
     args = parser.parse_args()
     if OVERRIDE.exists():
         print("refusing to run: %s already exists; remove it first" % OVERRIDE)
@@ -108,7 +116,7 @@ def main() -> int:
     try:
         ok = True
         for take in args.takes:
-            ok = render(args.godot, take, args.out.resolve()) and ok
+            ok = render(args.godot, take, args.out.resolve(), args.driver) and ok
     finally:
         OVERRIDE.unlink(missing_ok=True)
         print("removed %s" % OVERRIDE.name)
