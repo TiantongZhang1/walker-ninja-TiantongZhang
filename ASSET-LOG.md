@@ -269,9 +269,106 @@ the same discipline the music section had to be rebuilt to follow.
 
 ## Art
 
-| Asset ID | Model + version | Where run | Licence / terms | Prompt + settings | Outcome | Edits | Where used |
-|---|---|---|---|---|---|---|---|
-| `CHAR-REF-01` | | | | | | | |
+### The seed requirement was broken on purpose, and here is the reasoning
+
+`CHARACTER-SHEET.md` section 8 has carried "the generator must record a seed"
+as a preference since the start, and the correction dated 2026-10-04 made it
+**binding** after Suno turned out to expose none — which left the music
+reproducible as a *request* and not as an *output*.
+
+**`CHAR-REF-01` was generated on a tool that records no seed.** That is a
+deliberate departure from my own rule, taken after five attempts on a tool
+that does record one failed to produce a usable frame. The cost is real and
+unchanged: this asset reproduces as a request, not as an output. What is
+recorded instead is the exact instruction text and the file's hash.
+
+Writing it down rather than quietly switching is the point. The rule was right;
+it lost to a worse problem.
+
+### Attempts on Civitai — five generations, none usable
+
+| # | Model | Prompt summary | Outcome |
+|---|---|---|---|
+| 1 | `Z Image Turbo` + **`8bitdiffuser 64x`** LoRA (SD 1.5), **TO CONFIRM: checkpoint, seed** | the full `CHARACTER-SHEET` prompt, ~60 words | **Rejected.** Produced a front **and** back turnaround of a tall, realistic-proportioned figure. Two characters in one frame, no side view, roughly 8 heads tall — at a 28 px figure height that leaves a 3 px head |
+| 2 | same | shortened, `side profile facing right`, `three and a half heads tall` | **Rejected.** Back view on a stone pedestal, dark background, no scarf, no visor. Almost nothing in the prompt survived |
+| 3 | **`2D Pixel Toolkit`**, `((Side view)), full body, solid background` | 15 words | **Rejected, but the first useful failure.** Side view ✓, chibi proportions ✓, facing right ✓, white background ✓ — and anime hair instead of a helm, with the purple landing on the hair rather than a scarf |
+| 4 | same | added `full face helmet, glowing cyan visor slit, no hair` | **Rejected.** The colour words fought: `glowing cyan` and `navy blue armor` averaged into an all-cyan creature at 2 heads tall. `no hair` pushed it away from a humanoid entirely |
+| 5 | — | — | not spent; the budget decision below was taken first |
+
+**What those four cost and what they bought.** 40 Buzz of a 100 Buzz balance —
+**four of ten available generations** — which is why the remaining budget could
+not have covered eight poses at ten Buzz each even if attempt 4 had worked.
+What they bought is the diagnosis: these LoRAs are trained on front-facing
+anime figures, so "side view" is fought rather than followed, and a 60-word
+prompt dilutes the one token that matters past the 77-token limit. Attempt 3
+is the evidence — it is the one where the prompt got short enough.
+
+**Screenshots: TO CAPTURE** → `design/rejected/2026-10-05-civitai-*.png`.
+
+### `CHAR-REF-01` — accepted
+
+| | |
+|---|---|
+| Model | **TO CONFIRM — the exact model and version** (an instruction-following image model, not a diffusion UI) |
+| Seed | **none exposed.** See the note above |
+| Licence | **TO CONFIRM** against the tool's own terms page, and written into `SOURCES.md` |
+| File | `design/character/CHAR-REF-01.png`, 1254 × 1254 |
+| SHA-256 | `7bc5e6428fec00e3107bf5fb9b2df141657ebe6d8263933492510a7984841971` |
+
+The instruction was written as prose with hard requirements rather than as
+comma-separated tags, which is what the tool responds to:
+
+> Side view, strict profile, facing RIGHT. Not front, not back, not 3/4. Chibi
+> proportions, about 3.5 heads tall, large head, stocky body. A ninja in deep
+> navy blue plate armour. Full head covering — a dark navy hood/helm. NO hair,
+> NO visible face, NO eyes. Just a thin glowing light-blue horizontal slit
+> across where the eyes would be. A long purple scarf trailing behind him.
+> Pale steel gauntlets and boots. The far-side arm and leg must be painted a
+> DARKER navy than the near-side arm and leg, so the limbs read as separate.
+> Limited palette, hard pixel edges, no gradients, no anti-aliasing, no glow.
+> Plain solid white background. Single character only. No text, no weapon, no
+> pedestal, no shadow.
+
+**Accepted on the first attempt**, against the four it took elsewhere. Every
+identity item is present: side profile facing right, full hood with no hair and
+no face, the light-blue visor slit, the purple scarf, navy plate, steel
+gauntlets and boots, plain white background, single character, no weapon.
+
+### Edits, and one that is not optional
+
+`scripts/import_pose.py` is run on every pose. It finds the figure, scales it
+to the collider's height, places it on the (20, 30) anchor, and **snaps every
+pixel to the eight-colour palette**.
+
+**It also adds the directional rim, and that is an edit worth being explicit
+about.** `CHARACTER-SHEET.md` section 3c requires 1 px of `steel_edge` toward
+the character's back and 1 px up, because the dungeon's light is a torch above
+and behind. The generated reference came back with a near-black outline
+instead, which snaps to `shade` — 1.14:1 against the wall, which is to say
+nothing at all.
+
+Measured on `CHAR-REF-01`, at the real game size:
+
+| | without the rim | with it |
+|---|---|---|
+| figure reading at 3:1 or better against the wall | **6.3 %** | **24.2 %** |
+| `steel_edge` pixels | 20 | 94 (74 added) |
+| rim check | WARN — nothing on the back edge | ok |
+
+(The shipped code-drawn character measures 9.1 % on the same test.)
+
+A model cannot be relied on to place a one-pixel light edge correctly at a
+28 px figure height. Doing it in the importer is deterministic, identical for
+every pose, and derived from the same rule the code already uses — but it is
+**an edit to a generated asset**, not a property of the generation, and the
+distinction matters for anyone reading this log to find out what the model
+actually produced.
+
+### Still owed
+
+- `CHAR-P1` … `CHAR-P8`, derived from `CHAR-REF-01` as the reference.
+- The model, version and licence rows above, filled in.
+- The Civitai rejection screenshots.
 
 ## Rejected, logged without downloading
 
