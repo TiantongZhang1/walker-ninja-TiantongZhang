@@ -156,9 +156,11 @@ VERIFICATION
   An anonymous clone is byte-identical, re-verified against this repository
   rather than assumed from Assignment 1:
     git -c core.autocrlf=true clone <repo>.git
-  35 commits, 188 files, file list identical, contents byte-identical. Run
-  against tip 8226d93 on 2026-10-06, not carried over from an earlier state of
-  the repository.
+  Run against tag `a2-submitted` on 2026-10-06 - the same tree a grader gets -
+  not carried over from an earlier state of the repository. Every tracked file
+  is byte-identical and the file lists match exactly. The counts are not typed
+  in here, for the reason given under "Submitted commit" above; `git ls-files |
+  wc -l` and `git rev-list --count a2-submitted` print them.
   core.autocrlf=true is the Windows default and it is what broke Assignment 1,
   where a clone recomputed the film's build_id as e83b9a83 against the
   82696a5d recorded in its own evidence. The committed .gitattributes (* -text)
