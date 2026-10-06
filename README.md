@@ -138,8 +138,10 @@ files that commit tracks — no `.godot/` cache, no `*.mp4`, no `*.wav`, no
 credentials — and the film is not in it:
 
 ```bash
-git archive --format=zip --prefix=walker-ninja-TiantongZhang/ -o walker-ninja-TiantongZhang-$(git rev-parse --short a2-submitted).zip a2-submitted
+git archive --format=zip --prefix=walker-ninja-TiantongZhang/ -o walker-ninja-TiantongZhang-$(git rev-list -n1 --abbrev-commit a2-submitted).zip a2-submitted
 ```
+
+`git rev-list -n1 --abbrev-commit`, not `git rev-parse --short` — the latter prints the annotated **tag object's** SHA, not the commit's.
 
 The MP4 is deliberately **not** in this repository: it is over 25 MB and this
 project keeps `*.mp4` out of git. It is reproducible from the tagged revision —
