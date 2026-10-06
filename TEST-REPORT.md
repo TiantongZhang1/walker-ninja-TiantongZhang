@@ -299,6 +299,32 @@ None of these is done. All four need ears or eyes, not a script.
 
 ---
 
+## 6b. The clone is byte-identical, and that was checked
+
+Not a claim carried over from Assignment 1 — re-run against this repository
+after the first push:
+
+```bash
+git -c core.autocrlf=true clone https://github.com/TiantongZhang1/walker-ninja-TiantongZhang.git
+```
+
+`core.autocrlf=true` is **the Windows default**, and it is what broke
+Assignment 1: it rewrites every LF to CRLF on checkout, which changes every
+text file's length and therefore every per-file hash. An anonymous clone there
+recomputed a `build_id` of `e83b9a83…` against the `82696a5d…` recorded in the
+film's own evidence, so a reviewer following the documented verification would
+have concluded the film did not match the posted source. `player.gd` alone
+differed by 354 bytes, all of them carriage returns.
+
+| | |
+|---|---|
+| Commits cloned | 25 |
+| File list | **identical**, 135 files |
+| File contents | **byte-identical**, all 135, with `core.autocrlf=true` |
+
+The committed `.gitattributes` (`* -text`) is what makes that true, and the
+comment in it is the record of why.
+
 ## 7. One environment note that cost real time
 
 **`--quit-after` counts process iterations, not physics ticks.** A windowed
@@ -320,4 +346,5 @@ capture commands in §1 use `--quit-after 200000` for this reason.
 | Rendered | 21 frames and a contact sheet, with 2 pixel checks over them, both PASS. |
 | Human | **0 of 4 done.** H2 is the one the assignment's argument rests on. |
 | Rights | 1 open item — the Suno download-pack terms. |
+| Distribution | pushed to <https://github.com/TiantongZhang1/walker-ninja-TiantongZhang>; an anonymous clone is byte-identical, verified. |
 | Generation | music only. Art and sound effects are specified but not generated. |

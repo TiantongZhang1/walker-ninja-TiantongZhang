@@ -9,6 +9,7 @@ horses. It continues the Assignment 1 build rather than starting a new game.
 
 | | |
 |---|---|
+| Repository | <https://github.com/TiantongZhang1/walker-ninja-TiantongZhang> |
 | Engine | Godot **4.7.2.stable.official** `ed1daf0bf`, GL Compatibility |
 | Resolution | 640 × 360 logical, 1280 × 720 windowed, `canvas_items` stretch |
 | Physics | 60 Hz fixed |
@@ -31,6 +32,16 @@ By hand, if you prefer:
 ```bash
 "…/Godot_v4.7.2-stable_win64.exe" --path godot
 ```
+
+From a fresh clone:
+
+```bash
+git clone https://github.com/TiantongZhang1/walker-ninja-TiantongZhang.git
+```
+
+The clone is **byte-identical** to what was committed, on Windows included.
+That is not automatic — `.gitattributes` carries `* -text` for it, and the
+comment in that file explains the Assignment 1 failure it exists to prevent.
 
 ### Controls
 
