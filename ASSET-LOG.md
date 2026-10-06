@@ -363,9 +363,9 @@ is the evidence — it is the one where the prompt got short enough.
 
 | | |
 |---|---|
-| Model | **TO CONFIRM — the exact model and version** (an instruction-following image model, not a diffusion UI) |
+| Model | **GPT-6**, as I reported it. An instruction-following image model rather than a diffusion UI, which is why its instruction was written as prose with hard requirements instead of comma-separated tags. Recorded as reported — I did not verify the version string myself. |
 | Seed | **none exposed.** See the note above |
-| Licence | **TO CONFIRM** against the tool's own terms page, and written into `SOURCES.md` |
+| Licence | **STILL TO CONFIRM.** The last open provenance question in the project. |
 | File | `design/character/CHAR-REF-01.png`, 1254 × 1254 |
 | SHA-256 | `7bc5e6428fec00e3107bf5fb9b2df141657ebe6d8263933492510a7984841971` |
 
@@ -485,8 +485,8 @@ the importer does is keep it alive at 28 px.
 
 ### Still owed
 
-- The model, version and licence rows for `CHAR-REF-01` and the eight poses.
-  The Civitai rows are settled by the correction above.
+- **The licence terms of the model that generated the art.** Model and version
+  are recorded now; its terms are not. Last open provenance question here.
 - ~~The Civitai rejection screenshots.~~ **Done, 2026-10-06** — three of four,
   in `design/rejected/`. The fourth had already aged out of Civitai's 30-day
   generator history.

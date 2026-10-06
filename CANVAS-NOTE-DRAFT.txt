@@ -1,7 +1,7 @@
 *** DRAFT - NOT READY TO SUBMIT ***
-Five things below are still blank, and they are marked [[ like this ]]:
-the submitted commit SHA, the film's URL, the film's SHA-256, the art model's
-name and version, and Suno's download-pack licence terms.
+Three things below are still blank, and they are marked [[ like this ]]:
+the submitted commit SHA, the film's URL and the film's SHA-256. All three
+depend on the film, which is not made yet.
 Do not paste this into Canvas until every [[ ]] is gone and this banner with it.
 ***
 
@@ -148,7 +148,8 @@ KNOWN LIMITATIONS, DECLARED
      right; it lost to a worse problem, and ASSET-LOG.md says so rather than
      switching quietly.
 
-     Model and version: [[ to fill in ]]
+     Model and version: GPT-6, as I reported it. Its own licence terms are
+     the one provenance question still open in this project.
 
   3. TWO EDITS ARE APPLIED TO EVERY GENERATED POSE by scripts/import_pose.py,
      and they are edits to generated assets rather than properties of the
@@ -166,15 +167,32 @@ KNOWN LIMITATIONS, DECLARED
      What the model produced is a slit in a 1254 px image. What the importer
      does is keep it alive at 28.
 
-  4. THE LICENCE TERMS OF SUNO'S PURCHASED SINGLE-DOWNLOAD PACK HAVE NOT BEEN
-     READ. [[ read them and fill this in ]] They are not assumed to match the
-     free tier's personal-use grant and not assumed to be broader. Flagged in
-     SOURCES.md section 3. For the record: eight tracks were generated on the
-     free tier and ZERO downloaded there; the free allowance was reported
-     exhausted because Suno moved to seven lifetime downloads on 2026-09-03 and
-     applied it retroactively, so downloads made on this account long before
-     this course count against it. The paywall was not circumvented and nothing
-     was screen-recorded.
+  4. THE MUSIC IS NON-COMMERCIAL USE ONLY, and this project has to stay
+     non-commercial while it is in it. Suno's Help Center puts the test in one
+     sentence - "was I subscribed when I made the song?" - and answers it: a
+     Pro or Premier subscriber at creation time owns the song; on the free
+     Basic tier Suno retains ownership and you may use the song for
+     non-commercial purposes.
+
+     Ownership turns on the plan AT CREATION TIME, not on how the file was
+     later obtained. These tracks were generated on 2026-10-01 on the free
+     tier with no Pro or Premier subscription at any point; the
+     single-download pack bought afterwards purchased a download, not a
+     licence upgrade. So Suno owns MUS-B-02 and a graded course submission is
+     inside the non-commercial grant - but if this slice is ever sold,
+     monetised or commercially released, the music has to be replaced first. A
+     film of it posted publicly and unmonetised is still non-commercial use.
+
+     Scope of what I checked: the Help Center article, read 2026-10-06. The
+     Terms of Service themselves I did not read in full and I could not find
+     the pack's receipt. Nothing above rests on either.
+
+     Also for the record: eight tracks were generated on the free tier and
+     ZERO downloaded there. The free allowance was reported exhausted because
+     Suno moved to seven lifetime downloads on 2026-09-03 and applied it
+     retroactively, so downloads made on this account long before this course
+     count against it. The paywall was not circumvented and nothing was
+     screen-recorded.
 
   5. THE TEST SUITE DOES NOT ASSERT WHAT THE PLAYER CHARACTER LOOKS LIKE. All
      113 checks are behavioural - where the hitbox is, whether the trap is

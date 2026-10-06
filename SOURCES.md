@@ -13,6 +13,21 @@ API key or token is in this repository or its history.**
 | Repository | <https://github.com/TiantongZhang1/walker-ninja-TiantongZhang> |
 | Version this document describes | the tip of `main` |
 | Tracked files | 135 |
+| Last revised | 2026-10-06 |
+
+**This file is kept CURRENT, and that is deliberately different from the other
+documents here.** `CONCEPT.md`, `CHANGE-BRIEF.md`, `ASSET-LOG.md` and
+`FRICTIONAL.md` are append-only: revisions are added and earlier text is never
+rewritten, so the record of what was believed when still stands. This one
+answers *where did each file come from, right now*, and a stale answer to that
+is worse than no answer. So it gets edited in place.
+
+Revised 2026-10-06 because it had gone wrong: it still said "no art has been
+generated" and "every pixel the game draws is original geometry written in
+GDScript" after the character had been replaced with generated sprites. Both
+sentences were true when written on 2026-10-05 and false a day later. The
+history of what changed and when is in `ASSET-LOG.md` and `CHANGE-BRIEF.md`;
+this file is only the current state.
 
 ---
 
@@ -41,20 +56,33 @@ represented by the placeholders in section 4.
 
 ## 2. Original work — mine, not generated
 
-### All visual art in the running game
+### The visual art that is NOT generated
 
-**Every pixel the game draws is original geometry written in GDScript.**
-Nothing is imported, traced, or generated. The relevant code is
-`godot/features/player/player.gd::_body_parts()` / `_draw()` and
+Everything in this table is original geometry written in GDScript — nothing
+imported, traced or generated. The relevant code is
 `godot/game/session.gd::_draw()` / `_draw_alcove()` / `_draw_torch()` /
-`_draw_spikes()` / `_draw_enemies()`.
+`_draw_spikes()` / `_draw_enemies()`, and `player.gd::_draw_swing()` /
+`_body_parts()`.
 
 | | |
 |---|---|
-| Character | deep navy plate, light-blue visor slit, purple scarf, back-slung blade, head / torso / two arms / two legs, directional rim light |
 | Dungeon | stone wall, staggered mortar courses, blind arches, wall torches, platforms with a torchlit top edge |
 | Hazards and enemies | spikes, slimes, flying horses |
 | HUD | bands, cards, progress bar, labels |
+| **The character's blade** | sheathed and swung, deliberately still code-drawn — see below |
+| The character's **fallback** body | `_body_parts()`, still live and still tested, used when `godot/assets/poses/` is absent |
+
+**The character the player normally sees is generated art** — eight sprites in
+`godot/assets/poses/`. Section 3 has their provenance.
+
+**The blade is code-drawn on purpose, and this is the one place in the project
+where that distinction carries weight.** It comes from `ATTACK_PIVOT`,
+`attack_angle()` and `tuning.attack_reach` — the same three numbers the kill
+hitbox is built from — so the generated poses were prompted with *"empty hand,
+NO weapon"*. A blade baked into a sprite would stop tracking the hitbox the
+moment anyone touched the tuning, and **nothing would report it**: the two
+`attack-hitbox-on-the-blade-*` checks would still pass, because they measure
+the hitbox against the numbers rather than against the picture.
 
 The eight-colour palette is recorded with measured contrast ratios in
 `CHARACTER-SHEET.md` sections 3, 3b and 3c.
@@ -119,26 +147,87 @@ over period and phase); three candidate loops cut at bar boundaries and scored
 for spectral continuity across the splice plus level match; the chosen one
 crossfaded at the wrap. Method and numbers in `ASSET-LOG.md` under 2026-10-04.
 
-> **⚠ OPEN RIGHTS ITEM — the one thing in this file that is not settled.**
-> The licence terms of Suno's purchased single-download pack **have not been
-> read**. They are *not* assumed to match the free tier's personal-use grant
-> and they are *not* assumed to be broader. This must be checked against
-> Suno's own terms page before submission, and the row above updated with what
-> it actually says.
+> **RIGHTS — settled 2026-10-06. The music's licence is no longer an open
+> item.**
 >
-> What *is* settled: eight tracks were generated on 2026-10-01 across two
-> directions, every one auditioned in the browser, and **zero** downloaded on
-> the free tier. The free allowance was reported exhausted — Suno moved to
-> seven lifetime downloads on 2026-09-03 and applied it retroactively, so
-> downloads made on this account long before this course count against it.
-> The paywall was **not circumvented** and nothing was screen-recorded.
+> Suno's Help Center, *"Does Suno own the music I make?"*
+> (<https://help.suno.com/en/articles/2416769>), puts the test in one sentence
+> — *"was I subscribed when I made the song?"* — and answers it:
+>
+> > If you were subscribed with a Pro or Premier plan when the song was
+> > created, you are considered the owner of the song. […] If you are using the
+> > free version of Suno (our Basic tier), we retain ownership of the songs you
+> > generate, but you are allowed to use those songs for non-commercial
+> > purposes, subject to your compliance with Suno's Terms of Service.
+>
+> **Ownership turns on the plan at CREATION time, not on how the file was
+> later obtained.** These tracks were generated on 2026-10-01 on the free Basic
+> tier, with no Pro or Premier subscription at any point. The single-download
+> pack bought afterwards purchased **a download, not a licence upgrade**.
+>
+> **So:** Suno retains ownership of `MUS-B-02`; the permitted use is
+> **personal and non-commercial**, which a graded course submission is, and the
+> loop in this repository is inside that grant.
+>
+> **The limits, stated rather than left to be inferred:** this project must not
+> be sold, monetised or commercially released while that track is in it. A film
+> of it posted publicly and unmonetised is still non-commercial use; a
+> monetised upload would not be.
+>
+> **Scope of what was checked:** the Help Center article above, read
+> 2026-10-06. **The Terms of Service themselves were not read in full** and the
+> pack's receipt was not located. Nothing above rests on either.
+>
+> What was already settled: eight tracks generated on 2026-10-01, every one
+> auditioned in the browser, and **zero** downloaded on the free tier. The free
+> allowance was reported exhausted because Suno moved to seven lifetime
+> downloads on 2026-09-03 and applied it retroactively, so downloads made on
+> this account long before this course count against it. The paywall was **not
+> circumvented** and nothing was screen-recorded.
+
+### The character sprites — `CHAR-REF-01` and eight poses
+
+| | |
+|---|---|
+| Model | **GPT-6**, as I reported it — an instruction-following image model rather than a diffusion UI, which is why its instruction was written as prose with hard requirements instead of comma-separated tags. Recorded as reported; I did not verify the version string myself. |
+| Seed | **none exposed.** Same gap as the music: these reproduce as a request, not as an output |
+| Licence | **TO CONFIRM — the last open provenance question in this project.** `ASSET-LOG.md` records it in the same place it records that the art broke this project's own seed requirement |
+| Sources | `design/character/CHAR-REF-01.png` and `CHAR-P1` … `CHAR-P8.png`, 1254 × 1254 each |
+| In the project | `godot/assets/poses/p1-idle.png` … `p8-death.png`, 32 × 32 |
+
+The eight poses were generated from `CHAR-REF-01` supplied back as a reference
+image, one request each, with the same opening sentence every time and a single
+pose line appended. Full prompts, per-pose measurements and the reasoning are
+in `ASSET-LOG.md`.
+
+**Before this worked, four generations on Civitai did not**, and all four are
+logged with what each failed on, three with screenshots of the generator's own
+history in `design/rejected/`. Those screenshots corrected three facts I had
+recorded wrongly, and the correction is left standing above the text it
+corrects.
+
+**Two edits are applied to every pose** by `scripts/import_pose.py`, and they
+are edits to generated assets rather than properties of the generation:
+
+1. **The directional rim.** The reference came back with a near-black outline,
+   which snaps to `shade` at 1.14:1 against the dungeon wall — nothing at all.
+   The importer adds 1 px of `steel_edge` toward the back and up. At real game
+   size this takes the fraction of the figure reading at 3:1 or better against
+   the wall from **6.3 % to 24.2 %**; the code-drawn character measures 9.1 %
+   on the same test.
+2. **Restoring the visor through the downscale.** The slit is 1–2 px tall at a
+   28 px figure height, an area resample averages it into the navy helm and the
+   result snaps to `plate`: **0 visor pixels in seven of the first eight
+   imports.** 6–9 px restored per pose.
+
+What the model produced is a slit in a 1254 px image. What the importer does is
+keep it alive at 28.
 
 ### Nothing else is generated
 
-**No art has been generated.** Not the character, not the dungeon, not the
-enemies. `CHARACTER-SHEET.md` sections 3c and 4 carry the prompt skeleton and
-the eleven-pose specification that generation will be run against; `REF-01`
-does not exist yet.
+**The dungeon, the HUD, the enemies, the traps and the blade are not
+generated.** See section 2. No environment asset was generated, and the three
+optional poses (air jump, attack recovery, celebrate) were not either.
 
 **No sound effect has been generated.** See section 4.
 
@@ -217,8 +306,8 @@ the game draws. No font file is bundled, downloaded, or redistributed.
 
 ## 8. What a reader should check first
 
-1. **The open rights item in section 3** — the Suno download-pack terms. It is
-   the only unresolved provenance question in the project.
+1. **The one open provenance question**: the licence terms of the model that
+   generated the art, in section 3. Everything else is settled.
 2. `ASSET-LOG.md`, which has the full per-asset history including every
    rejection and two corrections that are left standing above the text they
    correct.
