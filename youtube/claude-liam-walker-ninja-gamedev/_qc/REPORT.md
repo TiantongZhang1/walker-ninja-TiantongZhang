@@ -35,5 +35,14 @@ panel's measured 1529 × 987 now; the empty left panel is the component's
 | outro | `ClaudeTitleOutro` locked card: exact title, `@NikBearBrown`, one mascot, no subline, no narration. |
 | B09 legibility | 42 px monospace, values verbatim; the on-screen label states that the JSON payloads are wrapped one key per line. |
 
-**Still outstanding and not claimable by me:** a full end-to-end watch by the
-author at playback speed. Sampled frames are not a viewing.
+**The full watch — done 2026-10-06, by the author, not by me.** Sampled frames
+are not a viewing, so this was the one check in this report I could not make.
+The author watched the master end to end at playback speed and reported no
+problems, B05 and B09's empty left panel included: it was shown to them, named
+as a declared defect, and accepted. That is a one-sentence pass over a 4:54
+film, which is weaker evidence than a failure with detail would have been, and
+it is recorded as exactly that rather than expanded into findings nobody gave.
+
+The share links were also opened and checked by the author on the same day. I
+could not reach `northeastern-my.sharepoint.com` from here, so the scope of
+those links is their observation, not mine.

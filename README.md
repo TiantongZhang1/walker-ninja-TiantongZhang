@@ -189,6 +189,7 @@ revisions are added and earlier text is never rewritten.
 | **`CONCEPT.md`** | the game in one page, four design pillars, then revisions 1.1–1.4 as each decision landed: the music's feel, the art style, the dungeon, the character rebuild |
 | **`CHARACTER-SHEET.md`** | the generation spec — palette with measured contrast ratios, 11 poses mapped to states the code can actually distinguish, and the acceptance order a generated frame has to survive |
 | **`STORYBOARD.md`** | six panels on the level's own signage, with the method and per-panel coordinates, plus seven hand-drawn frames |
+| **`CANVAS-NOTE.txt`** | the submission note as pasted into Canvas: every field the assignment asks for, the film's links and hash, and the declared gaps in one place |
 | **`CHANGE-BRIEF.md`** | what changed in the code, revision by revision, each one naming its **predicted failure** and the check for it before the change was made |
 | **`ASSET-LOG.md`** | one row per generation kept or seriously considered, including every rejection, with two corrections left standing above the text they correct |
 | **`TEST-REPORT.md`** | 113 checks with their observed values, the three defects they caught, and **what was not checked** |
@@ -269,6 +270,12 @@ were **not** used here.
   they do not satisfy the assignment's "generate sound" requirement. They exist
   so the masking check from `CONCEPT.md` revision 1.1 can be run at all, since
   it cannot be run against silence.
+- **The film was watched end to end on 2026-10-06** by me, at playback speed,
+  and accepted — the empty left panel on the two asset beats included, which
+  was shown and named as a declared defect before being accepted. Gate V's own
+  report says visual content review remains required; that is what closed it.
+  `youtube/claude-liam-walker-ninja-gamedev/_qc/REPORT.md` records it as the
+  one-sentence pass it was.
 - **Four human checks were run on 2026-10-06** — the loop seam, the masking
   check, the retry behaviour and a muted playthrough. All four came back
   acceptable, in one sentence covering all four. `TEST-REPORT.md` section 6
