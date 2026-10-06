@@ -11,10 +11,22 @@ Project name: walker-ninja-TiantongZhang
 GitHub repository URL:
   https://github.com/TiantongZhang1/walker-ninja-TiantongZhang
 
-Submitted commit SHA:
-  8226d93cb7734156e97246079086e06cb23b2d84
-  ("Finish the gamedev film: a 4:54 master, and the two defects a gate did
-   not catch")
+Submitted commit: tag `a2-submitted` on branch `main`
+  git clone https://github.com/TiantongZhang1/walker-ninja-TiantongZhang.git
+  git -C walker-ninja-TiantongZhang checkout a2-submitted
+
+  The tag resolves to 040c9f2c44ff0766bfd55bff57d4d055131bca58.
+
+  It is a tag rather than a SHA typed into this file because filling the SHA in
+  moves the tip past the value just written - the first attempt at this line
+  named 8226d93 while the tip was already 040c9f2. The tag is a fixed name for
+  the tip of main at submission.
+
+  The two commits whose work the sections below describe:
+    8226d93  Finish the gamedev film: a 4:54 master, and the two defects a
+             gate did not catch
+    040c9f2  Correct the check count to 113, and three README claims the film
+             made false
 
 Last commit that touched the game itself:
   959f81b  ("C2: the generated sprites are in the game")
