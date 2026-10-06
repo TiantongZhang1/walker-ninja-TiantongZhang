@@ -15,7 +15,9 @@ Submitted commit: tag `a2-submitted` on branch `main`
   git clone https://github.com/TiantongZhang1/walker-ninja-TiantongZhang.git
   git -C walker-ninja-TiantongZhang checkout a2-submitted
 
-  `git rev-parse a2-submitted` prints the SHA. This file does not, on purpose.
+  `git rev-list -n1 a2-submitted` prints the commit SHA. (Plain `git rev-parse
+  a2-submitted` prints the annotated tag OBJECT, which is a different SHA -
+  not what you want.) This file does not print either, on purpose.
   A SHA typed in here is stale the moment it is committed - writing it moves
   the tip past the value just written. The first attempt at this line named
   8226d93 while the tip was already 040c9f2; the second named 040c9f2 and the
@@ -28,8 +30,19 @@ Submitted commit: tag `a2-submitted` on branch `main`
     040c9f2  Correct the check count to 113, and three README claims the film
              made false
 
-Last commit that touched the game itself:
+Game source demonstrated in the film:
   959f81b  ("C2: the generated sprites are in the game")
+
+  Stated precisely, because the loose version of this claim is wrong:
+  godot/game, godot/features, godot/levels and godot/ui are BYTE-IDENTICAL
+  between 959f81b and the tagged tip -
+    git diff --name-only 959f81b a2-submitted -- godot/game godot/features godot/levels godot/ui
+  returns nothing. godot/project.godot DOES differ, by one line's position
+  only: Godot rewrote the file on save and moved
+  textures/canvas_textures/default_texture_filter=0 above the renderer keys.
+  Same key, same value, same section. The commit that did that was 4b7dbff, so
+  "959f81b is the last commit that touched the game" would not have been true;
+  "the game source the film demonstrates is 959f81b's" is.
 
 Godot version and operating system:
   Godot 4.7.2.stable.official.ed1daf0bf
@@ -46,6 +59,17 @@ Final film URL:
 
 Final film SHA-256:
   ae1668c0f5a44aa2c4bbdc689b51509bf2fd5e49ce3277198126f57ee2c9dff6
+
+  A CHECKSUM.txt carrying this hash, the dimensions and the provenance above
+  is uploaded beside the film, as Assignment 1 did. To check the copy you were
+  given is the one this note describes, DOWNLOAD it - a web preview is a
+  re-encoded stream, the download is the original bytes - and run:
+    Windows PowerShell:  Get-FileHash NewWalkerArt_TiantongZhang.mp4 -Algorithm SHA256
+    macOS / Linux:       shasum -a 256 NewWalkerArt_TiantongZhang.mp4
+
+  The MP4 is deliberately NOT in the repository: it is over 25 MB and this
+  project keeps *.mp4 out of git. It is reproducible from the tagged revision -
+  see youtube/claude-liam-walker-ninja-gamedev/BUILD-PROMPT.md.
   Recomputed after the export was renamed from the reel slug to the locked
   title. The reel's own SOURCES.md is the only other place it is written.
 
