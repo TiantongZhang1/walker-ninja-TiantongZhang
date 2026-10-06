@@ -38,6 +38,17 @@ Game source demonstrated in the film:
   "959f81b is the last commit that touched the game" would not have been true;
   "the game source the film demonstrates is 959f81b's" is.
 
+Project archive (the zip):
+  walker-ninja-TiantongZhang-<short>.zip, where <short> is the submitted
+  commit's short SHA - `git rev-parse --short a2-submitted` prints it. The
+  filename is not written out here for the same reason the full SHA is not.
+
+  It is a `git archive` of the tagged commit, so it holds exactly the files
+  that commit tracks and nothing else: no .godot/ cache, no *.mp4, no *.wav,
+  no credentials. The film is NOT in it - it is 21.9 MB and lives on OneDrive,
+  per the links above. Rebuild or verify it with:
+    git archive --format=zip --prefix=walker-ninja-TiantongZhang/         -o walker-ninja-TiantongZhang-$(git rev-parse --short a2-submitted).zip         a2-submitted
+
 Godot version and operating system:
   Godot 4.7.2.stable.official.ed1daf0bf
   Windows 11 Home China 10.0.26200 (x86_64)

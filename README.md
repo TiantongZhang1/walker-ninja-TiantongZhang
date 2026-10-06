@@ -132,6 +132,15 @@ and 0 MAJOR.
 | Also | [the submission folder](https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgDg_vNibymFRo2cVCga_osiAVqFHeLr3Zj7NWzq7mmhysY?e=Hg0KSJ), which holds the film and a `CHECKSUM.txt` beside it |
 | Access | Northeastern OneDrive. The links are **not public** — they require a Microsoft sign-in |
 
+A **project archive** is submitted alongside: a `git archive` of the tagged
+commit, named `walker-ninja-TiantongZhang-<short>.zip`. It holds exactly the
+files that commit tracks — no `.godot/` cache, no `*.mp4`, no `*.wav`, no
+credentials — and the film is not in it:
+
+```bash
+git archive --format=zip --prefix=walker-ninja-TiantongZhang/ -o walker-ninja-TiantongZhang-$(git rev-parse --short a2-submitted).zip a2-submitted
+```
+
 The MP4 is deliberately **not** in this repository: it is over 25 MB and this
 project keeps `*.mp4` out of git. It is reproducible from the tagged revision —
 see
