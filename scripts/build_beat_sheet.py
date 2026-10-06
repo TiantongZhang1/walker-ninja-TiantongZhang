@@ -66,7 +66,12 @@ def footage_beat(bid, capture, window, secs, narration, role, show):
         "narration_text": narration, "voice": "am_onyx", "engine": "kokoro",
         "estimated_duration_s": secs,
         "shot": {
-            "type": "FOOTAGE", "class": "SHOW", "source": "own",
+            "type": "FOOTAGE", "class": "SHOW", "source": "capture",
+            # "capture", not "own": beat_plan.fill_plan reads this field and
+            # falls through to "ai-video-prompt" for anything it does not
+            # recognise, which put "ai-video-prompt / human" against three real
+            # Godot captures in the generated STATUS.md. "capture" is the
+            # toolkit's own word for footage the CLI cannot fake.
             "motion": "gameplay", "capture": capture,
             "window_s": window, "show": show,
             "evidence_media": "capture/%s.mp4" % capture,

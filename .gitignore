@@ -45,3 +45,9 @@ youtube/*/mp3/*.mp3
 # produce are the evidence, and their hashes are tracked even though the *.mp4
 # rule above keeps the files themselves out.
 youtube/*/capture/take-*/
+
+# Machine-local build state: rewritten on every `./art final`, full of absolute
+# paths, and it names the export under its pre-rename slug. Its one durable
+# fact — the master's SHA-256 — is recorded deliberately in
+# youtube/*/SOURCES.md instead, so it lives in exactly one place.
+youtube/*/build-state.json

@@ -170,10 +170,37 @@ func take_p() -> bool:
 	if player.attacks != 1:
 		failure = "the swing did not happen (attacks=%d)" % player.attacks
 		return false
+	# Keep going east for a second helping of the same states, so the result
+	# beats have motion to spend instead of a frozen frame. The first cut of
+	# this take was 4.3 s against a 10.6 s narration, which is a seven-second
+	# held still - a fair device for a moment, not for most of a beat.
+	await step(12)
+	# 548 again. This is the third time the block at x 576 has stopped a take in
+	# this file; it is written out in take t's comment and it still caught me
+	# here. The level's walls set these marks, not my reading of the geometry.
+	for mark in [424.0, 548.0, 712.0]:
+		if not await run_until(at_least(mark), 300, "x >= %.0f" % mark):
+			return false
+		await jump_once("jump at %.0f" % mark)
+		await step(26)
+		if not await until(func() -> bool: return player.is_on_floor(), 120, "landing"):
+			return false
+	await hold_right(false)
+	await step(16)
+	# A second swing, facing right on flat ground, for the blade beat.
+	await click(true)
+	await step(2)
+	await click(false)
+	if not await until(func() -> bool: return player.attack_phase() == 2, 30, "the second live window"):
+		return false
+	await step(30)
+	if player.attacks != 2:
+		failure = "the second swing did not happen (attacks=%d)" % player.attacks
+		return false
 	if session.deaths != 0:
 		failure = "take p died (%d)" % session.deaths
 		return false
-	await step(24)
+	await step(20)
 	return true
 
 # --- take t: the trap warning, and the death it precedes --------------------

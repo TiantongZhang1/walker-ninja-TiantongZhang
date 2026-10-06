@@ -138,7 +138,7 @@
   },
   {
    "path": "tests/capture_gamedev.gd",
-   "sha256": "7a2ae86cbe80fcfc6746c8519d995b5f3083a2e5d6605391d2b3cff74e9ad347",
+   "sha256": "b4e994ec6e9a0a993d418fff1c1010517ff156d9f0ec636e8f3a99dd54a7f7b8",
    "role": "test",
    "component_ids": [
     "C1-pose-mapping",
@@ -241,8 +241,8 @@
    "beat_id": "B02",
    "path": "features/player/player.gd",
    "start_line": 118,
-   "end_line": 134,
-   "text": "func pose_key() -> String:\n\tif death_pose:\n\t\treturn \"death\"\n\tvar phase := attack_phase()\n\tif phase == 1:\n\t\treturn \"windup\"\n\tif phase >= 2:\n\t\t# P10 (recovery) is one of the three optional poses and was not\n\t\t# generated; three ticks of the live frame is the honest substitute.\n\t\treturn \"live\"\n\tif dash_ticks_left > 0:\n\t\treturn \"dash\"\n\tif not is_on_floor():\n\t\treturn \"rise\" if velocity.y < 0.0 else \"fall\"\n\tif absf(velocity.x) > 8.0:\n\t\treturn \"run\"\n\treturn \"idle\""
+   "end_line": 131,
+   "text": "func pose_key() -> String:\n\tif death_pose:\n\t\treturn \"death\"\n\tvar phase := attack_phase()\n\tif phase == 1:\n\t\treturn \"windup\"\n\tif phase >= 2:\n\t\t# P10 (recovery) is one of the three optional poses and was not\n\t\t# generated; three ticks of the live frame is the honest substitute.\n\t\treturn \"live\"\n\tif dash_ticks_left > 0:\n\t\treturn \"dash\"\n\tif not is_on_floor():\n\t\treturn \"rise\" if velocity.y < 0.0 else \"fall\""
   },
   {
    "beat_id": "B04",
@@ -268,9 +268,9 @@
   {
    "beat_id": "B10",
    "path": "features/player/player.gd",
-   "start_line": 674,
+   "start_line": 678,
    "end_line": 690,
-   "text": "func _draw_swing() -> void:\n\tvar steel := Color(\"4a5468\")\n\tvar steel_dark := Color(\"2a3246\")\n\tvar steel_edge := Color(\"9aa7bd\")\n\tvar a := ATTACK_PIVOT\n\tvar b := attack_tip()\n\tif attack_phase() >= 2:\n\t\tvar wedge := PackedVector2Array()\n\t\twedge.append(a)\n\t\tvar samples := 7\n\t\tfor i in range(samples + 1):\n\t\t\tvar t: float = lerpf(ATTACK_ANGLE_START, attack_angle(), float(i) / float(samples))\n\t\t\twedge.append(a + Vector2.from_angle(t) * tuning.attack_reach)\n\t\t_mpoly(wedge, Color(0.49, 0.89, 1.0, 0.28))\n\t_mpoly(_bar(a - Vector2.from_angle(attack_angle()) * 4.0, a, 1.3), steel_dark)\n\t_mpoly(_bar(a, b, 2.0), steel)\n\t_mpoly(_bar(a.lerp(b, 0.14), b, 0.7), steel_edge)"
+   "text": "\tvar a := ATTACK_PIVOT\n\tvar b := attack_tip()\n\tif attack_phase() >= 2:\n\t\tvar wedge := PackedVector2Array()\n\t\twedge.append(a)\n\t\tvar samples := 7\n\t\tfor i in range(samples + 1):\n\t\t\tvar t: float = lerpf(ATTACK_ANGLE_START, attack_angle(), float(i) / float(samples))\n\t\t\twedge.append(a + Vector2.from_angle(t) * tuning.attack_reach)\n\t\t_mpoly(wedge, Color(0.49, 0.89, 1.0, 0.28))\n\t_mpoly(_bar(a - Vector2.from_angle(attack_angle()) * 4.0, a, 1.3), steel_dark)\n\t_mpoly(_bar(a, b, 2.0), steel)\n\t_mpoly(_bar(a.lerp(b, 0.14), b, 0.7), steel_edge)"
   }
  ],
  "code_result_pairs": [
@@ -280,7 +280,7 @@
    "observation": "The pose sequence the capture driver logged: idle, run, rise, fall, run, idle, rise, dash, fall, idle - each transition a logged event with its tick.",
    "media": {
     "path": "capture/take-p.mp4",
-    "sha256": "7d2dbc9017069b833a189caae6fa63b1d2feb4ff2c61fc053ea0b64d98f94978"
+    "sha256": "31e7eb9ea04a158434efdd95ba4080e62515480614490608e9dbfba3584e57ec"
    }
   },
   {
@@ -289,7 +289,7 @@
    "observation": "All eight poses at 32 px, on the dungeon wall, as silhouettes, and on the torchlit edge. 6.3% of the figure read against the wall without the rim, 24.2% with it.",
    "media": {
     "path": "media/B05-poses.png",
-    "sha256": "bf601fbf4a49fd108427421b01b7e0513ceb7fc30fab00cc8fe051308f4a4b09"
+    "sha256": "e116c33b20a6bba5e3f77ce7522cc8541c020abb38140cc543514c7e16d5639a"
    }
   },
   {
@@ -307,7 +307,7 @@
    "observation": "An ordinary retry moves the playhead 0.557 -> 0.651 s. Pause then retry resumes at exactly the paused position.",
    "media": {
     "path": "media/B09-suite-output.png",
-    "sha256": "7cd1e2aa3205d6f679b87bd8ca18d4682672c52b50d82bc7577f5eab683a49e2"
+    "sha256": "d6e7de4d7c52edbcd37dc1c03b9509b5d7b33a962e8bf768e2e3d4179096fb69"
    }
   },
   {
@@ -316,7 +316,7 @@
    "observation": "The wind-up and live poses with the code-drawn blade over them, from the pivot the hitbox uses. Worst endpoint error 3.8e-6 px.",
    "media": {
     "path": "capture/take-p.mp4",
-    "sha256": "7d2dbc9017069b833a189caae6fa63b1d2feb4ff2c61fc053ea0b64d98f94978"
+    "sha256": "31e7eb9ea04a158434efdd95ba4080e62515480614490608e9dbfba3584e57ec"
    }
   }
  ],

@@ -57,8 +57,8 @@ b09["narration_text"] = (
     "am driving for the camera. An ordinary retry moves the playhead forward. Pause, "
     "then retry, and it resumes at exactly the position it was paused at - the same "
     "reading to the millisecond. That second check exists because once, it did not.")
-b09["estimated_duration_s"] = 17
-b09["shot"]["remotion"]["props"]["durationSeconds"] = 17
+# duration comes from the measured narration, set by the timing pass
+b09.setdefault("estimated_duration_s", 17)
 
 doc["beats"] = [by[b["beat_id"]] for b in doc["beats"]]
 io.open(os.path.join(REEL, "beat_sheet.json"), "w", encoding="utf-8",
@@ -253,13 +253,22 @@ if ghost:
     raise SystemExit("excluded but not in the inventory: %s" % sorted(ghost))
 
 # ---- excerpts, read from the files again so they cannot drift
-EX = {"B02": ("features/player/player.gd", 118, 134),
-      "B04": ("features/player/player.gd", 313, 326),
-      "B06": ("game/session.gd", 276, 288),
-      "B08": ("game/session.gd", 601, 611),
-      "B10": ("features/player/player.gd", 674, 690)}
+# The ranges are DERIVED FROM THE BEAT SHEET, not restated here. They were
+# hardcoded once, and when the panel-fitting pass shortened two excerpts the
+# ledger kept the old numbers and the checker said "Displayed code differs from
+# excerpt". A fact written in two places is a fact that will disagree with
+# itself.
+EX = {}
+for bid, b in by.items():
+    rem = b["shot"].get("remotion")
+    if not rem or not rem["props"].get("code"):
+        continue
+    props = rem["props"]
+    rel = props["source"].split("godot/", 1)[-1]
+    a = props["startLine"]
+    EX[bid] = (rel, a, a + len(props["code"].splitlines()) - 1)
 excerpts = []
-for bid, (rel, a, b) in EX.items():
+for bid, (rel, a, b) in sorted(EX.items()):
     lines = io.open(os.path.join(GAME, rel), encoding="utf-8", newline="").read().split("\n")
     text = "\n".join(lines[a - 1:b])
     if by[bid]["shot"]["remotion"]["props"]["code"] != text:
