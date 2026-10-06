@@ -1,9 +1,3 @@
-*** ONE BLANK LEFT - marked [[ like this ]] ***
-The film's URL. The film is made and its hash is below; the URL does not exist
-until you upload the file to OneDrive, which is yours to do and not something I
-can do for you. Fill it, delete this banner, then paste.
-***
-
 Assignment: Assignment 2 - Generate Art, Sound, and Music for Your Game
 Student: Tiantong Zhang
 Project name: walker-ninja-TiantongZhang
@@ -54,8 +48,14 @@ Final film filename:
   22,949,169 bytes
 
 Final film URL:
-  [[ upload NewWalkerArt_TiantongZhang.mp4 to OneDrive and paste the share
-     link here ]]
+  https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQDaPDnYendrTa9zgO53DBA0Ac_JPpgwzdAxPDHmO5Il5bY?e=Kfo2SC
+
+  The submission folder, which holds the film and CHECKSUM.txt beside it:
+  https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgDg_vNibymFRo2cVCga_osiAVqFHeLr3Zj7NWzq7mmhysY?e=Hg0KSJ
+
+  Access: Northeastern OneDrive. Both links require a Microsoft sign-in - they
+  are NOT public. The tracking parameters OneDrive appends on copy (nav=...)
+  are stripped; the ?e= token is the share token and is required.
 
 Final film SHA-256:
   ae1668c0f5a44aa2c4bbdc689b51509bf2fd5e49ce3277198126f57ee2c9dff6

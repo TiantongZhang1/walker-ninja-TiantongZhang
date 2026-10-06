@@ -70,7 +70,7 @@ comment in that file explains the Assignment 1 failure it exists to prevent.
 | **A death pose** — prone, face down, the only pose wider than it is tall | **done**, original vector art |
 | **Four sound effects** — jump, slash, trap warning, death | **wired; the audio is a placeholder, not generated** |
 | **Generated art** | **done** — a reference plus eight poses, imported, checked and wired in. The blade is still drawn in code on purpose |
-| **The film** | **done** — `NewWalkerArt_TiantongZhang.mp4`, 4:54, 3840×2160. Built in `youtube/claude-liam-walker-ninja-gamedev/`; the master itself is gitignored with the rest of the media, and its SHA-256 is in that folder's `SOURCES.md` |
+| **The film** | **done** — `NewWalkerArt_TiantongZhang.mp4`, 4:54, 3840×2160. Built in `youtube/claude-liam-walker-ninja-gamedev/`. Filename, size, hash and links are in [The film](#the-film) below |
 
 `SOURCES.md` is the authoritative answer to *which of these did you actually
 generate*. `godot/assets/README.md` is the one-table version.
@@ -108,6 +108,74 @@ python scripts/import_pose.py design/character/CHAR-P1.png --id p1-idle
 ```
 
 Requires Python 3.12 with numpy, scipy and Pillow, plus `ffmpeg` on PATH.
+
+---
+
+## The film
+
+The reel and all of its evidence live in
+[youtube/claude-liam-walker-ninja-gamedev/](youtube/claude-liam-walker-ninja-gamedev/).
+`./art godot-gamedev --check` **PASSes**: 18 source files inventoried, 5
+components, 5 exact excerpts and 5 code-result pairs under the teaching
+contract `code-then-result-v1`. Gate V samples 30 frames and reports 0 BLOCKER
+and 0 MAJOR.
+
+| | |
+|---|---|
+| Filename | `NewWalkerArt_TiantongZhang.mp4` |
+| Size | 22,949,169 bytes (21.9 MB) |
+| SHA-256 | `ae1668c0f5a44aa2c4bbdc689b51509bf2fd5e49ce3277198126f57ee2c9dff6` |
+| Length | 294.40 s — 4:54 |
+| Container | H.264 / AAC, 3840 × 2160, 30 fps, stereo 48 kHz |
+| Game source demonstrated | `959f81b` — see below |
+| URL | [northeastern-my.sharepoint.com/…/NewWalkerArt_TiantongZhang.mp4](https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQDaPDnYendrTa9zgO53DBA0Ac_JPpgwzdAxPDHmO5Il5bY?e=Kfo2SC) |
+| Also | [the submission folder](https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgDg_vNibymFRo2cVCga_osiAVqFHeLr3Zj7NWzq7mmhysY?e=Hg0KSJ), which holds the film and a `CHECKSUM.txt` beside it |
+| Access | Northeastern OneDrive. The links are **not public** — they require a Microsoft sign-in |
+
+The MP4 is deliberately **not** in this repository: it is over 25 MB and this
+project keeps `*.mp4` out of git. It is reproducible from the tagged revision —
+see
+[BUILD-PROMPT.md](youtube/claude-liam-walker-ninja-gamedev/BUILD-PROMPT.md).
+
+Verify the copy you were given is the one this README describes. **Download it
+first** — a web preview is a re-encoded stream, the download is the original
+bytes:
+
+```bash
+sha256sum NewWalkerArt_TiantongZhang.mp4
+# ae1668c0f5a44aa2c4bbdc689b51509bf2fd5e49ce3277198126f57ee2c9dff6
+```
+
+### What game source the film shows
+
+`959f81b`, stated precisely because the loose version of the claim is wrong.
+`godot/game`, `godot/features`, `godot/levels` and `godot/ui` are
+**byte-identical** between `959f81b` and the submitted tag:
+
+```bash
+git diff --name-only 959f81b a2-submitted -- godot/game godot/features godot/levels godot/ui
+```
+
+returns nothing. `godot/project.godot` *does* differ, by one line's **position**
+only — Godot rewrote the file on save and moved
+`textures/canvas_textures/default_texture_filter=0` above the renderer keys.
+Same key, same value, same section. The commit that did that was `4b7dbff`, so
+"`959f81b` is the last commit that touched the game" would not be true; "the
+game source the film demonstrates is `959f81b`'s" is.
+
+The capture driver `godot/tests/capture_gamedev.gd` was extended after the
+first pass, inside `take_p()` only. `take_p` was re-recorded with the final
+driver; `take_t`'s code path is untouched. All five of the ledger's
+code-result pairs were re-verified against the files on disk at compile time.
+
+### What the film does not prove
+
+That the artwork is *right*. The footage shows the character moving and the
+pose log shows which key was live; neither says the drawing is correct, and
+`TEST-REPORT.md` section 6 says so first. Two of the film's fifteen beats also
+render an empty code panel across the left ~45% of the frame — a limitation of
+the shared component's `asset` layout, declared in that folder's `SHOTLIST.md`
+rather than hidden.
 
 ---
 
