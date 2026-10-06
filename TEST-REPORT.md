@@ -9,7 +9,7 @@
 | **Failures** | **0** |
 | Pixel checks | 2, both PASS |
 | Rendered evidence | 21 frames + 1 contact sheet |
-| **Human checks outstanding** | **4 — listed in section 6 and none of them is done** |
+| **Human checks** | **4 — all four run on 2026-10-06, all four acceptable** |
 
 ---
 
@@ -276,9 +276,22 @@ the check — they assert the *state* of each of the 11 captured frames, and a
 human has to look at the frames. That is a weaker guarantee than the rest of
 this report and nothing in the submission should imply otherwise.
 
-### Four human checks are outstanding
+### Four human checks — run on 2026-10-06
 
-None of these is done. All four need ears or eyes, not a script.
+All four need ears or eyes, not a script. All four were run and all four came
+back acceptable.
+
+**What was reported, in full:** *"检查完了，没问题"* — the checks are done, no
+problems. That is a single-sentence pass covering all four, and it is recorded
+as exactly that rather than expanded into four paragraphs of detail nobody
+gave. A pass with no detail is weaker evidence than a failure with detail would
+have been, and this report says so instead of dressing it up.
+
+**H3 was a decision, not a pass/fail**, and this resolves it: `[TZ DECIDE]` #3
+has been open since `CONCEPT.md` revision 1.1 — *what should the music do
+during the 0.55 s retry.* It is implemented as "keeps playing", that is what
+was listened to, and that is now the accepted answer. Ducking was the leading
+alternative and is not being built.
 
 | # | check | written down in | why it cannot be automated |
 |---|---|---|---|
@@ -344,7 +357,7 @@ capture commands in §1 use `--quit-after 200000` for this reason.
 |---|---|
 | Automated | **110 checks, 0 failures.** Gameplay, input bindings, audio behaviour and audio *timing* are covered, and three of the checks measure an invariant rather than asserting it. |
 | Rendered | 21 frames and a contact sheet, with 2 pixel checks over them, both PASS. |
-| Human | **0 of 4 done.** H2 is the one the assignment's argument rests on. |
+| Human | **4 of 4 run, 2026-10-06, all acceptable** — including H2, the masking prediction the assignment's argument rests on. Reported as one sentence without per-check detail, which is recorded as such in section 6. |
 | Rights | 1 open item — the Suno download-pack terms. |
 | Distribution | pushed to <https://github.com/TiantongZhang1/walker-ninja-TiantongZhang>; an anonymous clone is byte-identical, verified. |
 | Generation | music only. Art and sound effects are specified but not generated. |

@@ -285,6 +285,60 @@ recorded instead is the exact instruction text and the file's hash.
 Writing it down rather than quietly switching is the point. The rule was right;
 it lost to a worse problem.
 
+> **CORRECTION, 2026-10-06 — the table below gets the model wrong, the price
+> wrong and the count wrong, and the budget argument under it does not survive.
+> It is left standing because the mistake is the same one the music section had
+> to be rebuilt for: I wrote down what I believed instead of what the tool
+> recorded.**
+>
+> Evidence: `design/rejected/2026-10-05-civitai-9-15pm.png` and
+> `2026-10-05-civitai-9-17pm-and-9-18pm.png` — screenshots of Civitai's own
+> generator history, with its prompts, its model chips, its prices and its
+> timestamps.
+>
+> **The model.** Every evidenced generation ran on **`DreamShaper - 8`** as the
+> checkpoint with **`2D Pixel Toolkit (2D像素工具包) - Sprites_64`** as the LoRA
+> — *including the 9:15pm one the table attributes to `Z Image Turbo` +
+> `8bitdiffuser 64x`*. The string `PIXEL_ART` survives at the front of that
+> prompt because it is `8bitdiffuser`'s trigger word and I had stopped editing
+> the text, but the LoRA under it had already changed. So rows 1–2's model
+> column is wrong and rows 3–4's is incomplete — it names the LoRA and not the
+> checkpoint.
+>
+> **The price: 3 Buzz, not 10.** Every row in the history reads `3 BUZZ`. The
+> `⚡10` I read off the Generate button was something else.
+>
+> **The count: four, not five.** Row 5 says "five generations" in its own
+> heading and then that the fifth was never spent. That is incoherent and there
+> were four.
+>
+> **What this breaks.** The paragraph under the table argues that the remaining
+> balance "could not have covered eight poses at ten Buzz each". At 3 Buzz a
+> 100 Buzz balance is about **33 generations**, four of them had cost **12**,
+> and eight poses would have cost **24**. The budget was never the constraint
+> and I asserted that it was.
+>
+> **What the attempts actually showed** stands unchanged, and it is the real
+> reason for leaving: the model was not following `side view` or the
+> proportions, and a 60-word prompt diluted the one token that mattered past
+> the 77-token limit. Attempt 3 is the evidence — the one where the prompt got
+> short enough came back side-on and chibi immediately. That diagnosis is
+> independent of what anything cost.
+>
+> **Evidenced generations, from the history itself:**
+>
+> | time | prompt, as Civitai records it | result |
+> |---|---|---|
+> | 9:15pm, 3 Buzz | `PIXEL_ART, pixel art character reference, side view facing right, standing, small humanoid ninja in deep navy segmented plate armour, horizontal light-blue visor slit across the helm, short neck clearly separa…` | tall figure on a stone pedestal, no scarf, no visor |
+> | 9:17pm, 3 Buzz | `((side view)), ((profile view)), pixel art sprite, chibi ninja, navy armor, purple scarf, white background` | side-on chibi ✓ — anime hair instead of a helm, purple on the hair |
+> | 9:18pm, 3 Buzz | `((side view)), ((profile view)), pixel art sprite, chibi ninja, full face helmet, glowing cyan visor slit, no hair, navy blue armor, long purple scarf behind, white background` | all-cyan creature, 2 heads tall |
+>
+> The fourth — the front-and-back turnaround of a tall realistic figure — was
+> **not saved**. Civitai's own banner says why: *"Creations are kept in the
+> Generator for 30 days. Download or Post them to your Profile to save them!"*
+> Three of four is what there is, and inventing the fourth's row would be worse
+> than the gap.
+
 ### Attempts on Civitai — five generations, none usable
 
 | # | Model | Prompt summary | Outcome |
@@ -431,8 +485,11 @@ the importer does is keep it alive at 28 px.
 
 ### Still owed
 
-- The model, version and licence rows above, filled in.
-- The Civitai rejection screenshots.
+- The model, version and licence rows for `CHAR-REF-01` and the eight poses.
+  The Civitai rows are settled by the correction above.
+- ~~The Civitai rejection screenshots.~~ **Done, 2026-10-06** — three of four,
+  in `design/rejected/`. The fourth had already aged out of Civitai's 30-day
+  generator history.
 
 ## Rejected, logged without downloading
 

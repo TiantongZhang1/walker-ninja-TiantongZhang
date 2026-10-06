@@ -1,8 +1,7 @@
 *** DRAFT - NOT READY TO SUBMIT ***
-Eleven things below are still blank or unverified, and they are marked
-[[ like this ]]: the submitted commit, the film URL and hash, the date and the
-four results of the human checks, the art model's name and version, Suno's
-download-pack licence terms, and the rejected-generation screenshots.
+Five things below are still blank, and they are marked [[ like this ]]:
+the submitted commit SHA, the film's URL, the film's SHA-256, the art model's
+name and version, and Suno's download-pack licence terms.
 Do not paste this into Canvas until every [[ ]] is gone and this banner with it.
 ***
 
@@ -95,11 +94,21 @@ VERIFICATION
   would have passed while being useless to the player; this one would fail if
   the warning were ever moved onto the damage.
 
-  Human checks, done on [[ date ]]:
-    - the loop seam, listened to over three repetitions:  [[ result ]]
-    - the masking prediction, trap warning over the music: [[ result ]]
-    - what the music does during the 0.55 s retry:         [[ result ]]
-    - a full playthrough with all sound muted:             [[ result ]]
+  Four human checks, run on 2026-10-06. All four came back acceptable:
+    - the loop seam, listened to over three repetitions
+    - the masking prediction, the trap warning over the music at full level
+    - what the music does during the 0.55 s retry
+    - a full playthrough with all sound muted
+
+  The report back was one sentence covering all four, so that is how
+  TEST-REPORT.md section 6 records it. A pass with no detail is weaker
+  evidence than a failure with detail would have been and the report says so.
+
+  The retry check settles an open design question rather than passing a test.
+  CONCEPT.md revision 1.1 left it open on 2026-10-01: what the music should do
+  during the 0.55 s retry. It is implemented as "keeps playing", that is what
+  was listened to, and that is now the answer. Ducking was the alternative and
+  is not being built.
 
   An anonymous clone is byte-identical, re-verified against this repository
   rather than assumed from Assignment 1:
@@ -201,9 +210,23 @@ KNOWN LIMITATIONS, DECLARED
      ticks. No environment asset was generated either; the dungeon is
      code-drawn.
 
-  9. FIVE REJECTED GENERATIONS ARE LOGGED WITHOUT SCREENSHOTS.
-     [[ capture them into design/rejected/ ]] The prompts, models and reasons
-     are recorded in ASSET-LOG.md; the images themselves were not saved.
+  9. ONE OF THE FOUR REJECTED GENERATIONS HAS NO SCREENSHOT. Three are in
+     design/rejected/, captured from Civitai's own generator history with its
+     prompts, model chips, prices and timestamps. The fourth had already aged
+     out - Civitai keeps creations in the generator for 30 days unless you
+     download or post them, and it was not saved in time.
+
+     Those screenshots also corrected my own log, and the correction is left
+     standing above the text it corrects in ASSET-LOG.md. I had recorded the
+     wrong checkpoint (it was DreamShaper-8 with the 2D Pixel Toolkit
+     Sprites_64 LoRA throughout, not Z Image Turbo with 8bitdiffuser), the
+     wrong price (3 Buzz per generation, not 10) and the wrong count (four, not
+     five). The price error broke an argument I had made: I claimed the
+     remaining balance could not have covered eight poses, and at 3 Buzz a 100
+     Buzz balance is about 33 generations. The budget was never the constraint.
+     What the attempts actually showed - that the model would not follow
+     "side view" and that a 60-word prompt diluted the one token that mattered
+     past the 77-token limit - is independent of cost and stands.
 
 
 WHERE TO LOOK
