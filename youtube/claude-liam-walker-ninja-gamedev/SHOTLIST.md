@@ -1,6 +1,7 @@
 # SHOTLIST.md — what is on screen, beat by beat
 
-`godot-gamedev walker` · 15 beats · **4:55 measured**, not a target length.
+`godot-gamedev walker` · 15 beats · **294.40 s — 4:54**, measured off the
+master, not a target length.
 Durations are the Kokoro `am_onyx` narration as generated; nothing is padded to
 a round number.
 
