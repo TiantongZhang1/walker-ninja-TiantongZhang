@@ -51,3 +51,9 @@ youtube/*/capture/take-*/
 # fact — the master's SHA-256 — is recorded deliberately in
 # youtube/*/SOURCES.md instead, so it lives in exactly one place.
 youtube/*/build-state.json
+
+# Blender's own save-versions. Blender writes <name>.blend1 beside a file
+# every time it re-saves it, so these appear as soon as an asset is rebuilt.
+# Assignment 3 says to exclude them, and they are regenerated anyway.
+*.blend1
+*.blend2

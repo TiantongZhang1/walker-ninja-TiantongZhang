@@ -62,8 +62,9 @@ func _check(asset_name: String, file: String, want: Vector3) -> void:
 		print("")
 		return
 
+	# Not added to the tree: nothing below needs it, and adding it was what
+	# made the first version of _world_aabb() read identity transforms.
 	var root := packed.instantiate()
-	get_root().add_child(root)
 
 	var aabb := _world_aabb(root)
 	if aabb.size == Vector3.ZERO:
@@ -120,34 +121,44 @@ func _check(asset_name: String, file: String, want: Vector3) -> void:
 	print("")
 
 
-## Union of every MeshInstance3D AABB, expressed in the instanced root's space.
+## Union of every MeshInstance3D AABB, expressed in the instanced root's own
+## space.
+##
+## This accumulates each node's local `transform` down the hierarchy instead of
+## reading `global_transform`. The first version of this function used
+## `global_transform`, and it was wrong in a way worth recording: a script run
+## from `_init()` has nodes that are not yet inside the tree, so every
+## `global_transform` returned identity, every mesh was measured at the origin,
+## and the merged box was the union of the LOCAL meshes with their positions
+## thrown away. It reported the spike trap as 0.850 m tall and sunk 0.425 m
+## below the floor — which is exactly the cone's local half-height, and exactly
+## what you get when the offsets vanish. The asset was correct and the check
+## was not. Local transforms need no tree, so this version cannot fail that way.
 func _world_aabb(node: Node) -> AABB:
-	var out := AABB()
-	var seeded := false
-	for n: Node in _walk(node):
-		var mi := n as MeshInstance3D
-		if mi == null or mi.mesh == null:
-			continue
-		var local := mi.get_aabb()
-		# Transform relative to the instanced root, not to the whole tree.
-		var xform := mi.global_transform
-		var root3d := node as Node3D
-		if root3d != null:
-			xform = root3d.global_transform.affine_inverse() * mi.global_transform
-		var box := xform * local
-		if seeded:
-			out = out.merge(box)
-		else:
-			out = box
-			seeded = true
+	var boxes: Array[AABB] = []
+	_collect(node, Transform3D.IDENTITY, boxes, true)
+	if boxes.is_empty():
+		return AABB()
+	var out := boxes[0]
+	for i in range(1, boxes.size()):
+		out = out.merge(boxes[i])
 	return out
 
 
-func _walk(node: Node) -> Array[Node]:
-	var all: Array[Node] = [node]
+## `is_root` keeps the instanced root's own transform out of the measurement:
+## we want the box in the root's space, which is where Godot places it.
+func _collect(node: Node, xform: Transform3D, boxes: Array[AABB], is_root: bool) -> void:
+	var here := xform
+	var n3 := node as Node3D
+	if n3 != null and not is_root:
+		here = xform * n3.transform
+
+	var mi := node as MeshInstance3D
+	if mi != null and mi.mesh != null:
+		boxes.append(here * mi.get_aabb())
+
 	for child in node.get_children():
-		all.append_array(_walk(child))
-	return all
+		_collect(child, here, boxes, false)
 
 
 func _fail(msg: String) -> void:

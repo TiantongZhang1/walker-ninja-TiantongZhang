@@ -1,15 +1,20 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 ; A3 — the showcase scene the assignment asks for: a floor, one light, a
 ; camera, and the three assets side by side at game scale.
 ;
 ; Scale reference: the player's collider is 18 x 28 px and the project's
-; convention is 16 px = 1 m, so the player is 1.125 x 1.75 m. The markers below
-; are 1.8 m apart, which is about one player-width of clear air between assets.
+; convention is 16 px = 1 m, so the player is 1.125 x 1.75 m. The three assets
+; are 1.8 m apart, about one player-width of clear air between them.
 ;
-; The three .glb instances are added under their markers once the assets are
-; exported from Blender. Until then this scene is the stage without the actors,
-; and godot/tests/check_assets_3d.gd reports each asset as "not imported".
+; Each asset is placed at y = 0 on purpose. Their origins are at the centre of
+; their undersides, so sitting on the floor is the default and floating or
+; sinking would be visible immediately — that is the brief's P3 check made
+; into the scene's layout rather than left to a script.
+
+[ext_resource type="PackedScene" path="res://assets/models/torch.glb" id="1_torch"]
+[ext_resource type="PackedScene" path="res://assets/models/spike_trap.glb" id="2_spike"]
+[ext_resource type="PackedScene" path="res://assets/models/slime.glb" id="3_slime"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
 size = Vector2(12, 12)
@@ -30,15 +35,15 @@ light_energy = 1.2
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1.5, 5)
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1.2, 4.2)
 current = true
 fov = 55.0
 
-[node name="Torch" type="Marker3D" parent="."]
+[node name="Torch" parent="." instance=ExtResource("1_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, 0)
 
-[node name="SpikeTrap" type="Marker3D" parent="."]
+[node name="SpikeTrap" parent="." instance=ExtResource("2_spike")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="Slime" type="Marker3D" parent="."]
+[node name="Slime" parent="." instance=ExtResource("3_slime")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0, 0)
