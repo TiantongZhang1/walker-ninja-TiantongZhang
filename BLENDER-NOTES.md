@@ -158,6 +158,17 @@ viewport and scaled it with **S**, then nudged it down.
 | `Slime_Eye_1` | scale 1.000, z 0.6400 | **scale 1.526**, z 0.6129 |
 | `Slime_Eye_2` | scale 1.000, z 0.6400 | **scale 1.570**, z 0.6141 |
 
+![the edited eye selected in my own Blender session](design/blender/hand-edit-slime-eye.png)
+
+My own session, photographed from the screen I was working on — not a
+reconstruction. One frame carries four things: the title bar names the file
+(`design/blender/slime.blend`), the Outliner shows `Slime_Eye_1` selected
+apart from the body and the other eye, the Properties editor reads its
+position as **X −0.19831, Y −0.50546, Z 0.61295 m**, and its scale reads
+**1.000** on all three axes because the scale was applied into the mesh
+afterwards. Those position numbers are the ones the measurement above
+reports, to five decimal places.
+
 The two are not identical — 1.526 against 1.570 — because I sized them by eye
 rather than by typing a number. I am leaving the asymmetry: it is what a hand
 edit looks like, and at game size it reads as character rather than as error.
