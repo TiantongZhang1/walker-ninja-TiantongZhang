@@ -391,3 +391,187 @@ capture commands in §1 use `--quit-after 200000` for this reason.
 | Rights | 1 open item — the Suno download-pack terms. |
 | Distribution | pushed to <https://github.com/TiantongZhang1/walker-ninja-TiantongZhang>; an anonymous clone is byte-identical, verified. |
 | Generation | music only. Art and sound effects are specified but not generated. |
+
+---
+
+# Assignment 3 — the three 3D assets
+
+Added 2026-10-14. Sections 1–8 above are Assignment 2's and are unchanged.
+
+| | |
+|---|---|
+| Godot | 4.7.2.stable.official.`ed1daf0bf` |
+| Blender | 5.2.2 LTS, build 2026-09-15 |
+| MCP | `mcp-for-blender` 2.1.9, Blender add-on 1.8, protocol 13 |
+| OS | Windows 11 Home China 10.0.26200 |
+| Source revision | the commit this file is in; `git rev-list -n1 a3` once tagged |
+
+## A1. How to re-run it
+
+```bash
+"…/Godot_v4.7.2-stable_win64.exe" --headless --path godot --import
+"…/Godot_v4.7.2-stable_win64.exe" --headless --path godot --script res://tests/check_assets_3d.gd
+```
+
+Exits 0 on pass, 1 on any failure. The chapter's macOS line wraps this in
+`timeout 120 … --fixed-fps 60`; neither is needed here, because the script
+calls `quit()` itself and never advances a frame.
+
+To rebuild an asset from source, with no window:
+
+```bash
+"…/blender.exe" -b --factory-startup --python-exit-code 1 --python tools/blender/build_torch.py
+```
+
+## A2. The automated check — 3 assets × 4 measurements, all PASS
+
+Output of the run, not a transcription of it:
+
+```
+A3 asset check — Godot 4.7.2-stable (official)
+Expected values come from CHANGE-BRIEF.md revision 3.0.0.
+--- A3-TORCH  (res://assets/models/torch.glb)
+  bounding box   0.220 x 0.700 x 0.220 m   (W x H x D)
+  expected       0.220 x 0.700 x 0.220 m   (brief 3.0.0)
+  longest axis   Y   (brief implies Y)
+  node scale     (1.0000, 1.0000, 1.0000)
+  lowest point   y = +0.0000 m   (0 means it sits on the floor)
+--- A3-SPIKE  (res://assets/models/spike_trap.glb)
+  bounding box   1.500 x 1.000 x 0.500 m   (W x H x D)
+  expected       1.500 x 1.000 x 0.500 m   (brief 3.0.0)
+  longest axis   X   (brief implies X)
+  node scale     (1.0000, 1.0000, 1.0000)
+  lowest point   y = +0.0000 m   (0 means it sits on the floor)
+--- A3-SLIME  (res://assets/models/slime.glb)
+  bounding box   1.375 x 1.000 x 1.375 m   (W x H x D)
+  expected       1.375 x 1.000 x 1.375 m   (brief 3.0.0)
+  longest axis   X   (brief implies X)
+  node scale     (1.0000, 1.0000, 1.0000)
+  lowest point   y = +0.0000 m   (0 means it sits on the floor)
+ALL CHECKS PASSED
+```
+
+Mapped to the brief's predictions: **P1** is the longest-axis line, **P2** the
+bounding box against expected at ±5 %, **P3** the lowest point, **P4** the node
+scale. All four pass on all three assets.
+
+## A3. Size, in Blender and in Godot, beside the brief
+
+| Asset | Brief says | Blender reports | Godot reports | Shapes | Triangles |
+|---|---|---|---|---|---|
+| A3-TORCH | 0.22 × 0.22 × 0.70 | 0.220 × 0.220 × 0.700 | 0.220 × 0.700 × 0.220 | 4 / 6 | 84 / 500 |
+| A3-SPIKE | 1.50 × 0.50 × 1.00 | 1.500 × 0.500 × 1.000 | 1.500 × 1.000 × 0.500 | 4 / 6 | 54 / 500 |
+| A3-SLIME | 1.375 × 1.375 × 1.00 | 1.375 × 1.375 × 1.000 | 1.375 × 1.000 × 1.375 | 3 / 6 | 72 / 500 |
+
+The axis order differs between the two columns and that is correct, not a
+discrepancy: Blender is Z-up and writes W × D × H, glTF is Y-up and Godot
+reads W × H × D. The numbers are the same three numbers in both.
+
+## A4. Triangle counts
+
+Measured with `mesh.calc_loop_triangles()` in Blender, reported by each build
+script. 210 triangles for all three against an allowance of 1500.
+
+The assignment warns that a default sphere or cylinder eats the budget. Every
+cylinder and cone here is 8-sided, and the slime is an icosphere at
+subdivision 2 rather than a UV sphere, which would have cost roughly 960 for
+the same silhouette.
+
+## A5. P5 — the colours survived the export, and the number says so
+
+The one prediction the automated check does not cover, verified separately by
+reading the imported material rather than by looking:
+
+```
+SpikeTrap_Plate        albedo hex #2b2430    brief: #2b2430
+SpikeTrap_Tooth_1..3   albedo hex #d24e42    brief: #d24e42
+```
+
+Exact. The scripts convert the game's sRGB hex to linear for Blender's Base
+Color input and Godot converts back on import. Setting the raw sRGB value
+instead would have arrived as `#ea968b`, which was printed alongside during the
+check to confirm the conversion is doing something rather than cancelling out
+by luck.
+
+## A6. HUMAN CHECK — walk the camera around each asset
+
+The assignment's own wording: *"Walk the camera around each asset, including
+from behind and below. Do the shapes read as what they are at game size… Any
+missing faces, wrong colours?"*
+
+**Run 2026-10-14 by the author, in the Godot editor, scene
+`scenes/asset_showcase.tscn`.** Reported in full:
+
+> 检查好了，没问题了。
+>
+> *(Checked, no problems.)*
+
+That is a one-sentence pass covering three assets and three questions —
+missing faces, colour, and whether each reads at game size. It is recorded as
+exactly that and not expanded, because a pass with no detail is weaker
+evidence than a failure with detail would have been, and writing findings
+nobody reported would be inventing them. The same thing happened with
+Assignment 2's four human checks and is recorded there the same way.
+
+What it does establish: a person opened the scene, orbited each asset
+including from behind and below, and did not find a hole, a wrong colour or an
+unreadable shape. The slime's flat underside — cut and hole-filled rather than
+modelled, and the most likely place for a missing face — was named in the
+instructions as something to look at specifically.
+
+## A7. The revision this cycle produced
+
+The assignment asks for at least one documented inspect-and-revise cycle
+driven by an observation. There were two, and neither came from a check.
+
+**The slime was pointed, and is round now.** Built from an icosphere at
+subdivision 1 it measured correctly, sat on the floor correctly, and had a
+twenty-sided apex where the 2D `_draw_slime()` draws a smooth dome. The author
+looked at the render and asked for it to be round. Subdivision 2: 52
+triangles to 72, inside the brief's budget of 120, recorded as
+`CHANGE-BRIEF.md` revision 3.0.1.
+
+**The eyes were too small, and are bigger now.** The hand edit, made with the
+mouse in the Blender viewport: `Slime_Eye_1` to scale 1.526 and `Slime_Eye_2`
+to 1.570, both about 27 mm lower, because at a player height of 1.75 m they
+did not read. The asymmetry is kept. Details in `BLENDER-NOTES.md`.
+
+Both are changes no assertion in `check_assets_3d.gd` would have asked for,
+and the check passed identically before and after each.
+
+## A8. What this check does not show
+
+Stated because the rubric awards three points for being able to state it, and
+because it is true.
+
+`check_assets_3d.gd` measures geometry as Godot received it: size,
+orientation, node scale, and where the origin sits relative to the floor. It
+says nothing about whether an asset reads as a torch, a trap or a slime;
+whether the colours look right under the game's lighting rather than matching
+a hex value; whether a face is missing; or whether any of it suits the game's
+style. Section A6 is the only evidence for those, and it is one sentence long.
+
+Two further limits worth naming:
+
+- **The check was wrong before any asset was.** Its first version read
+  `global_transform` from nodes a script running in `_init()` has not put in
+  the tree, so every transform came back identity and it reported the spike
+  trap as 0.850 m tall and 0.425 m below the floor. Those are exactly the
+  cone's local half-dimensions. The asset was correct; the check was not. It
+  accumulates local transforms by hand now. The assignment warns that an
+  agent's check can prove less than it claims, and this one proved nothing
+  until it was fixed.
+- **Nothing here tests the assets in the game.** They are shown in a scene of
+  their own. Wiring them into the 2D slice is not asked for until later
+  assignments.
+
+## A9. Verdict
+
+| | |
+|---|---|
+| Automated | **12 measurements over 3 assets, 0 failures** (4 each: size, axis, node scale, origin), plus the colour read in A5. |
+| Budgets | 11 shapes of 18 allowed; 210 triangles of 1500. |
+| Human | **1 of 1 run, 2026-10-14, acceptable.** One sentence, recorded as one sentence. |
+| Revisions | 2, both driven by looking rather than by a check: the slime's roundness and the hand edit to its eyes. |
+| Provenance | built, not generated and not downloaded; all six libraries and generators off, confirmed machine-readably in `SOURCES.md` §9. |
+| Not covered | whether the assets read, whether they suit the style, and anything about them inside the 2D game. |
