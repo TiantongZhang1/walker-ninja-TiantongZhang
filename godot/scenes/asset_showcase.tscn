@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3]
+
+; A3 — the showcase scene the assignment asks for: a floor, one light, a
+; camera, and the three assets side by side at game scale.
+;
+; Scale reference: the player's collider is 18 x 28 px and the project's
+; convention is 16 px = 1 m, so the player is 1.125 x 1.75 m. The markers below
+; are 1.8 m apart, which is about one player-width of clear air between assets.
+;
+; The three .glb instances are added under their markers once the assets are
+; exported from Blender. Until then this scene is the stage without the actors,
+; and godot/tests/check_assets_3d.gd reports each asset as "not imported".
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(12, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.168627, 0.141176, 0.188235, 1)
+roughness = 0.9
+
+[node name="AssetShowcase" type="Node3D"]
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 4, 0)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1.5, 5)
+current = true
+fov = 55.0
+
+[node name="Torch" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, 0)
+
+[node name="SpikeTrap" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Slime" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0, 0)

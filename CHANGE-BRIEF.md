@@ -755,3 +755,136 @@ cell row 30 puts its lowest opaque row exactly there.
 - **C7** — the placeholder death reaction (`death-laugh.ogg`,
   `death-laugh-cat.png`) and the four placeholder sound effects.
 - The four human checks of `TEST-REPORT.md` section 6.
+
+---
+
+# Revision 3.0.0 — 2026-10-14 — A3: three 3D assets, predicted before building
+
+Assignment 3 adds a layer rather than a restart: same repository, same game,
+submitted as the tag `a3`. Nothing in revisions 2.0.0–2.5.0 changes. The 2D
+slice is untouched; what is added is three `.glb` assets and a small Godot 3D
+scene to show them in.
+
+**This revision is committed before the first `execute_blender_code` that makes
+geometry.** That ordering is the assignment's, and it is scored. The sizes
+below are informed by the "Learn the window" session, and every one of them is
+derived from something the 2D game already contains rather than invented for
+3D.
+
+## The scale convention
+
+The anchor is the player's collider: `features/player/player.gd:67` sets it to
+**18 × 28 px**. At **16 px = 1 m** the player is **1.125 × 1.75 m** — a human
+height, which gives every other number a sanity check it would not have on its
+own. Blender is metric with `scale_length = 1.0` and Godot's 3D units are
+metres, so nothing converts as long as that holds. *(Measured, not assumed:
+`scene.unit_settings` reports `METRIC` / `1.0` in this Blender.)*
+
+## The three assets
+
+### A3-TORCH — the dungeon wall torch
+
+| | |
+|---|---|
+| In the game | `session.gd` `_draw_torch()`, called as `_draw_torch(tx, 150.0)`. The light source of the whole dungeon re-skin. |
+| Size (W × D × H) | **0.22 × 0.22 × 0.70 m** |
+| Justified | The 2D handle is `draw_rect(cx-1, cy, 2, 10)` = 10 px = **0.625 m**; the flame polygon adds 8 px above it. 0.70 m total is 40 % of the player's 1.75 m — a torch bracketed at head height. Depth equals width because the 2D drawing has no depth to copy and a torch is round. |
+| Origin | **Centre of the underside of the handle.** In the game it is wall-mounted, but the assignment requires each asset built around the world origin with its base on the floor, and the showcase scene stands all three on a floor. Mounting it on a wall later is a translation, not a re-origin. |
+| Look | A thin handle, a wider collar, a tapered flame. The flame is what makes it recognisable at this size, so it gets the silhouette: a cone, not a sphere. |
+| Colours | handle `#3a2f26`, flame outer `#ff9a3c`, flame core `#ffe08a` — the three the 2D code already uses. |
+| Budget | **≤ 160 tris**, 4 shapes: handle cylinder (8 sides, 28 tris) + collar cylinder (8 sides, 28) + flame cone (8 sides, 14) + flame core cone (8 sides, 14). The glow is light, not geometry, and is not exported. |
+
+### A3-SPIKE — the pop-up floor trap
+
+| | |
+|---|---|
+| In the game | `levels/first_steps.json` → `traps[0].spike = [1160, 304, 24, 16]`, drawn by `_draw_spikes()`. Four of them; the one the trap-warning sound is built around. |
+| Size (W × D × H) | **1.50 × 0.50 × 1.00 m** |
+| Justified | W and H are the level's own trap rect: 24 × 16 px. Depth is the one number with no 2D source; 0.5 m makes it a floor slab rather than a cutout, and keeps it narrower than it is wide so the teeth read from the side as they do in the game. |
+| Origin | **Centre of the underside of the base plate.** A trap sits on the floor and the whole mechanic is that it rises from it; an origin anywhere else makes "is it flush with the floor?" unanswerable. |
+| Look | A low base plate with **three** teeth. Three, not an arbitrary number: `spike_count()` is `rect.size.x / SPIKE_PITCH` = 24 / 8 = 3, so the 3D asset has the same tooth count as the thing it represents. |
+| Colours | teeth `#d24e42` (the 2D spike colour), plate `#2b2430` (the dungeon mortar colour, so it reads as part of the floor). |
+| Budget | **≤ 80 tris**, 4 shapes: base cube (12 tris) + 3 cones at 8 sides (14 each = 42). |
+
+### A3-SLIME — the ground enemy
+
+| | |
+|---|---|
+| In the game | `session.gd` `_draw_slime()`, `SLIME_SIZE = Vector2(22, 16)`. Six of the eleven enemies. |
+| Size (W × D × H) | **1.375 × 1.375 × 1.00 m** |
+| Justified | Straight from `SLIME_SIZE`: 22 × 16 px. Depth equals width because the 2D silhouette is a dome with no depth to copy and a slime has no front. |
+| Origin | **Centre of the underside.** It sits on the ground and patrols along it; the same reason as the trap. |
+| Look | A squashed dome, wider than tall, with two small dark eyes. The squash is the whole read: `_draw_slime()` spends its two most important lines on squash and stretch, and a sphere that is not squashed looks like a ball rather than a slime. |
+| Colours | body `#7ab648`, base band `#55913a`, eyes `#17300d` — the three from the 2D function. |
+| Budget | **≤ 120 tris**, 3 shapes: icosphere at subdivision 1, scaled to 1.375 × 1.375 × 1.00 (80 tris) + two eye cubes (12 each = 24). |
+
+**Total across all three: ≤ 360 triangles, ≤ 11 basic shapes.** The course
+limits are 500 and 6 *per asset*, so every asset has headroom. The assignment
+warns that a default sphere or cylinder eats the budget; 8 sides and
+subdivision 1 are the knobs, and a cylinder costs `4N − 4` triangles while a
+cone costs `2N − 2`.
+
+## Predicted failures, and the check for each
+
+Written before building. Each names the check that would catch it, and every
+check produces a number or an image rather than an impression.
+
+**P1 — an asset arrives lying on its side.** Blender is Z-up and glTF is Y-up;
+the exporter's `export_yup` converts, and if it is ever off, or if a part was
+modelled along the wrong axis, the asset lands on its back in Godot.
+*Check:* the headless script prints, for each asset, which axis its bounding
+box is longest along and its height along Y. Expect the torch tallest in Y.
+*Measured already:* `export_yup` defaults to `True` in this Blender (5.2.2), so
+the prediction is about a mistake rather than about the default.
+
+**P2 — wrong by a factor of ten or a hundred.** The classic unit slip: a 0.70 m
+torch arrives 70 m or 0.007 m tall.
+*Check:* the script prints each bounding box in metres beside the number in
+this brief. Tolerance ±5 %. A factor-of-ten error is not subtle and this shows
+it immediately.
+
+**P3 — the origin is in the middle, so the asset floats or sinks.** Blender
+primitives are created centred on the origin, so each of these needs its
+geometry moved up by half its height before export — and it is easy to do that
+for two of three.
+*Check:* place all three at `y = 0` on the floor in Godot. The script prints
+the bounding box's minimum Y; expect `0.000 ± 0.001`. Floating or sunk shows as
+a non-zero number, and the screenshot shows it too.
+
+**P4 — transforms not applied, so Godot sees a scaled node.** If rotation and
+scale are not applied in Blender, the `.glb` carries them as node transforms;
+snapping and any later child node then inherit a non-unit scale.
+*Check:* the script prints each imported node's `scale`. Expect exactly
+`(1, 1, 1)`.
+
+**P5 — the colour does not survive the export.** This one has a known cause
+rather than being a guess: the MCP server's own guidance says *"Material colors
+go on shader node inputs; `material.diffuse_color` only affects the viewport."*
+Setting `diffuse_color` looks correct in Blender and exports grey.
+*Check:* compare the asset in Godot against the hex values above, by eye and by
+sampling the rendered frame. The failure mode is "it looked right in Blender",
+so the check has to happen after import, not before.
+
+**P6 — Claude builds something far more detailed than asked.** The budget is
+500 triangles and six shapes; an agent asked for "a torch" can reasonably
+produce a 4 000-triangle one.
+*Check:* Blender's Scene Statistics after each asset, and an object count
+before any join. Over budget means lowering the segment counts, not accepting
+it.
+
+## What this revision does NOT change
+
+- **The 2D slice.** No gameplay number, no level data, no sprite, no audio.
+- **The renderer.** The project stays on `gl_compatibility`. The showcase scene
+  is a floor, one light, a camera and three assets; if that renderer cannot
+  show it acceptably, that is a finding for `TEST-REPORT.md`, not a reason to
+  change the 2D game's renderer the day before a deadline.
+- **`a2-submitted`.** That tag stays where it is. A3 gets its own tag, `a3`,
+  and the assignment says not to move it after submitting.
+
+## Still open from 2.0.0
+
+Unchanged: **C7**, the placeholder death reaction and the four placeholder
+sound effects; and the generated environment asset A2 never produced. A3 does
+not close either — its three assets are *built*, not generated, which is what
+this assignment requires and the opposite of what A2's gap needs.

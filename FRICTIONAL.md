@@ -622,3 +622,142 @@ Running an actual generator is mine and still outstanding.
 **Traceability:** `CHANGE-BRIEF.md` revision 2.4.0, `ASSET-LOG.md` sound-effects
 section, `scripts/synth_placeholder_sfx.py`, `godot/assets/README.md`,
 `evidence/screens/02-failure.png`.
+
+---
+
+## 2026-10-14 — the MCP connected, and three things the instructions got wrong
+
+Assignment 3 starts with a setup the course itself has not run: *"the course
+has not run the MCP route itself, so part of your job is to record honestly
+what happens on your machine"* and *"Treat each line as a claim to check."*
+Three of those lines did not survive contact with this machine. None of them is
+interesting as a difficulty; they are interesting because each fails for a
+reason, and the reason is checkable.
+
+### The add-on installer could not find Blender, because Blender had never run
+
+`uvx mcp-for-blender install-addon` is step three in the chapter's sequence. I
+ran `addon-paths` first, to see where it would put the file, and got:
+
+    No Blender addons directories found.
+
+Blender was installed — `D:\Graduate\2026Fall\7270\Blender\blender.exe`, 5.2.2
+LTS, an extracted build rather than the `.msi` — but it had never been
+launched, and Blender creates `%APPDATA%\Blender Foundation\Blender\5.2\` on
+first start. There was nothing to install into. After one launch:
+
+    C:\Users\...\Blender\5.2\scripts\addons (missing)
+
+and after `install-addon`, `(exists)`, with `blender_mcp.py` in it. The chapter
+puts "Learn the window" before this step anyway, so following the assignment's
+own order would have avoided it. It cost minutes instead of an hour only
+because I looked before installing.
+
+### The `claude mcp add` line in the assignment does not parse
+
+The assignment gives this, and flags it as the chapter's own adaptation rather
+than a README line:
+
+    claude mcp add -e DISABLE_TELEMETRY=true blender -- uvx mcp-for-blender
+
+It fails:
+
+    Invalid environment variable format: blender, environment variables
+    should be added as: -e KEY1=value1 -e KEY2=value2
+
+`claude mcp add --help` gives the shape — `claude mcp add [options] <name>
+<commandOrUrl> [args...]` — and `-e, --env <env...>` is **variadic**. With `-e`
+before the name, the parser takes `blender` as a second environment variable.
+The server name has to come first:
+
+    claude mcp add blender -e DISABLE_TELEMETRY=true -- uvx mcp-for-blender
+
+A real defect in a line the assignment already warns is untested, and the kind
+that reads as correct until a parser disagrees with it.
+
+### Enabling the add-on failed, and "restart it" was right for a reason worth knowing
+
+Preferences -> Add-ons -> enable gave:
+
+    Add-on not loaded: "blender_mcp", cause: No module named 'blender_mcp'
+
+The installer's own message says "disable then enable ... or restart Blender",
+so restarting was the obvious move. I did not want to take it on faith, because
+"turn it off and on again" hides the difference between *the file is in the
+wrong place* and *this process cannot see a directory that did not exist when
+it started*. So I asked a fresh Blender instead:
+
+    blender.exe -b --python probe_paths.py
+
+    addon_utils.paths():
+        ...\Blender\5.2\scripts\addons_core                EXISTS
+        ...\Blender Foundation\Blender\5.2\scripts\addons  EXISTS
+    is blender_mcp importable?
+        YES  ...\5.2\scripts\addons\blender_mcp.py
+
+A new process imports it fine, so the file was never misplaced: the running
+Blender had fixed its module search path at startup, before the `addons`
+directory existed. Same root cause as the first failure, one layer up.
+Restarting worked. Had the probe printed `NO`, restarting would have wasted the
+next hour.
+
+### A fourth failure that was mine, not the instructions'
+
+The MCP registered cleanly and `claude mcp list` reported `OK Connected`, but
+the forked Claude Code session came up with no Blender tools. I had checked the
+working directory with `pwd` in a shell and seen `walker-ninja-TiantongZhang` —
+but that is the *shell's* directory, not the *session's*, which was one level
+up at `D:\Graduate\2026Fall\7270`. The MCP was registered at project scope, so
+from the parent directory there was nothing to load. Re-registering with
+`-s user` fixed it and removes the whole class of error. It belongs here
+because it has the same shape as the three above — something that looked
+verified and was not — except that this one was my own reading error rather
+than a document's.
+
+### What the connection actually reports
+
+`get_addon_status`, which is machine-readable and therefore better evidence
+than the screenshot of the panel taken first:
+
+    blender_version   5.2.2 LTS
+    addon_version     [1, 8]      up_to_date: true, protocol 13 = expected 13
+    libraries         polyhaven off | sketchfab off | polypizza off
+    generators        tripo "off (Premium only)" | hunyuan3d off | hyper3d off
+    telemetry_consent false
+
+All six services the assignment names are off, which is the requirement, and
+that is now a measurement rather than a reading of a screenshot. It also
+**corrects a note made an hour earlier**: I had written that add-on 1.8 has no
+Tripo, because the N-panel shows no checkbox for it. The panel does not list
+it; the software does, Premium-gated and off. The claim was true about the UI
+and wrong about the thing.
+
+Two more facts checked rather than assumed, because the assignment's numbers
+are for Blender 5.1.2 and this is 5.2.2: the unit system is `METRIC` with
+`scale_length = 1.0`, so one Blender unit really is one metre here, and the
+glTF exporter's `export_yup` default really is `True`. A third was a surprise —
+`export_format` defaults to the empty string, so calling the exporter from
+Python without `export_format='GLB'` does not produce a `.glb`. That goes into
+`tools/blender/` as a comment rather than being rediscovered at export time.
+
+### What is not yet done
+
+Nothing has been built. The assignment's order puts the "Learn the window"
+session and `CHANGE-BRIEF.md` before the first `execute_blender_code` that
+makes geometry, and the ordering is itself scored, so the modelling waits. The
+two-hour time box the assignment sets for the MCP attempt was not needed — it
+connected — and I will not claim a duration I did not time.
+
+**Human / Claude / model:** installing Blender and the add-on, enabling it,
+clicking Connect, and the decision to continue with `walker-ninja` rather than
+take the one permitted change of game are the user's. Diagnosing the three
+failures, writing the headless probe that ruled out a misplaced file, finding
+the parser defect in the `claude mcp add` line, and the directory error are
+Claude's — the error included. No generative model produced anything here;
+nothing has been generated for A3 at all, and under this assignment's rules
+nothing may be, since the geometry has to be built rather than generated.
+
+**Traceability:** `A3-COMPLIANCE.md` section 6 for the measured values;
+`C:\Users\Zztian\.claude.json` for the user-scope MCP registration;
+`%APPDATA%\Blender Foundation\Blender\5.2\scripts\addons\blender_mcp.py`
+(264.5 KB, add-on 1.8); `blender_mcp.py:1184` for the `localhost:9876` binding.
