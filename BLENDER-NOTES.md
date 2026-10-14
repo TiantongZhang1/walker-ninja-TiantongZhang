@@ -52,44 +52,52 @@ screenshot.)*
 
 ## 3. Toolbar — 工具栏
 
-**[ my words needed ]** — the narrow vertical strip of icons down the **left**
-edge of the viewport in my screenshot (the arrow at the top, then the cursor,
-move, rotate, scale icons below it).
+The vertical strip of icons down the **left** edge of the viewport — box 1 in
+`design/blender/interface-parts-labelled.png`. Top to bottom: select, the 3D
+cursor, move, rotate, scale, transform, annotate, measure, add-cube.
 
-What is it for, in my own words? What happens when I pick a different one?
+**[ one line in my own words still to add ]** — what it is for, and what
+changes when I pick a different icon.
 
 ## 4. Outliner — 大纲视图
 
-**[ my words needed ]** — the panel at the **top right** of my screenshot, the
-one listing 场景集合 → Collection → Camera, Cube, Light, with an eye icon and
-a camera icon beside each row.
+The panel at the **top right** — box 2. It lists the scene as a tree: 场景集合
+→ Collection → Camera, Cube, Light, with an eye icon and a camera icon on each
+row.
 
-What does it show me that the viewport does not?
+**[ one line in my own words still to add ]** — what it shows me that the
+viewport does not.
 
 ## 5. Properties editor — 属性编辑器
 
-**[ my words needed ]** — the tall panel at the **bottom right**, with the
-column of small tab icons down its left side, currently showing 变换 with 位置
-/ 旋转 / 缩放 and below that 关系, 集合, 实例化, 可见性 and so on.
+The tall panel at the **bottom right** — box 3, with the column of small tab
+icons down its left side. In my screenshot it is on the object tab, showing
+变换 (位置 / 旋转 / 缩放) and then 关系, 集合, 实例化, 可见性 and the rest.
 
-How is this different from the sidebar in §2, which also shows 位置 / 旋转 /
-缩放?
+**[ one line in my own words still to add ]** — how this differs from the
+sidebar in §2, which also shows 位置 / 旋转 / 缩放.
 
 ## 6. Mode selector — 模式选择器
 
-**[ my words needed ]** — the dropdown at the **top left of the viewport
-header**, currently reading **物体模式** (Object Mode).
+The dropdown at the **top left of the viewport header** — box 4, reading
+**物体模式** (Object Mode).
 
-What is the other mode I switched to, and what changed when I did?
+**[ one line in my own words still to add ]** — the other mode I switched to,
+and what changed when I did.
 
 ---
 
-## What this session changed about the brief
+## What I learned going through all six
 
-**[ my words needed, one or two lines ]** — the assignment's reason for doing
-this first is *"so your sizes and budget are informed guesses and not blind
-ones"*. Did seeing the 2 m cube at that zoom level change my sense of how big
-0.70 m, 1.00 m and 1.50 m actually are?
+> 都过完了，学会了如何切换选择的物体部分，如何改变视图，如何调整模型。
+>
+> *(Went through them all. Learned how to switch which part of a model is
+> selected, how to change the view, and how to adjust a model.)*
+
+Those three are the operations the rest of this assignment runs on: selecting
+a part is how I reached a single eye cube rather than the whole slime,
+changing the view is how I got behind and under each asset for the human check
+in `TEST-REPORT.md` section A6, and adjusting a model is the hand edit below.
 
 ---
 
@@ -135,7 +143,14 @@ the look without breaking anything `CHANGE-BRIEF.md` promised.
 
 ### What it taught me about the interface
 
-**[ my words needed, one or two lines ]** — I now know how to move an object
-(**G**) and scale one (**S**). What surprised me, or what I would want to know
-next time? For example: how the sidebar's 位置 / 缩放 numbers change live as I
-drag, or the difference between moving an object and moving its origin.
+> 学会了如何切换选择的物体部分，如何调整模型。
+>
+> *(Learned how to switch which part of a model is selected, and how to adjust
+> a model.)*
+
+Selecting *a part* rather than the whole thing is the half that mattered here.
+The slime is three objects — a body and two eye cubes — and the edit only
+worked because I could click one eye on its own instead of scaling the
+creature. **G** moves, **S** scales, and the sidebar's 位置 and 缩放 numbers
+change as you drag, which is how I could tell afterwards that one eye had
+ended up at 1.526 and the other at 1.570.
