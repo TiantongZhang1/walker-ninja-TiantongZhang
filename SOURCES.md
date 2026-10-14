@@ -323,3 +323,106 @@ the game draws. No font file is bundled, downloaded, or redistributed.
    correct.
 3. `godot/assets/README.md`, which is the shortest honest answer to "which of
    these did you actually generate".
+
+---
+
+## 9. Assignment 3 — the three 3D assets
+
+Added 2026-10-14, tagged `a3`. Nothing in sections 1–8 changes.
+
+### Built, not generated, and not downloaded
+
+The assignment is explicit: *"You build the geometry yourself, with Claude, in
+Blender. A downloaded model or an AI-generated mesh does not count."* All
+three assets are primitives placed, scaled and combined by Python that Claude
+wrote and the author approved.
+
+| Asset | File | Source script | Shapes | Triangles |
+|---|---|---|---|---|
+| A3-TORCH | `godot/assets/models/torch.glb` | `tools/blender/build_torch.py` | 4 | 84 |
+| A3-SPIKE | `godot/assets/models/spike_trap.glb` | `tools/blender/build_spike_trap.py` | 4 | 54 |
+| A3-SLIME | `godot/assets/models/slime.glb` | `tools/blender/build_slime.py` | 3 | 72 |
+
+Blender sources are in `design/blender/*.blend`. `tools/blender/export_glb.py`
+is shared by all three.
+
+**The saved scripts are not copies of what ran.** The MCP executed each file
+with `exec(open(path).read())`, so the file in `tools/blender/` *is* the code
+Blender executed, and the same file runs unchanged as the assignment's
+script-route fallback.
+
+### No asset library and no 3D generator was used
+
+The add-on can fetch models and call generation services, and the assignment
+says to leave all of them off. `get_addon_status` reports, machine-readably,
+on 2026-10-14:
+
+```
+libraries   polyhaven off | sketchfab off | polypizza off
+generators  tripo "off (Premium only)" | hunyuan3d off | hyper3d off
+premium_generators  []
+telemetry_consent   false
+```
+
+`generate_3d`, `search_assets` and `import_asset` were never called. The
+add-on's N-panel shows no Tripo checkbox at all; `get_addon_status` does list
+it, as Premium-gated and off. An earlier note in this project said version 1.8
+has no Tripo — true of the panel, wrong about the software, and corrected
+here.
+
+`blender_mcp.py` contains a `tencentcloudapi.com` code path. It belongs to the
+Hunyuan3D generator and is reachable only through `generate_3d`, which was not
+called.
+
+### Tools and versions
+
+| Tool | Version | Where it ran | Licence / terms |
+|---|---|---|---|
+| Blender | **5.2.2 LTS**, build 2026-09-15 | local, Windows 11 | GNU GPL v2-or-later; output is the author's |
+| glTF 2.0 exporter | add-on `(5, 2, 40)`, ships with Blender | local | same |
+| MCP for Blender — server | `mcp-for-blender` **2.1.9** (PyPI) | local via `uvx` | community project named by the syllabus |
+| MCP for Blender — Blender add-on | **1.8**, protocol 13 | local | same project; **two different version numbers, both needed to identify the install** |
+| uv / uvx | **0.13.0** | local | Astral, installed through winget |
+| Godot | **4.7.2.stable.official.ed1daf0bf** | local | MIT |
+
+The chapter ran Blender 5.1.2 and this is 5.2.2, so the numbers the assignment
+quotes were re-measured rather than inherited. Two held and one did not:
+`export_yup` does default to `True`, the unit system is `METRIC` with
+`scale_length = 1.0`, and `export_format` defaults to the **empty string**, so
+calling the exporter from Python without `export_format='GLB'` silently
+produces no `.glb`. That last one is recorded in `export_glb.py` where it
+cannot be forgotten.
+
+Telemetry is off twice over: `DISABLE_TELEMETRY=true` on the MCP registration,
+and `telemetry_consent: false` in the add-on.
+
+### Colour provenance
+
+No colour was invented for 3D. All six hex values are read out of the 2D
+game's own drawing code, and the asset tables in `CHANGE-BRIEF.md` revision
+3.0.0 name the line each came from:
+
+`#d24e42` spike teeth · `#2b2430` mortar · `#7ab648` slime body · `#17300d`
+slime eyes · `#3a2f26` torch handle · `#ff9a3c` / `#ffe08a` flame.
+
+They survive the export exactly. Godot reports `albedo_color.to_html()` as
+`#d24e42` and `#2b2430` on the trap, because the scripts convert sRGB to
+linear for Blender's Base Color input and Godot converts back on import.
+Setting the raw sRGB value instead would arrive as `#ea968b`.
+
+### What AI contributed, and what the author did
+
+**Claude** wrote the three build scripts, the shared exporter, the Godot
+showcase scene, `check_assets_3d.gd`, and the A3 sections of these documents;
+drove Blender through the MCP; and diagnosed the setup failures recorded in
+`FRICTIONAL.md`, including one of its own making.
+
+**The author** installed Blender and the add-on and connected it; ran the
+"Learn the window" session and wrote `BLENDER-NOTES.md` in their own words;
+chose the three assets; approved the sizes before anything was built; asked
+for the slime to be round after looking at it, which is revision 3.0.1; made
+the hand edit to the slime's eyes in the Blender viewport; and performed the
+human checks in `TEST-REPORT.md` that no script can perform.
+
+**No generative model produced any part of these assets.** Under this
+assignment's rules none may: the geometry has to be built.

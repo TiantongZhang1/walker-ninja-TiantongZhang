@@ -77,6 +77,94 @@ generate*. `godot/assets/README.md` is the one-table version.
 
 ---
 
+## What Assignment 3 added
+
+Three 3D assets for this game, built with Claude through the Blender MCP in a
+live Blender session, and a small Godot 3D scene that shows them together at
+game scale. The 2D slice is untouched; A3 adds a layer rather than replacing
+anything. Tagged **`a3`**.
+
+| Asset | What it is in the game | Size (W × H × D) | Shapes | Triangles |
+|---|---|---|---|---|
+| **Torch** | the dungeon's light source, `_draw_torch()` in the 2D game | 0.22 × 0.70 × 0.22 m | 4 | 84 |
+| **Spike trap** | the pop-up floor trap the warning sound is built around | 1.50 × 1.00 × 0.50 m | 4 | 54 |
+| **Slime** | six of the eleven enemies | 1.375 × 1.00 × 1.375 m | 3 | 72 |
+
+Course limits are 6 shapes and 500 triangles **each**; the three together cost
+210 triangles. Every size is derived from the 2D game rather than invented:
+the player's collider is 18 × 28 px and the project's convention is 16 px =
+1 m, so the player is 1.75 m, and the trap's dimensions are the level file's
+own trap rect. `CHANGE-BRIEF.md` revision 3.0.0 names the source line for each
+number.
+
+### Open the 3D scene
+
+`.tscn` files cannot be opened by double-clicking them — Windows does not know
+the extension. Open the project, then the scene:
+
+1. Run `Godot_v4.7.2-stable_win64.exe`, choose **Import**, and pick
+   `godot/project.godot`
+2. In the **FileSystem** panel: `scenes/` → `asset_showcase.tscn`
+3. **F6** runs this scene on its own (**F5** runs the 2D game)
+
+A rendered frame of it is committed at `evidence/a3/showcase.png`, captured
+from a real run rather than described.
+
+### Run the asset check
+
+```bash
+"…/Godot_v4.7.2-stable_win64.exe" --headless --path godot --script res://tests/check_assets_3d.gd
+```
+
+It prints each asset's bounding box in metres beside the number
+`CHANGE-BRIEF.md` predicted, which axis it stands along, its node scale, and
+how far its lowest point is from the floor; it exits non-zero if any of those
+is wrong. The chapter's macOS line wraps this in `timeout 120 … --fixed-fps
+60`; neither is needed, because the script quits itself and never advances a
+frame.
+
+**What that check cannot show**, and its own header says so: it measures
+geometry as Godot received it. Whether an asset *reads* as a torch, whether
+the colours look right under the game's lighting, whether any face is missing
+— all of that is in `TEST-REPORT.md` as a human check, and it is the half that
+matters for marks.
+
+### Rebuild the assets from source
+
+Each asset's Blender source is in `design/blender/`, and the script that built
+it is in `tools/blender/`. Those scripts are not transcriptions: the MCP ran
+each file with `exec(open(path).read())`, so the committed script is the code
+Blender executed. The same file also runs standalone, which is the
+assignment's script-route fallback:
+
+```bash
+"…/blender.exe" -b --factory-startup --python-exit-code 1 --python tools/blender/build_torch.py
+```
+
+### Versions
+
+Godot **4.7.2.stable.official.ed1daf0bf** · Blender **5.2.2 LTS** (build
+2026-09-15) · `mcp-for-blender` **2.1.9** with Blender add-on **1.8**,
+protocol 13 · uv **0.13.0** · Windows 11 Home China 10.0.26200.
+
+The chapter ran Blender 5.1.2, so its numbers were re-measured here rather
+than inherited. `SOURCES.md` §9 records which held and which did not.
+
+### Known limitations
+
+- **No asset library or 3D generator was used, by rule.** `get_addon_status`
+  reports all six off, machine-readably; `SOURCES.md` §9 quotes it.
+- **The assets are low-poly and faceted.** An 8-sided cone and an icosphere at
+  subdivision 2 are visibly flat-sided up close. That is the triangle budget
+  spent where it shows, not an accident.
+- **They are not wired into the 2D game.** The assignment does not ask for
+  that yet; Assignments 4 and 5 reuse this scene.
+- **The torch's glow is not in the asset.** The 2D version's light is 16
+  nested discs drawn in code; the `.glb` carries an emissive flame material
+  and nothing else. A light belongs to a scene, not to a mesh.
+
+---
+
 ## Verify it
 
 ```bash
