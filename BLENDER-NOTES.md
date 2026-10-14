@@ -56,8 +56,12 @@ The vertical strip of icons down the **left** edge of the viewport — box 1 in
 `design/blender/interface-parts-labelled.png`. Top to bottom: select, the 3D
 cursor, move, rotate, scale, transform, annotate, measure, add-cube.
 
-**[ one line in my own words still to add ]** — what it is for, and what
-changes when I pick a different icon.
+> 切换工具栏的话我鼠标的功能会改变。
+>
+> *(Switching the toolbar changes what my mouse does.)*
+
+That is the whole point of it, and it is the same idea as the mode selector in
+§6 — see the note at the end of this section.
 
 ## 4. Outliner — 大纲视图
 
@@ -65,8 +69,15 @@ The panel at the **top right** — box 2. It lists the scene as a tree: 场景�
 → Collection → Camera, Cube, Light, with an eye icon and a camera icon on each
 row.
 
-**[ one line in my own words still to add ]** — what it shows me that the
-viewport does not.
+> 主要告诉你「场景里到底有什么、它们之间是什么关系」。
+>
+> *(Mainly tells you what is actually in the scene and how the things in it
+> relate to each other.)*
+
+The relationship half is what the viewport cannot give you. Looking at the
+slime I see one green shape; the Outliner shows it is three objects —
+`Slime_Body`, `Slime_Eye_1`, `Slime_Eye_2` — which is why the hand edit was
+possible at all.
 
 ## 5. Properties editor — 属性编辑器
 
@@ -74,16 +85,32 @@ The tall panel at the **bottom right** — box 3, with the column of small tab
 icons down its left side. In my screenshot it is on the object tab, showing
 变换 (位置 / 旋转 / 缩放) and then 关系, 集合, 实例化, 可见性 and the rest.
 
-**[ one line in my own words still to add ]** — how this differs from the
-sidebar in §2, which also shows 位置 / 旋转 / 缩放.
+> 属性编辑器和 N 侧栏确实都有位置、旋转、缩放，但定位不一样。N 侧栏是
+> 「当前这个对象在视口里的快速参数面板」。
+>
+> *(The Properties editor and the N sidebar both have location, rotation and
+> scale, but they are positioned differently. The N sidebar is the quick
+> parameter panel for whichever object is current in the viewport.)*
 
 ## 6. Mode selector — 模式选择器
 
 The dropdown at the **top left of the viewport header** — box 4, reading
 **物体模式** (Object Mode).
 
-**[ one line in my own words still to add ]** — the other mode I switched to,
-and what changed when I did.
+> 模式选择器里我切换到了雕刻模式，鼠标的功能也变了。
+>
+> *(In the mode selector I switched to Sculpt Mode, and the mouse's function
+> changed too.)*
+
+### The thing the toolbar and the mode selector have in common
+
+I wrote the same sentence twice without meaning to — *"鼠标的功能会改变"* for
+the toolbar in §3 and *"鼠标的功能也变了"* for the mode selector in §6. They
+really are the same idea at two scales. The toolbar changes what one drag of
+the mouse does inside the mode I am already in; the mode selector changes what
+the whole application is for, and Sculpt Mode is the clearest case of that —
+the same left-drag that moved an object a moment ago now pushes the mesh
+around.
 
 ---
 
