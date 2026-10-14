@@ -888,3 +888,61 @@ Unchanged: **C7**, the placeholder death reaction and the four placeholder
 sound effects; and the generated environment asset A2 never produced. A3 does
 not close either — its three assets are *built*, not generated, which is what
 this assignment requires and the opposite of what A2's gap needs.
+
+---
+
+# Revision 3.0.1 — 2026-10-14 (later) — the slime is round, because it was looked at
+
+Revision 3.0.0 is unchanged above. This is the assignment's required
+inspect-and-revise cycle, and it was driven by an observation rather than by a
+check: the numbers all passed and the shape was still wrong.
+
+## What was observed
+
+`A3-SLIME` was built from an icosphere at **subdivision 1** — 80 triangles for
+the whole sphere, chosen because the assignment warns that a default sphere
+eats the triangle budget. Rendered from four angles it measured correctly and
+sat on the floor correctly, and it had a **visibly pointed apex**. An
+icosphere at subdivision 1 is a twenty-sided solid; `_draw_slime()` in the 2D
+game draws a smooth dome. The author looked at it and said it should be round.
+
+No automated check caught this, and none could have. The brief's P1 to P4 are
+about size, axis, scale and origin, and all four passed on the pointed
+version. This is the thing `check_assets_3d.gd` says in its own header that it
+cannot show.
+
+## What changed
+
+`SUBDIV` 1 → 2 in `tools/blender/build_slime.py`. Nothing else.
+
+| | subdivision 1 | subdivision 2 |
+|---|---|---|
+| Triangles, whole asset | 52 | **72** |
+| Body silhouette | twenty-sided, pointed apex | rounded dome |
+| Budget (brief 3.0.0: 120) | inside | **inside** |
+| Course limit (500) | inside | inside |
+
+Twenty extra triangles. The brief's budget of 120 for this asset still holds,
+so **revision 3.0.0's prediction is not being rewritten to make it look
+right** — it was generous enough, and this revision exists to record that the
+reason for the change was a judgement, not a measurement.
+
+## What did not change, and why that matters
+
+The size contract survived the edit untouched: **1.375 × 1.000 × 1.375 m**,
+origin at the base, node scale (1, 1, 1), all still exact in Godot.
+
+That is not luck. `fit_to_size()` measures the mesh after the cut and scales it
+to the brief's numbers, so the asset's dimensions are independent of how many
+faces the primitive happens to have. Had the earlier 14.8 % shortfall been
+fixed by multiplying by a constant — which was the quicker option at the time
+— raising the subdivision level would have silently moved the slime off its
+own brief, and the Godot check would have failed for a reason that had nothing
+to do with the change being made.
+
+## The other two
+
+Untouched. `A3-TORCH` and `A3-SPIKE` are cones and cylinders at 8 sides, where
+faceting reads as deliberate low-poly rather than as a sphere that failed to be
+round. Re-ran after this change anyway, and both still report their 3.0.0
+numbers exactly.

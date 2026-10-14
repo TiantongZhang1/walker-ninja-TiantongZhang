@@ -29,7 +29,10 @@ import bmesh
 import bpy
 
 W, D, H = 1.375, 1.375, 1.00   # metres, from the brief
-SUBDIV = 1                     # icosphere subdivisions: 80 tris before the cut
+SUBDIV = 2                     # icosphere subdivisions; see brief revision 3.0.1
+#   1 gives 80 triangles but a visibly pointed apex: an icosphere at that
+#   level is a 20-sided solid, and the 2D slime is a smooth dome. Raised to
+#   2 after looking at it. Still far inside the 500-triangle course limit.
 
 EYE = 0.11                     # eye cube edge
 EYE_X = 0.20                   # half the gap between the eyes
