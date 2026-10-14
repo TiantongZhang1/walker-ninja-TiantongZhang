@@ -95,6 +95,47 @@ ones"*. Did seeing the 2 m cube at that zoom level change my sense of how big
 
 ## The hand edit
 
-**[ to be filled after I make it ]** — the assignment requires at least one
-change made by hand with the mouse, and what the experience taught me about
-the interface. Recorded here and in `FRICTIONAL.md` when it happens.
+I made two. The first one I undid, and that is worth recording as much as the
+one that stayed.
+
+### First try — the spike trap, moved and moved back
+
+> 打开了尖刺文件，改了一下 xy 轴,学会了如何调整模型位置。
+>
+> *(Opened the spike file, changed the x and y axes, learned how to move a
+> model.)*
+
+Then I put it back where it was, because I was only trying it out. When Claude
+compared `spike_trap.blend` against what the build script produces, every
+coordinate matched and the file's timestamp had not moved: the edit left no
+trace at all. The assignment says a TA may ask me to show which part I edited
+by hand, and an edit I reverted is not something I can show. Worth knowing
+before the deadline rather than after it.
+
+### The one that stayed — the slime's eyes
+
+In the Godot render the eyes looked too small and sat too high to read at
+game size, next to a player who is 1.75 m. So I selected each eye cube in the
+viewport and scaled it with **S**, then nudged it down.
+
+|  | before | after |
+|---|---|---|
+| `Slime_Eye_1` | scale 1.000, z 0.6400 | **scale 1.526**, z 0.6129 |
+| `Slime_Eye_2` | scale 1.000, z 0.6400 | **scale 1.570**, z 0.6141 |
+
+The two are not identical — 1.526 against 1.570 — because I sized them by eye
+rather than by typing a number. I am leaving the asymmetry: it is what a hand
+edit looks like, and at game size it reads as character rather than as error.
+
+Claude applied the scale into the mesh afterwards (`Ctrl+A` → Scale, which the
+build scripts do for every object they create) so the exported `.glb` carries
+no node scale, and re-ran the check: the bounding box is still exactly
+**1.375 × 1.000 × 1.375 m** with its origin on the floor, so the edit changed
+the look without breaking anything `CHANGE-BRIEF.md` promised.
+
+### What it taught me about the interface
+
+**[ my words needed, one or two lines ]** — I now know how to move an object
+(**G**) and scale one (**S**). What surprised me, or what I would want to know
+next time? For example: how the sidebar's 位置 / 缩放 numbers change live as I
+drag, or the difference between moving an object and moving its origin.
