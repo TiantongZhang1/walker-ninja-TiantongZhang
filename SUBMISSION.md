@@ -61,7 +61,12 @@ Checks run (command and result):  "$GODOT" --headless --path godot --import
                                   -> "checked, no problems". One sentence,
                                      recorded as one sentence.
 Final film URL and filename:      NewWalker3D_TiantongZhang.mp4 at
-                                  [[ upload to OneDrive and paste the link ]]
+                                  https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQDSuclFzayVTZRBZp6MgYQdASM0btLNfteewH2AlH0nAxM?e=34kKOK
+                                  Submission folder, which also holds
+                                  CHECKSUM.txt:
+                                  https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgACD9Jz4umkTpn5f9AHw8ziAUPNIfiTLw3CAKyhjKygKTM?e=fH6hNJ
+                                  Northeastern OneDrive. Both require a
+                                  Microsoft sign-in; they are NOT public.
 Final film SHA-256:               cd19e3d4acba3c39d0c060da8031fc7e80feeb628dcef81d9137622bf4f788b2
 Film length / size:               208.00 s (3:28), 13561812 bytes
                                   3840x2160, 30 fps, H.264 + AAC

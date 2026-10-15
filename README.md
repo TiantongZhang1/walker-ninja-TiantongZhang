@@ -159,7 +159,9 @@ than inherited. `SOURCES.md` §9 records which held and which did not.
 | Size | 13,561,812 bytes (12.9 MB) |
 | Container | H.264 / AAC, 3840 × 2160, 30 fps |
 | SHA-256 | `cd19e3d4acba3c39d0c060da8031fc7e80feeb628dcef81d9137622bf4f788b2` |
-| URL | *[ uploaded to Northeastern OneDrive at submission — link in `SUBMISSION.md` ]* |
+| URL | [northeastern-my.sharepoint.com/…/NewWalker3D_TiantongZhang.mp4](https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQDSuclFzayVTZRBZp6MgYQdASM0btLNfteewH2AlH0nAxM?e=34kKOK) |
+| Also | [the submission folder](https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgACD9Jz4umkTpn5f9AHw8ziAUPNIfiTLw3CAKyhjKygKTM?e=fH6hNJ), which holds the film and a `CHECKSUM.txt` beside it |
+| Access | Northeastern OneDrive. The links are **not public** — they require a Microsoft sign-in |
 
 Built with the course `godot-gamedev` skill in `walker` mode. Thirteen beats;
 the evidence ledger in
