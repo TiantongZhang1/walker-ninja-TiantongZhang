@@ -150,6 +150,32 @@ protocol 13 · uv **0.13.0** · Windows 11 Home China 10.0.26200.
 The chapter ran Blender 5.1.2, so its numbers were re-measured here rather
 than inherited. `SOURCES.md` §9 records which held and which did not.
 
+### The A3 film
+
+| | |
+|---|---|
+| Filename | `NewWalker3D_TiantongZhang.mp4` |
+| Length | 208.00 s — 3:28 |
+| Size | 13,561,812 bytes (12.9 MB) |
+| Container | H.264 / AAC, 3840 × 2160, 30 fps |
+| SHA-256 | `cd19e3d4acba3c39d0c060da8031fc7e80feeb628dcef81d9137622bf4f788b2` |
+| URL | *[ uploaded to Northeastern OneDrive at submission — link in `SUBMISSION.md` ]* |
+
+Built with the course `godot-gamedev` skill in `walker` mode. Thirteen beats;
+the evidence ledger in
+[youtube/claude-liam-walker-ninja-a3-blender/](youtube/claude-liam-walker-ninja-a3-blender/)
+hashes the nine project files it draws on, so a changed file breaks the check
+rather than passing quietly. Gate V: 26 frames, 0 BLOCKER, 0 MAJOR.
+
+The MP4 is not in this repository — over the 25 MB rule's spirit and `*.mp4`
+is gitignored. Verify a copy you were given by **downloading it** (a web
+preview is a re-encoded stream) and running:
+
+```bash
+sha256sum NewWalker3D_TiantongZhang.mp4
+# cd19e3d4acba3c39d0c060da8031fc7e80feeb628dcef81d9137622bf4f788b2
+```
+
 ### Known limitations
 
 - **No asset library or 3D generator was used, by rule.** `get_addon_status`

@@ -62,8 +62,8 @@ Checks run (command and result):  "$GODOT" --headless --path godot --import
                                      recorded as one sentence.
 Final film URL and filename:      NewWalker3D_TiantongZhang.mp4 at
                                   [[ upload to OneDrive and paste the link ]]
-Final film SHA-256:               1b7344b2aec38b61b921f515414f2ca033b09b9560b3328254964b119bda7d86
-Film length / size:               195.80 s (3:16), 12,840,200 bytes
+Final film SHA-256:               cd19e3d4acba3c39d0c060da8031fc7e80feeb628dcef81d9137622bf4f788b2
+Film length / size:               208.00 s (3:28), 13561812 bytes
                                   3840x2160, 30 fps, H.264 + AAC
 Summary of my changes:            see below
 Known limitations:                see below

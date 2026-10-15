@@ -26,7 +26,7 @@
     "teaching_contract": "code-then-result-v1",
     "game": "walker-ninja-TiantongZhang",
     "build": {
-      "at": "2026-10-14T20:00:46",
+      "at": "2026-10-14T20:22:18",
       "cut": "master",
       "filled": 13,
       "of": 13,
@@ -76,7 +76,7 @@
         "status": "VIDEO",
         "src": "media\\B00.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -134,7 +134,7 @@
         "status": "VIDEO",
         "src": "media\\B01.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -185,7 +185,7 @@
         "status": "VIDEO",
         "src": "media\\B02.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -236,7 +236,7 @@
         "status": "VIDEO",
         "src": "media\\B03.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -287,7 +287,7 @@
         "status": "VIDEO",
         "src": "media\\B04.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -338,7 +338,7 @@
         "status": "VIDEO",
         "src": "media\\B05.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -406,7 +406,7 @@
         "status": "VIDEO",
         "src": "media\\B06.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -458,7 +458,7 @@
         "status": "VIDEO",
         "src": "media\\B07.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -499,10 +499,6 @@
             ],
             "cues": [],
             "durationSeconds": 17.88
-          },
-          "rendered": {
-            "out": "media/B08.mp4",
-            "at": "2026-10-14T23:59:36.535766+00:00"
           }
         }
       },
@@ -512,8 +508,8 @@
       "build": {
         "status": "VIDEO",
         "src": "media\\B08.mp4",
-        "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-14T20:00:46"
+        "filled_by": "media",
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -564,17 +560,17 @@
         "status": "VIDEO",
         "src": "media\\B09.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
       "beat_id": "B10",
       "act": "VERDICT",
       "role_note": "WALKER BOOKEND 3/4 - ClaudeVerdictArtifact.",
-      "narration_text": "What this film can defend. Three assets, built not generated, every size traced to a line in the 2D game. Twelve automated measurements, no failures. Two revisions that no check asked for, because a person looked. And one human check, one sentence long, recorded as one sentence rather than dressed up.",
+      "narration_text": "What this film can defend. Three assets, built not generated, every size traced to a line in the 2D game. Twelve automated measurements, no failures. Two revisions that no check asked for, because a person looked. One human check, one sentence long, recorded as one sentence. The assets chosen, the sizes approved, the hand edit and that check are the author's. The scripts, the scene, the checks and this film are Claude's, including the check that was wrong. Everything you have seen is the repository at tag a3.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 24.0,
+      "estimated_duration_s": 30.0,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -590,25 +586,29 @@
               "Built: torch, spike trap, slime - 11 primitives, 210 triangles.",
               "Generated: nothing. All six libraries and generators off.",
               "Sizes: every one traced to the level file or a draw function.",
-              "Checked: 12 measurements over 3 assets, 0 failures.",
-              "The check was wrong before any asset was, and is recorded.",
-              "Revised twice on sight: the slime's shape and its eyes.",
-              "Human check: one sentence. Recorded as one sentence.",
-              "Not shown: the assets inside the 2D game. Not asked for yet."
+              "Checked: 12 measurements, 0 failures - the check was wrong first.",
+              "Revised twice on sight. Human check: one sentence, so recorded.",
+              "Author: the assets, the sizes, the hand edit, the looking.",
+              "Claude: the scripts, the scene, the checks, the film, the bug.",
+              "Shown: tag a3. Not shown: the assets inside the 2D game."
             ],
             "brandLabel": "@NikBearBrown",
-            "durationSeconds": 17.09
+            "durationSeconds": 29.27
+          },
+          "rendered": {
+            "out": "media/B10.mp4",
+            "at": "2026-10-15T00:20:43.531256+00:00"
           }
         }
       },
-      "actual_duration_s": 16.64,
+      "actual_duration_s": 28.82,
       "audio_file": "mp3/beat-B10.mp3",
-      "render_duration_s": 16.666666666666668,
+      "render_duration_s": 28.833333333333332,
       "build": {
         "status": "VIDEO",
         "src": "media\\B10.mp4",
-        "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -652,7 +652,7 @@
         "status": "VIDEO",
         "src": "media\\B11.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     },
     {
@@ -684,7 +684,7 @@
         "status": "VIDEO",
         "src": "media\\B12.mp4",
         "filled_by": "media",
-        "at": "2026-10-14T20:00:46"
+        "at": "2026-10-14T20:22:18"
       }
     }
   ]

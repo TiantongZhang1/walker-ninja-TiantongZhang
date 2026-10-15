@@ -277,25 +277,32 @@ beats.append({
         "What this film can defend. Three assets, built not generated, every "
         "size traced to a line in the 2D game. Twelve automated measurements, "
         "no failures. Two revisions that no check asked for, because a person "
-        "looked. And one human check, one sentence long, recorded as one "
-        "sentence rather than dressed up."),
-    "voice": "am_onyx", "engine": "kokoro", "estimated_duration_s": 24.0,
+        "looked. One human check, one sentence long, recorded as one sentence. "
+        "The assets chosen, the sizes approved, the hand edit and that check "
+        "are the author's. The scripts, the scene, the checks and this film are "
+        "Claude's, including the check that was wrong. Everything you have seen "
+        "is the repository at tag a3."),
+    "voice": "am_onyx", "engine": "kokoro", "estimated_duration_s": 30.0,
     "shot": {"type": "GRAPHIC", "class": "SHOW", "source": "remotion",
              "motion": "verdict-columns", "show": [],
              "remotion": {"pattern": "ClaudeVerdictArtifact", "props": {
                  "artifactTitle": "Verdict",
                  "artifactHeading": "Built, measured, and what stayed unmeasured",
+                 # Eight lines, not eleven. Eleven overflowed the title-safe
+                 # bottom edge and ./art final refused the cut -- the same
+                 # class of failure as A2's 31-character title. Every line
+                 # here is <= 65 characters so none of them wraps.
                  "artifactLines": [
                      "Built: torch, spike trap, slime - 11 primitives, 210 triangles.",
                      "Generated: nothing. All six libraries and generators off.",
                      "Sizes: every one traced to the level file or a draw function.",
-                     "Checked: 12 measurements over 3 assets, 0 failures.",
-                     "The check was wrong before any asset was, and is recorded.",
-                     "Revised twice on sight: the slime's shape and its eyes.",
-                     "Human check: one sentence. Recorded as one sentence.",
-                     "Not shown: the assets inside the 2D game. Not asked for yet."],
+                     "Checked: 12 measurements, 0 failures - the check was wrong first.",
+                     "Revised twice on sight. Human check: one sentence, so recorded.",
+                     "Author: the assets, the sizes, the hand edit, the looking.",
+                     "Claude: the scripts, the scene, the checks, the film, the bug.",
+                     "Shown: tag a3. Not shown: the assets inside the 2D game."],
                  "brandLabel": "@NikBearBrown",
-                 "durationSeconds": 24.0}}}})
+                 "durationSeconds": 30.0}}}})
 
 beats.append({
     "beat_id": "B11", "act": "TURN",

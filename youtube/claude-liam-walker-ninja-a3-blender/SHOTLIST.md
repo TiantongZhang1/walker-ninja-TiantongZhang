@@ -1,6 +1,6 @@
 # SHOTLIST.md — what is on screen, beat by beat
 
-`godot-gamedev walker` · 13 beats · **195.80 s, 3:16 measured** off the
+`godot-gamedev walker` · 13 beats · **208.00 s, 3:28 measured** off the
 finished master. Durations follow the narration.
 
 Teaching contract **`code-then-result-v1`**: three code excerpts, each

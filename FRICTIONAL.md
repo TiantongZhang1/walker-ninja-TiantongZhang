@@ -761,3 +761,142 @@ nothing may be, since the geometry has to be built rather than generated.
 `C:\Users\Zztian\.claude.json` for the user-scope MCP registration;
 `%APPDATA%\Blender Foundation\Blender\5.2\scripts\addons\blender_mcp.py`
 (264.5 KB, add-on 1.8); `blender_mcp.py:1184` for the `localhost:9876` binding.
+
+---
+
+## 2026-10-14 (later) — three assets, and the three times something was wrong
+
+The MCP was connected, so this is the part the assignment is actually about.
+Three assets, built one at a time. Every one of them hit its brief on the
+first or second try, which is less interesting than the three things that
+went wrong around them, so those get the space.
+
+### Order, and why the trap went first
+
+The brief lists the torch first and I built the trap first. It is four
+primitives — a plate and three cones — and the point of going first was not
+the modelling but the pipeline: build, measure, export, import, check. If
+something in that chain was broken I wanted to find it in ten minutes on the
+cheapest asset, not after building all three.
+
+It paid immediately. The trap came out at 4 objects, 54 triangles, 1.500 x
+0.500 x 1.000 m, bottom at z = 0, every transform applied — the brief's
+numbers exactly — and the export then ran into the thing I had read about but
+not yet believed: `bpy.ops.export_scene.gltf`'s `export_format` defaults to
+the empty string, so calling it from Python without `export_format='GLB'`
+produces no `.glb` at all. I had checked that default before writing the
+exporter, which is the only reason it cost nothing.
+
+### The check accused a correct asset, and I nearly believed it
+
+First Godot run on the trap:
+
+    bounding box   1.500 x 0.850 x 0.500 m
+    expected       1.500 x 1.000 x 0.500 m
+    FAIL: A3-SPIKE is 15.0% off on H (0.850 vs 1.000)
+    lowest point   y = -0.4250 m
+    FAIL: A3-SPIKE sinks below the floor by 0.4250 m
+
+Two failures, on an asset Blender had just measured as correct. The obvious
+move was to go back and fix the asset. What stopped me was that 0.850 and
+0.425 are not arbitrary numbers: the tooth cone is 0.85 tall and sits
+centred on its own origin, so ±0.425 is exactly what you get if every
+object's position is thrown away and only the local meshes are merged.
+
+It was the check. `_world_aabb()` read `global_transform` from nodes that a
+script running in `_init()` has not put in the tree yet, Godot returned
+identity for every one of them with an error I had been filtering out of the
+output, and the measurement was of three meshes all stacked at the origin.
+Rewritten to accumulate local transforms, which need no tree, it passed.
+
+The assignment warns about this in as many words — *"The check is Claude's,
+so read it: a check can prove less than it claims"* — and the warning did not
+stop me writing it. Reading the numbers did. The failing output is kept in
+`TEST-REPORT.md` section A8 rather than deleted now that it passes.
+
+### The slime missed its own brief, and the quick fix was the wrong one
+
+Built nominally at 1.375 m wide, it measured **1.171** — 14.8 % under, outside
+the brief's own ±5 % in P2. An icosphere at subdivision 1 is a twenty-sided
+solid, not a sphere, and there is no ring of vertices on the z = 0 plane it
+gets cut at, so the widest surviving geometry is narrower than the semi-axis
+asked for.
+
+The fast fix was a multiplier: 1.375 / 1.171 = 1.174, type it in, move on.
+I wrote `fit_to_size()` instead, which measures the mesh after the cut and
+scales it to the brief's numbers. Six extra lines and one pass over the
+vertices.
+
+That decision paid off inside the hour. The author looked at the render, said
+the slime should be round, and `SUBDIV` went 1 → 2. With a hard-coded 1.174
+the slime would have silently come out 17 % too wide and the Godot check
+would have failed for a reason with nothing to do with the change being made.
+With the measurement it came out at 1.375 again without anything else being
+touched.
+
+Then the eyes were inside its head, because their Y position had been typed
+for the pre-fit width. Derived from the ellipsoid now.
+
+### Round, and the edit that stayed
+
+**Observation, not assertion.** Every automated check passed on the pointed
+slime: correct size, origin on the floor, scale one, longest axis right.
+A person looking at four rendered views is what caught the apex. That is
+`CHANGE-BRIEF.md` revision 3.0.1, added rather than editing 3.0.0, because
+the assignment says to add revisions rather than rewrite predictions to look
+right.
+
+The hand edit went the same way. The first attempt was mine on the spike
+trap's X and Y, and I moved it back — which, as the comparison against the
+build script showed, left no trace at all on disk. The assignment says a TA
+may ask which part was edited by hand and a reverted edit cannot answer that.
+The second attempt stayed: both of the slime's eye cubes scaled in the
+viewport, 1.526 and 1.570, because at a 1.75 m player height they were too
+small to read. The asymmetry is kept.
+
+### What the documents got wrong, and were corrected
+
+Two claims written earlier in this project turned out to be false and are
+corrected in place rather than quietly edited:
+
+- **"Add-on 1.8 has no Tripo."** True of the N-panel, which shows no checkbox
+  for it. False of the software: `get_addon_status` lists it, Premium-gated
+  and off. Corrected in `SOURCES.md` §9.
+- **Two evidence images did not fit the panel they render in.** The same
+  mistake Assignment 2 made: composing to no particular aspect. The
+  workbench's image area is 1529 x 987 and a square 644 x 644 capture throws
+  away 35 % of it. Found by laying all thirteen beats out as a contact sheet
+  after Gate V passed, which is the second time a visual gate has passed
+  something a person then spotted.
+
+### Human / Claude / model
+
+**Mine:** the three assets chosen, and chosen because the 2D game already
+draws them. Approving the sizes before anything was built. Asking for the
+slime to be round after looking at it. The hand edit. The human check in the
+Godot editor. Blender and the add-on installed and connected.
+
+**Claude's:** the three build scripts and the shared exporter, the Godot
+showcase scene, `check_assets_3d.gd`, the evidence composition, the film, and
+these documents. Also the check that was wrong, the typed eye position, and
+the directory error that made the first forked session useless — those are
+Claude's too and are recorded as such rather than smoothed over.
+
+**No generative model produced any part of this.** Under this assignment's
+rules none may: the geometry has to be built. The generators were one tool
+call away in the same add-on and all six report off.
+
+### Still unresolved
+
+- Whether the three assets suit the game's style is not something I have a
+  test for, and the one human check that bears on it is a single sentence.
+- The torch's glow is not in the asset. A light belongs to a scene, and
+  whether 3.75 m is the right range is the prediction the film's Your Turn
+  beat hands to the viewer rather than something measured here.
+- Five of the film's thirteen beats waste their left half, and the fix needs
+  either a different component or an extension to a shared one. Deferred,
+  with the reasoning in Assignment 2's `SHOTLIST.md`.
+
+**Traceability:** commits `a794167` (brief before geometry) through `0a51af9`
+(the cut film); `TEST-REPORT.md` sections A2–A9; `CHANGE-BRIEF.md` revisions
+3.0.0 and 3.0.1; `tools/blender/` for every line the MCP executed.
