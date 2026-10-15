@@ -46,5 +46,15 @@ contract together, since a result beat may not carry a source excerpt. Every
 evidence image is composed to the panel's measured size so the right half is
 full. Assignment 2's `SHOTLIST.md` has the alternatives that were rejected.
 
-**Still outstanding and not claimable here:** a watch of the whole film at
-playback speed by the author. A contact sheet is not a viewing.
+**The full watch — done 2026-10-15, by the author.** A contact sheet is not a
+viewing, so this was the one check in this report that could not be made here.
+The author watched all 3:28 at playback speed and reported no problems.
+
+That is a one-sentence pass over a thirteen-beat film, and it is recorded as
+one sentence rather than expanded into findings nobody gave. It is the same
+shape as the human check in `TEST-REPORT.md` section A6, and weaker evidence
+than a failure with detail would have been.
+
+What it does close: every defect listed above was found by Claude sampling
+frames, and a person has now watched the cut end to end without finding
+another.

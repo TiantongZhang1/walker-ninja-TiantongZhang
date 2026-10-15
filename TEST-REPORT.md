@@ -571,7 +571,7 @@ Two further limits worth naming:
 |---|---|
 | Automated | **12 measurements over 3 assets, 0 failures** (4 each: size, axis, node scale, origin), plus the colour read in A5. |
 | Budgets | 11 shapes of 18 allowed; 210 triangles of 1500. |
-| Human | **1 of 1 run, 2026-10-14, acceptable.** One sentence, recorded as one sentence. |
+| Human | **2 of 2 run, acceptable.** The assets in the Godot editor on 2026-10-14; the finished 3:28 film at playback speed on 2026-10-15. Both reported in one sentence, both recorded as one sentence. |
 | Revisions | 2, both driven by looking rather than by a check: the slime's roundness and the hand edit to its eyes. |
 | Provenance | built, not generated and not downloaded; all six libraries and generators off, confirmed machine-readably in `SOURCES.md` §9. |
 | Not covered | whether the assets read, whether they suit the style, and anything about them inside the 2D game. |
