@@ -184,9 +184,123 @@ def code_image(out_name, rel, first, last, caption):
     print("wrote", out_name, canvas.size, "font", size, "%d lines" % len(rows))
 
 
+def spike_angles():
+    """Re-lay the 4-view Blender capture to the panel's aspect.
+
+    The `look` tool returns a square 2x2 grid. A square image in a 1.549
+    panel fits by height and wastes 35 % of the width, which is the same
+    mistake Assignment 2 made before the panel was measured. The views keep
+    their 2x2 arrangement and the recovered width carries the measurements,
+    so the beat shows the shape and the numbers at once.
+    """
+    grid = Image.open(os.path.join(MEDIA, "blender-spike-angles.png")).convert("RGB")
+    g = grid.size[0] // 2
+    quads = [grid.crop((c * g, r * g, (c + 1) * g, (r + 1) * g))
+             for r in range(2) for c in range(2)]
+
+    # 415, not 440: at 440 the grid reached y=948 and ran under the
+    # caption at y=933. Caught by looking at the composed file.
+    cell = 415
+    quads = [q.resize((cell, cell), Image.LANCZOS) for q in quads]
+    canvas = Image.new("RGB", (W, H), CREAM)
+    d = ImageDraw.Draw(canvas)
+    f_h = ImageFont.truetype(FONT_UI, 34)
+    f_b = ImageFont.truetype(FONT_UI, 27)
+    f_m = ImageFont.truetype(FONT_MONO, 26)
+
+    gx, gy, gap = 40, 46, 10
+    for i, q in enumerate(quads):
+        canvas.paste(q, (gx + (i % 2) * (cell + gap), gy + (i // 2) * (cell + gap)))
+    for i, name in enumerate(("front", "three-quarter", "right", "top")):
+        d.text((gx + (i % 2) * (cell + gap) + 10,
+                gy + (i // 2) * (cell + gap) + cell - 36),
+               name, font=f_b, fill=(0xf0, 0xf0, 0xf0))
+
+    tx = gx + cell * 2 + gap + 46
+    d.text((tx, gy + 4), "A3-SPIKE, measured", font=f_h, fill=DARKINK)
+    rows = [("shapes", "4", "of 6 allowed"),
+            ("triangles", "54", "of 500 allowed"),
+            ("width", "1.500 m", "level rect, 24 px"),
+            ("height", "1.000 m", "level rect, 16 px"),
+            ("depth", "0.500 m", "chosen; no 2D source"),
+            ("teeth", "3", "= spike_count()"),
+            ("base", "z = 0.0000", "origin at the underside"),
+            ("node scale", "(1,1,1)", "transforms applied")]
+    y = gy + 68
+    for label, value, note in rows:
+        d.text((tx, y), label, font=f_b, fill=(0x55, 0x55, 0x55))
+        d.text((tx, y + 32), value, font=f_m, fill=DARKINK)
+        d.text((tx + 190, y + 34), note, font=f_b, fill=(0x7a, 0x7a, 0x7a))
+        y += 100
+
+    d.text((gx, H - 54),
+           "captured from the running Blender through the MCP look tool",
+           font=f_b, fill=(0x55, 0x55, 0x55))
+
+    out = os.path.join(MEDIA, "spike-angles-panel.png")
+    canvas.save(out)
+    print("wrote", os.path.basename(out), canvas.size)
+
+
+def hand_edit_panel():
+    """Crop the hand-edit screenshot to the parts that carry the evidence.
+
+    The raw capture is the whole 2000 x 1088 Blender window. Shrunk into the
+    workbench's image area it is unreadable: the title bar, the selected eye
+    and the Properties values all vanish, and those three ARE the evidence.
+    So the frame is cut into the regions that matter and re-laid at the
+    panel's size. Nothing is redrawn; every pixel here is from the author's
+    own screenshot.
+    """
+    src = Image.open(os.path.join(MEDIA, "hand-edit-slime-eye.png")).convert("RGB")
+    sw, sh = src.size
+
+    title = src.crop((0, 0, int(sw * 0.46), 20))
+    view = src.crop((int(sw * 0.27), int(sh * 0.13), int(sw * 0.56), int(sh * 0.62)))
+    outl = src.crop((int(sw * 0.825), int(sh * 0.052), sw, int(sh * 0.128)))
+    props = src.crop((int(sw * 0.825), int(sh * 0.230), sw, int(sh * 0.470)))
+
+    canvas = Image.new("RGB", (W, H), CREAM)
+    d = ImageDraw.Draw(canvas)
+    f_h = ImageFont.truetype(FONT_UI, 30)
+    f_b = ImageFont.truetype(FONT_UI, 25)
+
+    def put(img, x, y, target_w):
+        scaled = img.resize((target_w, max(1, round(img.size[1] * target_w / img.size[0]))),
+                            Image.LANCZOS)
+        canvas.paste(scaled, (x, y))
+        d.rectangle([x - 2, y - 2, x + scaled.size[0] + 1, y + scaled.size[1] + 1],
+                    outline=(0xc9, 0xc3, 0xb6), width=2)
+        return y + scaled.size[1]
+
+    d.text((40, 20), "the file", font=f_b, fill=(0x55, 0x55, 0x55))
+    put(title, 40, 52, 900)
+
+    d.text((40, 108), "the selected eye, in the viewport", font=f_b, fill=(0x55, 0x55, 0x55))
+    put(view, 40, 140, 700)
+
+    rx = 790
+    d.text((rx, 108), "Outliner - one of three objects", font=f_b, fill=(0x55, 0x55, 0x55))
+    y = put(outl, rx, 140, 700)
+
+    d.text((rx, y + 30), "Properties - position, and scale 1.000", font=f_b, fill=(0x55, 0x55, 0x55))
+    put(props, rx, y + 62, 700)
+
+    d.text((40, H - 58),
+           "the author's own Blender window - scale reads 1.000 because the "
+           "transform was applied after the edit",
+           font=f_b, fill=(0x55, 0x55, 0x55))
+
+    out = os.path.join(MEDIA, "hand-edit-panel.png")
+    canvas.save(out)
+    print("wrote", os.path.basename(out), canvas.size)
+
+
 if __name__ == "__main__":
     slime_before_after()
     check_output()
+    spike_angles()
+    hand_edit_panel()
     code_image("code-spike-trap.png", "tools/blender/build_spike_trap.py", 98, 111,
                "verbatim from the file the MCP executed - not a copy of it")
     code_image("code-slime-fit.png", "tools/blender/build_slime.py", 98, 109,

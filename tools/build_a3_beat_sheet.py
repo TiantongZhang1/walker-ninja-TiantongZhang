@@ -179,8 +179,8 @@ beats.append(asset_beat(
 beats.append(asset_beat(
     "B03", "The trap, in the live Blender session",
     "design/blender/spike_trap.blend",
-    "blender-spike-angles.png",
-    "four views, captured from the running Blender through the MCP",
+    "spike-angles-panel.png",
+    "four views from the running Blender, with the measurements beside them",
     "There it is, from four sides. Fifty-four triangles. One point five metres "
     "wide and one metre tall, which is the level file's own trap rect. The "
     "teeth read as teeth from the side, and the top view shows the eight-sided "
@@ -246,8 +246,8 @@ beats.append(asset_beat(
 beats.append(asset_beat(
     "B08", "The hand edit, in my own Blender",
     "design/blender/slime.blend",
-    "hand-edit-slime-eye.png",
-    "my own session - a photograph of the window, not a reconstruction",
+    "hand-edit-panel.png",
+    "my own session, cropped to the evidence - not a reconstruction",
     "The assignment wants one change made by hand, with the mouse. The eyes "
     "were too small to read beside a player who is one point seven five "
     "metres, so I scaled them in the viewport. One frame carries the file "

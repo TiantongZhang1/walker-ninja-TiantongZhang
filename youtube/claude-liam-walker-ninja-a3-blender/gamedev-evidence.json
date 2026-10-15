@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "game": "godot",
+  "teaching_contract": "code-then-result-v1",
+  "files": [
+    {
+      "path": "assets/models/slime.glb",
+      "sha256": "24adf32e1841d061fde85c5d4b7525fc7b8c0f8d74bffdf963bf6275df1e3ef7",
+      "role": "asset",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "assets/models/slime.glb.import",
+      "sha256": "9c2690dfe9afecba5f8bc48a588c087ae6b80e3bfa9f19a8301dd753b2d5a679",
+      "role": "config",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "assets/models/spike_trap.glb",
+      "sha256": "a268ed36bb2cf8912da1bd318befe65f7ffaf51791c0d987bd2543e6d8c2c6b4",
+      "role": "asset",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "assets/models/spike_trap.glb.import",
+      "sha256": "d2c8ec08e61a8ddddba2f45f012c0436e7263ba53632ce6b23b2def6cdb768d4",
+      "role": "config",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "assets/models/torch.glb",
+      "sha256": "547fe93a59da4478ac91a8ed1bb2b48a6ecc17f1670e3fc40dc05a684b05cd71",
+      "role": "asset",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "assets/models/torch.glb.import",
+      "sha256": "b2644dae984692ba5e73852a66011ccbecb1787a19899e72e41837281ecfab79",
+      "role": "config",
+      "component_ids": [
+        "C1-glb-assets"
+      ]
+    },
+    {
+      "path": "project.godot",
+      "sha256": "8cbdaa0b36a1a10a4834ba01a5e01851a776c5c5cc6eaff14c048199e356206c",
+      "role": "config",
+      "component_ids": [
+        "C2-showcase-scene"
+      ]
+    },
+    {
+      "path": "scenes/asset_showcase.tscn",
+      "sha256": "8347158063b4f031c2a4f04f96008488f06f43acaaa540b1893eca727d824ddf",
+      "role": "scene",
+      "component_ids": [
+        "C2-showcase-scene"
+      ]
+    },
+    {
+      "path": "tests/check_assets_3d.gd",
+      "sha256": "8dd874a37e36b7237d4502d6a06124f32da1ad68e52327b0c467d1c2b2107bc1",
+      "role": "test",
+      "component_ids": [
+        "C3-asset-check"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "C1-glb-assets",
+      "explanation": "The three assets Assignment 3 adds, as Godot imported them. Each was built in Blender from basic shapes by a script in tools/blender/ that the MCP executed directly, exported as binary glTF with +Y Up, and sized from the 2D game: the trap's 1.50 x 1.00 m is the level file's own trap rect at 16 px = 1 m, the slime's 1.375 x 1.00 m is SLIME_SIZE, and the torch's 0.70 m is the handle rect in _draw_torch plus its flame. 11 primitives and 210 triangles for all three, against a course limit of 6 shapes and 500 triangles each. The .import sidecars are included rather than excluded because for these three files Godot's import settings are what turns a .glb into the PackedScene the scene instances.",
+      "beat_ids": [
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B08"
+      ],
+      "files": [
+        "assets/models/torch.glb",
+        "assets/models/torch.glb.import",
+        "assets/models/spike_trap.glb",
+        "assets/models/spike_trap.glb.import",
+        "assets/models/slime.glb",
+        "assets/models/slime.glb.import"
+      ]
+    },
+    {
+      "id": "C2-showcase-scene",
+      "explanation": "The scene the assignment asks for: a floor, one light, a camera and the three assets 1.9 m apart, all placed at y = 0. Sitting on the floor is the default rather than an adjustment, because each asset's origin is the centre of its underside, so the brief's third prediction is built into the layout where floating would be visible rather than merely measurable. The WorldEnvironment is not a second light: it supplies flat ambient at 0.25 so faces turned away from the sun can be inspected instead of reading as holes. project.godot is included because the project runs on gl_compatibility and that is the renderer this scene is judged under.",
+      "beat_ids": [
+        "B09"
+      ],
+      "files": [
+        "scenes/asset_showcase.tscn",
+        "project.godot"
+      ]
+    },
+    {
+      "id": "C3-asset-check",
+      "explanation": "The headless check. It loads each .glb, walks the instanced hierarchy accumulating local transforms, and prints the bounding box, the longest axis, the node scale and the distance from the floor beside the number CHANGE-BRIEF 3.0.0 predicted, exiting non-zero on any mismatch. Its first version read global_transform from nodes a script running in _init() has not put in the tree, got identity back for every one, and reported a correct asset as 0.850 m tall and 0.425 m below the floor - exactly the cone's local half-height. Its own header states what it cannot show: size, orientation, scale and origin are geometry, and whether an asset reads as a torch is not.",
+      "beat_ids": [
+        "B06",
+        "B07"
+      ],
+      "files": [
+        "tests/check_assets_3d.gd"
+      ]
+    }
+  ],
+  "excerpts": [
+    {
+      "beat_id": "B06",
+      "path": "tests/check_assets_3d.gd",
+      "start_line": 150,
+      "end_line": 161,
+      "text": "func _collect(node: Node, xform: Transform3D, boxes: Array[AABB], is_root: bool) -> void:\n\tvar here := xform\n\tvar n3 := node as Node3D\n\tif n3 != null and not is_root:\n\t\there = xform * n3.transform\n\n\tvar mi := node as MeshInstance3D\n\tif mi != null and mi.mesh != null:\n\t\tboxes.append(here * mi.get_aabb())\n\n\tfor child in node.get_children():\n\t\t_collect(child, here, boxes, false)"
+    }
+  ],
+  "code_result_pairs": [
+    {
+      "code_beat": "B06",
+      "result_beat": "B07",
+      "observation": "Twelve measurements over three assets, printed beside the numbers CHANGE-BRIEF 3.0.0 predicted: every bounding box exact, every node scale (1,1,1), every lowest point at y = +0.0000 m. ALL CHECKS PASSED, exit 0.",
+      "media": {
+        "path": "media/check-output.png",
+        "sha256": "480fef96d3bcf77a35d18243d99a9d4b1443163f7063d1cc1b39d6514f642fec"
+      }
+    }
+  ],
+  "exclusions": [
+    {
+      "path": ".gitignore",
+      "reason": "Git configuration, not game source. Excludes .godot/ from the repository."
+    },
+    {
+      "path": "assets/README.md",
+      "reason": "Assignment 2's asset provenance table. A3's provenance is in the repository SOURCES.md section 9."
+    },
+    {
+      "path": "assets/death-laugh-cat.png",
+      "reason": "Assignment 2's declared placeholder death reaction. Unchanged by A3."
+    },
+    {
+      "path": "assets/death-laugh-cat.png.import",
+      "reason": "Assignment 2's declared placeholder death reaction. Unchanged by A3."
+    },
+    {
+      "path": "assets/death-laugh.ogg",
+      "reason": "Assignment 2's declared placeholder death reaction. Unchanged by A3."
+    },
+    {
+      "path": "assets/death-laugh.ogg.import",
+      "reason": "Assignment 2's declared placeholder death reaction. Unchanged by A3."
+    },
+    {
+      "path": "assets/music-loop.ogg",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/music-loop.ogg.import",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/poses/p1-idle.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p1-idle.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p2-run.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p2-run.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p3-rising.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p3-rising.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p4-falling.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p4-falling.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p5-dash.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p5-dash.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p6-windup.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p6-windup.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p7-live.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p7-live.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p8-death.png",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/poses/p8-death.png.import",
+      "reason": "Assignment 2's generated character sprites and their import sidecars. Unchanged by A3 and taught in the Assignment 2 film."
+    },
+    {
+      "path": "assets/sfx-death.ogg",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-death.ogg.import",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-jump.ogg",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-jump.ogg.import",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-slash.ogg",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-slash.ogg.import",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-trap.ogg",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "assets/sfx-trap.ogg.import",
+      "reason": "Assignment 2's audio: one generated music loop and four synthesised placeholder effects. Unchanged by A3."
+    },
+    {
+      "path": "features/player/player.gd",
+      "reason": "The 2D slice's runtime: player, tuning, session and HUD. A3 changed none of it and the Assignment 2 film takes it apart."
+    },
+    {
+      "path": "features/player/tuning.gd",
+      "reason": "The 2D slice's runtime: player, tuning, session and HUD. A3 changed none of it and the Assignment 2 film takes it apart."
+    },
+    {
+      "path": "game/main.tscn",
+      "reason": "The 2D slice's runtime: player, tuning, session and HUD. A3 changed none of it and the Assignment 2 film takes it apart."
+    },
+    {
+      "path": "game/session.gd",
+      "reason": "The 2D slice's runtime: player, tuning, session and HUD. A3 changed none of it and the Assignment 2 film takes it apart."
+    },
+    {
+      "path": "levels/first_steps.json",
+      "reason": "The 2D level data. A3 reads two numbers out of it for asset sizes but does not modify it; the derivation is in CHANGE-BRIEF 3.0.0."
+    },
+    {
+      "path": "tests/capture_character.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/capture_enemies.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/capture_game.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/capture_gamedev.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/capture_walkthrough.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/route_driver.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/test_game.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "tests/test_keyboard.gd",
+      "reason": "Assignment 1 and 2 test and capture drivers. A3 adds its own check, tests/check_assets_3d.gd, and leaves these untouched."
+    },
+    {
+      "path": "ui/hud.gd",
+      "reason": "The 2D slice's runtime: player, tuning, session and HUD. A3 changed none of it and the Assignment 2 film takes it apart."
+    }
+  ]
+}
