@@ -53,7 +53,7 @@
     },
     {
       "path": "project.godot",
-      "sha256": "8cbdaa0b36a1a10a4834ba01a5e01851a776c5c5cc6eaff14c048199e356206c",
+      "sha256": "8a7de7a12a3dd1393021cde1cad0f38d73f7c462697554679677d90ce273527e",
       "role": "config",
       "component_ids": [
         "C2-showcase-scene"
